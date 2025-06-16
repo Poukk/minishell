@@ -1,0 +1,26 @@
+# Build artifacts
+*.o
+*.a
+
+# Core dumps
+core
+core.*
+vgcore.*
+
+# Temporary files
+*~
+*.swp
+*.swo
+*.tmp
+.#*
+
+# IDE and editor files
+.vscode/
+.idea/
+.zed/
+
+# Build directories
+obj/
+
+# Project specific (minishell)
+minishell
