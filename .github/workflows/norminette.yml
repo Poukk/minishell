@@ -20,8 +20,11 @@ jobs:
       - name: Set up Python
         run: uv python install
 
-      - name: Install norminette
-        run: uv pip install --system norminette
+      - name: Create virtual environment
+        run: uv venv
 
-      - name: Run norminette
-        run: norminette src/ include/ lib/
+      - name: Install and run norminette
+        run: |
+          source .venv/bin/activate
+          uv pip install norminette
+          norminette src/ include/ lib/
