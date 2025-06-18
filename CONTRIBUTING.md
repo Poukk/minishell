@@ -80,13 +80,14 @@ This document defines the rules, structure, and expectations for contributing to
 4. **Commit Changes**
     Follow [Commit Guidelines](#commit-guidelines) strictly.
 
-5. **Push & Open PR**
+5. **Push**
 
     ```bash
-    git push origin feature/your-short-description
+    git push origin feature/<short-description>
     ```
 
-    Then open a Pull Request against `main`.
+6. **Then, open a Pull Request against `main`.**
+  Check [Pull Request Process](#pull-request-process)
 
 
 ---
@@ -180,17 +181,15 @@ Branch off from `main`. Keep branches focused and short-lived. Merge via Pull Re
 
 1. **Open PR against `main`**
 
-2. **PR Title**: Use same format as commits (`<type>(<scope>): <description>`)
-
-3. **PR Description**:
+2. **PR Description**:
 
     - Clearly state what changed and why
 
     - Reference related issues if applicable
 
-4. **Assign Reviewers**: At least one other contributor
+3. **Assign Reviewers**: At least one other contributor
 
-5. **Certify all CI pipelines and tests pass**
+4. **Certify all CI pipelines and tests pass**
 
 
 ---
