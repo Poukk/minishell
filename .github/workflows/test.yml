@@ -1,21 +1,11 @@
 name: Test
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_run:
-    workflows: ["Build"]
-    types:
-      - completed
-    branches: [main]
+  workflow_call:
 
 jobs:
-  test:
+  Test:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
-
     steps:
       - uses: actions/checkout@v4
 

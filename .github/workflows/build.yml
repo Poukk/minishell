@@ -1,21 +1,11 @@
 name: Build
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_run:
-    workflows: ["Norminette check"]
-    types:
-      - completed
-    branches: [main]
+  workflow_call:
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
-
     steps:
       - uses: actions/checkout@v4
 
