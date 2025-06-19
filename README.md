@@ -40,10 +40,14 @@ minishell$ exit
 ```
 
 ## Project Structure
-- `src/` - Source code files
-- `include/` - Header files
-- `libft/` - Custom C library
-- `Makefile` - Build configuration
+```bash
+.
+├── include/ # Header files
+├── lib/     # Library files (Libft)
+├── src/     # Source files
+├── test/    # Test files
+└── Makefile
+```
 
 ## Testing
 Tests are implemented using the Criterion framework:
