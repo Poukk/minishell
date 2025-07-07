@@ -17,9 +17,11 @@ int	main(void)
 {
 	int	a;
 	int	b;
+	int c;
 
 	a = 5;
 	b = 10;
-	ft_printf("Sum of %d and %d is %d\n", a, b, sum(a, b));
+	c = 15;
+	ft_printf("Sum of %d, %d and %d is %d\n", a, b, c, sum(a, b, c));
 	return (0);
 }
