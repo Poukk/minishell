@@ -6,10 +6,11 @@ src/sum.c  \
 
 #---------------- Variables ----------------#
 CC      := cc
-CFLAGS  := -Wextra -Wall -Werror -Wunreachable-code -Ofast
+CFLAGS  := -Wextra -Wall -Werror -Wunreachable-code -g3
 
 LIB_DIR := ./lib
 LIBFT   := $(LIB_DIR)/Libft
+LIBFLAGS:= -lreadline -lhistory
 
 HEADERS := -I ./include  -I $(LIBFT)/include
 LIBS    := $(LIBFT)/libft.a

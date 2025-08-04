@@ -13,5 +13,13 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-int	sum(int a, int b);
+# include <stdlib.h>
+# include <stdio.h>
+# include <unistd.h>
+
+# include <readline/history.h>
+# include <readline/readline.h>
+
+
+
 #endif
