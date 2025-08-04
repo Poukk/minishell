@@ -21,15 +21,16 @@ char	*cell_read_line(void)
 
 	buf = NULL;
 
-	ft_printf("minishel>:");
+	Getcwd(cwd, sizeof(cwd));
+	ft_printf("%s$>" , cwd);
+
 	if (getline(&buf, &bufsize, stdin) == -1)
 	{
 		buf = NULL;
 		if (feof(stdin))
 			ft_printf("End of File!");
 		else
-			ft_printf("Getline failed");
-		ft_printf("%s\n", buf);
+			ft_printf("Getline failed!");
 	}
 	return (buf);
 }
@@ -42,10 +43,9 @@ int	main(int ac, char **av)
 	//READ->EVALUATE->PRINT/EXECUTE->LOOP
 	while(1)
 	{
-		//get line
+		//promt + get line
 		line = cell_read_line();
 		ft_printf("%s\n", line);
-		pause();
 
 		//get tokens gettok (->lexing->parsing = EVALUATING)
 
