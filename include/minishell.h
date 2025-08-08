@@ -16,11 +16,16 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>
+# include <string.h>
 
 # include <readline/history.h>
 # include <readline/readline.h>
 
+#define	DEL "\n\t \v\f\r"
+
 void	get_cwd(char *buf, size_t size);
+void	*malloc_util(size_t size);
+void	*realloc_util(void *ptr, size_t size);
 
 
 

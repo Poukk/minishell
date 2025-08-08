@@ -13,6 +13,30 @@
 #include "minishell.h"
 #include "libft.h"
 
+char	**cell_split_line(char *line)
+{
+	char			**tokens;
+	char			*token;
+	unsigned int	position;
+	size_t			bufsize;
+
+	bufsize = BUFSIZ;
+	tokens = malloc_util(bufsize * sizeof(*tokens));
+	position = 0;
+	for (token = strtok(line, DEL); token; token = strtok(NULL, DEL))
+	{
+		tokens[position++] = token;
+		if (position >= bufsize)
+		{
+			bufsize *=2;
+			tokens = realloc_util(tokens, bufsize * sizeof(*tokens));
+		}
+
+	}
+	tokens[position] = NULL;
+	return (tokens);
+}
+
 char	*cell_read_line(void)
 {
 	char	*buf;
@@ -24,6 +48,7 @@ char	*cell_read_line(void)
 	buf = get_next_line(0); //stdin = 0
 	if (!buf)
 	{
+		free(buf);
 		if (feof(stdin))
 			ft_printf("End of File!");
 		else
@@ -35,21 +60,29 @@ char	*cell_read_line(void)
 int	main(int ac, char **av) 
 {
 	char	*line;
+	char	**args;
+	int		i;
 	(void)ac;
 	(void)av;
-	//READ->EVALUATE->PRINT/EXECUTE->LOOP
+
 	while(1)
 	{
-		//promt + get line
+		//prompt + get line
 		line = cell_read_line();
 		if (!line)
 			break;
-		ft_printf("%s\n", line);
-
 		//get tokens gettok (->lexing->parsing = EVALUATING)
+		args = cell_split_line(line);
+		i = 0;
+		while (args[i])
+		{
+			ft_printf("%s\n", args[i]);
+			i++;
+		}
 
 		//exec
 		free(line);
+		free(args);
 	}
 
 	return (EXIT_SUCCESS);
