@@ -20,7 +20,7 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
-void	Getcwd(char *buf, size_t size);
+void	get_cwd(char *buf, size_t size);
 
 
 

@@ -16,21 +16,18 @@
 char	*cell_read_line(void)
 {
 	char	*buf;
-	size_t	bufsize;
 	char	cwd[BUFSIZ];
 
-	buf = NULL;
-
-	Getcwd(cwd, sizeof(cwd));
+	get_cwd(cwd, sizeof(cwd));
 	ft_printf("%s$>" , cwd);
 
-	if (getline(&buf, &bufsize, stdin) == -1)
+	buf = get_next_line(0); //stdin = 0
+	if (!buf)
 	{
-		buf = NULL;
 		if (feof(stdin))
 			ft_printf("End of File!");
 		else
-			ft_printf("Getline failed!");
+			ft_printf("get_next_line failed!");
 	}
 	return (buf);
 }
@@ -45,11 +42,14 @@ int	main(int ac, char **av)
 	{
 		//promt + get line
 		line = cell_read_line();
+		if (!line)
+			break;
 		ft_printf("%s\n", line);
 
 		//get tokens gettok (->lexing->parsing = EVALUATING)
 
 		//exec
+		free(line);
 	}
 
 	return (EXIT_SUCCESS);

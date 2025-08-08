@@ -6,7 +6,7 @@
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 17:33:12 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/04 19:19:00 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/08/08 14:42:48 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 //Wrappers
 
-void	Getcwd(char *buf, size_t size)
+void	get_cwd(char *buf, size_t size)
 {
 	if (getcwd(buf, size) == NULL)
 		perror("getcwd FAILED");
