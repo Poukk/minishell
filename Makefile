@@ -6,13 +6,13 @@ src/sum.c  \
 
 #---------------- Variables ----------------#
 CC      := cc
-CFLAGS  := -Wextra -Wall -Werror -Wunreachable-code -Ofast
+CFLAGS  := -Wextra -Wall -Werror -Wunreachable-code -Ofast -lreadline
 
 LIB_DIR := ./lib
 LIBFT   := $(LIB_DIR)/Libft
 
 HEADERS := -I ./include  -I $(LIBFT)/include
-LIBS    := $(LIBFT)/libft.a -lreadline
+LIBS    := $(LIBFT)/libft.a
 
 OBJ_DIR := obj
 OBJS    := $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
