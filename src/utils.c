@@ -6,7 +6,7 @@
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 17:33:12 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/08 17:59:29 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/08/08 19:32:02 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,22 @@ void	get_cwd(char *buf, size_t size)
 		perror("getcwd FAILED");
 }
 
+void	free_tokens(char **tokens)
+{
+	int	i;
+
+	i = 0;
+	if (!tokens)
+		return ;
+	while (tokens[i])
+	{
+		free(tokens[i]);
+		i++;
+	}
+	free(tokens);
+}
+
+/*
 void *malloc_util(size_t size)
 {
 	void *ptr;
@@ -46,4 +62,4 @@ void	*realloc_util(void *ptr, size_t size)
 		exit(EXIT_FAILURE);
 	}
 	return (new_ptr);
-}
+}*/

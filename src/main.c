@@ -13,8 +13,22 @@
 #include "minishell.h"
 #include "libft.h"
 
+void	cell_exec(char **args)
+{
+	
+}
+
 char	**cell_split_line(char *line)
 {
+	char	**tokens;
+
+	tokens = ft_split(line, ' ');
+	if (!tokens)
+	{
+		perror("ft_split failed");
+		exit(EXIT_FAILURE);
+	}
+	/*
 	char			**tokens;
 	char			*token;
 	unsigned int	position;
@@ -34,6 +48,7 @@ char	**cell_split_line(char *line)
 
 	}
 	tokens[position] = NULL;
+	*/
 	return (tokens);
 }
 
@@ -43,12 +58,11 @@ char	*cell_read_line(void)
 	char	cwd[BUFSIZ];
 
 	get_cwd(cwd, sizeof(cwd));
-	ft_printf("%s$>" , cwd);
+	ft_printf("%s$>", cwd);
 
 	buf = get_next_line(0); //stdin = 0
 	if (!buf)
 	{
-		free(buf);
 		if (feof(stdin))
 			ft_printf("End of File!");
 		else
@@ -81,8 +95,10 @@ int	main(int ac, char **av)
 		}
 
 		//exec
+		cell_exec(args);
+
+		free_tokens(args);
 		free(line);
-		free(args);
 	}
 
 	return (EXIT_SUCCESS);
