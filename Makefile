@@ -6,13 +6,13 @@ src/sum.c  \
 
 #---------------- Variables ----------------#
 CC      := cc
-CFLAGS  := -Wextra -Wall -Werror -Wunreachable-code -Ofast -lreadline
+CFLAGS  := -Wextra -Wall -Werror -Wunreachable-code -Ofast
 
 LIB_DIR := ./lib
 LIBFT   := $(LIB_DIR)/Libft
 
 HEADERS := -I ./include  -I $(LIBFT)/include
-LIBS    := $(LIBFT)/libft.a
+LIBS    := $(LIBFT)/libft.a -lreadline
 
 OBJ_DIR := obj
 OBJS    := $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
@@ -28,7 +28,7 @@ $(OBJ_DIR)/%.o: src/%.c
 	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS) && printf "Compiling: $(notdir $<)\n"
 
 $(NAME): $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(HEADERS) -o $(NAME) $(LIBS)
 
 clean:
 	@rm -rf $(OBJ_DIR)
