@@ -13,10 +13,6 @@
 #include "minishell.h"
 #include "libft.h"
 
-void	cell_exec(char **args)
-{
-	
-}
 
 char	**cell_split_line(char *line)
 {
@@ -28,27 +24,6 @@ char	**cell_split_line(char *line)
 		perror("ft_split failed");
 		exit(EXIT_FAILURE);
 	}
-	/*
-	char			**tokens;
-	char			*token;
-	unsigned int	position;
-	size_t			bufsize;
-
-	bufsize = BUFSIZ;
-	tokens = malloc_util(bufsize * sizeof(*tokens));
-	position = 0;
-	for (token = strtok(line, DEL); token; token = strtok(NULL, DEL))
-	{
-		tokens[position++] = token;
-		if (position >= bufsize)
-		{
-			bufsize *=2;
-			tokens = realloc_util(tokens, bufsize * sizeof(*tokens));
-		}
-
-	}
-	tokens[position] = NULL;
-	*/
 	return (tokens);
 }
 
@@ -95,7 +70,7 @@ int	main(int ac, char **av)
 		}
 
 		//exec
-		cell_exec(args);
+
 
 		free_tokens(args);
 		free(line);

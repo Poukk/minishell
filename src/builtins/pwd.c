@@ -1,36 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/04 17:33:12 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/09 18:51:40 by elvictor         ###   ########.fr       */
+/*   Created: 2025/08/09 15:48:58 by elvictor          #+#    #+#             */
+/*   Updated: 2025/08/09 18:59:20 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//Wrappers
-
-void	get_cwd(char *buf, size_t size)
+int	exec_pwd(char **args)
 {
-	if (getcwd(buf, size) == NULL)
-		perror("getcwd FAILED");
-}
+	char	*cwd;
 
-void	free_tokens(char **tokens)
-{
-	int	i;
-
-	i = 0;
-	if (!tokens)
-		return ;
-	while (tokens[i])
+	(void)args;
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
 	{
-		free(tokens[i]);
-		i++;
+		perror("pwd");
+		return (FAILURE);
 	}
-	free(tokens);
+	printf("%s\n", cwd);
+	free(cwd);
+	return (SUCCESS);
 }

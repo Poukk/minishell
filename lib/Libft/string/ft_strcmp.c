@@ -1,36 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/04 17:33:12 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/09 18:51:40 by elvictor         ###   ########.fr       */
+/*   Created: 2025/08/09 16:57:33 by elvictor          #+#    #+#             */
+/*   Updated: 2025/08/09 17:01:56 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-//Wrappers
-
-void	get_cwd(char *buf, size_t size)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	if (getcwd(buf, size) == NULL)
-		perror("getcwd FAILED");
-}
-
-void	free_tokens(char **tokens)
-{
-	int	i;
+	size_t	i;
 
 	i = 0;
-	if (!tokens)
-		return ;
-	while (tokens[i])
-	{
-		free(tokens[i]);
+	while (s1[i] && s2[i] && s1[i] == s2[i])
 		i++;
-	}
-	free(tokens);
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
