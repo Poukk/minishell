@@ -12,7 +12,7 @@ LIB_DIR := ./lib
 LIBFT   := $(LIB_DIR)/Libft
 
 HEADERS := -I ./include  -I $(LIBFT)/include
-LIBS    := $(LIBFT)/libft.a
+LIBS    := $(LIBFT)/libft.a -lreadline
 
 OBJ_DIR := obj
 OBJS    := $(SRCS:src/%.c=$(OBJ_DIR)/%.o)

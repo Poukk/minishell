@@ -12,14 +12,35 @@
 
 #include "minishell.h"
 #include "libft.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <stdlib.h>
+
+#define PROMPT "minishell$ "
+
+static void	handle_line(char *line)
+{
+	if (!line)
+		return ;
+	if (*line)
+		add_history(line);
+	ft_printf("You typed: %s\n", line);
+}
 
 int	main(void)
 {
-	int	a;
-	int	b;
+	char	*line;
 
-	a = 5;
-	b = 10;
-	ft_printf("Sum of %d and %d is %d\n", a, b, sum(a, b));
+	while (1)
+	{
+		line = readline(PROMPT);
+		if (!line)
+		{
+			ft_printf("exit\n");
+			break ;
+		}
+		handle_line(line);
+		free(line);
+	}
 	return (0);
 }
