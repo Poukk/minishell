@@ -38,6 +38,7 @@ void	free_tokens(char **tokens);
 //BUILTINS
 t_bool	is_builtin(const char *cmd);
 int		exec_builtin(char **args, int last_status);
+int		exec_pwd(char **args);
 
 
 #endif
