@@ -12,22 +12,18 @@
 
 #include "minishell.h"
 
-static int has_parametres_n(char **args)
+static int	has_n_flag(const char *arg)
 {
 	int	i;
-	int	j;
 
-	i = 1;
-	while (args[i] && args[i][0] == '-' && args[i][1] == 'n')
-	{
-		j = 2;
-		while (args[i][j] == 'n')
-			j++;
-		if (args[i][j] == '\0')
-			return (1);
-		break ;
-	}
-	return (0);
+	if (arg[0] != '-' || arg[1] != 'n')
+		return (0);
+	i = 2;
+	while (arg[i] == 'n')
+		i++;
+	if (arg[i] != '\0')
+		return (0);
+	return (1);
 }
 
 int	exec_echo(char **args)
@@ -37,7 +33,7 @@ int	exec_echo(char **args)
 
 	newline = 1;
 	i = 1;
-	if (has_parametres_n(args))
+	while (args[i] && has_n_flag(args[i]))
 	{
 		newline = 0;
 		i++;
