@@ -6,7 +6,7 @@
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 16:11:47 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/09 18:53:22 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/08/13 15:53:44 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,5 @@ int	exec_builtin(char **args, int last_status)
 		return (exec_env(args));
 	if (!ft_strcmp(args[0], "exit"))
 		return (exec_exit(args, last_status));
-	return (hundle_error("error executing builtin")); //TODO
+	return (handle_error("error executing builtin")); //TODO
 }
