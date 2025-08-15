@@ -40,3 +40,4 @@ void	gc_free_all(t_gc *gc)
 	ft_lstclear(&gc->allocated_ptrs, free);
 	gc->allocated_ptrs = NULL;
 }
+
