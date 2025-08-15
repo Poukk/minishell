@@ -14,6 +14,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc make libreadline-dev
 
+      - name: Build Libft
+        run: |
+          cd lib/Libft
+          make
+
       - name: Build and run tests
         run: |
           cd test
