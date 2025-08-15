@@ -2,7 +2,6 @@
 NAME    := minishell
 SRCS    := \
 src/main.c \
-src/sum.c  \
 
 #---------------- Variables ----------------#
 CC      := cc
