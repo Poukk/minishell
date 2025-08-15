@@ -6,11 +6,12 @@
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 16:33:18 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/13 20:30:31 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/08/15 20:26:08 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
+#include "../include/libft.h"
 
 static int	ft_print_format(const int fd, const char specifier, va_list args)
 {
@@ -23,13 +24,15 @@ static int	ft_print_format(const int fd, const char specifier, va_list args)
 	else if (specifier == '%')
 		return (ft_putchar_fd('%', fd));
 	else if (specifier == 'p')
-		return (ft_putptr_fd(va_arg(args, long), fd)); //TODO
+		return (ft_putptr_fd((unsigned long)va_arg(args, void *), fd));
 	else if (specifier == 'u')
-		return (ft_putnbr_fd(va_arg(args, unsigned int)), fd);
+		return (ft_putubase_fd(va_arg(args, unsigned int), "0123456789", fd));
 	else if (specifier == 'x')
-		return (ft_puthex_fd(va_arg(args, unsigned int), fd, 0)); //TODO
+		return (ft_putubase_fd(va_arg(args, unsigned int),
+				"0123456789abcdef", fd));
 	else if (specifier == 'X')
-		return (ft_puthex_fd(va_arg(args, unsigned int), fd, 1));
+		return (ft_putubase_fd(va_arg(args, unsigned int),
+				"0123456789ABCDEF", fd));
 	else
 		return (0);
 }

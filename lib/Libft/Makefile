@@ -13,7 +13,9 @@ ctype/ft_toupper.c                            \
 io/ft_putchar_fd.c                            \
 io/ft_putendl_fd.c                            \
 io/ft_putnbr_fd.c                             \
+io/ft_putptr_fd.c                             \
 io/ft_putstr_fd.c                             \
+io/ft_putubase_fd.c                             \
 linked_list/ft_lstadd_back_bonus.c            \
 linked_list/ft_lstadd_front_bonus.c           \
 linked_list/ft_lstclear_bonus.c               \
@@ -53,6 +55,7 @@ ft_printf/printf_number.c                     \
 ft_printf/printf_hex.c                        \
 ft_printf/printf_char.c                       \
 ft_printf/printf.c                            \
+ft_printf/printf_fd.c                         \
 get_next_line/get_next_line.c                 \
 get_next_line/utils.c                         \
 

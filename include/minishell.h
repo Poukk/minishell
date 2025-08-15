@@ -17,6 +17,7 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <string.h>
+# include "libft.h"
 
 # include <readline/history.h>
 # include <readline/readline.h>

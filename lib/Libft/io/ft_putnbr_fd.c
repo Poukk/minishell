@@ -11,13 +11,16 @@
 /* ************************************************************************** */
 #include "libft.h"
 
-void	ft_putnbr_fd(int n, int fd)
+int	ft_putnbr_fd(int n, int fd)
 {
 	char	*number;
+	int		len;
 
 	number = ft_itoa(n);
 	if (!number)
-		return ;
+		return (0);
 	ft_putstr_fd(number, fd);
+	len = ft_strlen(number);
 	free(number);
+	return (len);
 }

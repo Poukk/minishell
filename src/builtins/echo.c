@@ -6,7 +6,7 @@
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:32:25 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/09 21:02:16 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/08/15 20:36:57 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,13 @@ int	exec_echo(char **args)
 	}
 	while (args[i])
 	{
-		printf("%s", args[i]);
+		ft_printf_fd(1, "%s", args[i]);
 		if (args[i + 1])
-			printf(" ");
+			ft_printf_fd(1, " ");
 		i++;
 	}
 	if (newline)
-		printf("\n");
+		ft_printf_fd(1, "\n");
 	return (SUCCESS);
 }
 
