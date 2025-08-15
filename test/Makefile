@@ -1,11 +1,8 @@
 #------------------ Config -----------------#
 TARGET = test_runner
-SOURCES =    \
-	../src/sum.c \
+SOURCES =              \
 	../src/gc/gc.c \
-	test_sum.c   \
-	test_gc.c    \
-
+	test_gc.c      \
 
 #---------------- Variables ----------------#
 CC = gcc
