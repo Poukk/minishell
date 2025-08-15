@@ -8,7 +8,7 @@ Use this checklist to track progress and identify next steps.
 -   [x] **Project Setup:** Create `Makefile`, header files, and `.gitignore`.
 -   [x] **Readline Loop:** Implement the main loop using `readline` to get user input.
 -   [x] **Handle EOF:** Gracefully exit the shell on `Ctrl-D` (when `readline` returns `NULL`).
--   [ ] **Scoped Allocator:** Implement the `gc_malloc()` and `gc_free_all()` system to manage memory for each command line.
+-   [x] **Scoped Allocator:** Implement the `gc_malloc()` and `gc_free_all()` system to manage memory for each command line.
 -   [ ] **Lexer (Tokenizer):** Write a function to convert the input string into a linked list of tokens.
 -   [ ] **Lexer - Delimiters:** Handle spaces and tabs as token separators.
 -   [ ] **Lexer - Metacharacters:** Identify `|`, `<`, `>` as separate tokens.
