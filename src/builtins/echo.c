@@ -6,7 +6,7 @@
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 19:32:25 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/15 20:36:57 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/08/19 16:31:16 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ int	exec_echo(char **args)
 		ft_printf_fd(1, "\n");
 	return (SUCCESS);
 }
-
+/*
 int	main(int args, char **argv)
 {
 	argv++;
 	exec_echo(argv);
 }
+*/
