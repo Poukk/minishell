@@ -9,7 +9,7 @@
 /*   Updated: 2025/06/16 23:29:43 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
+/*
 #include "minishell.h"
 #include "libft.h"
 
@@ -35,7 +35,7 @@ char	*cell_read_line(void)
 	get_cwd(cwd, sizeof(cwd));
 	ft_printf("%s$>", cwd);
 
-	buf = get_next_line(0); //stdin = 0
+	buf = get_next_line(0); 
 	if (!buf)
 	{
 		if (feof(stdin))
@@ -78,3 +78,4 @@ int	main(int ac, char **av)
 
 	return (EXIT_SUCCESS);
 }
+*/

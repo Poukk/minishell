@@ -6,7 +6,7 @@
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 16:33:18 by elvictor          #+#    #+#             */
-/*   Updated: 2025/08/15 20:26:08 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/08/19 17:51:16 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,3 @@ int	ft_printf_fd(const int fd, const char *str, ...)
 	va_end(args);
 	return (printed);
 }
-
