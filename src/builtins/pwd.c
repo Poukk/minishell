@@ -1,27 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/14 17:21:12 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/08/20 15:28:32 by elvictor         ###   ########.fr       */
+/*   Created: 2025/08/20 14:28:29 by elvictor          #+#    #+#             */
+/*   Updated: 2025/08/20 15:10:17 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-int	ft_putnbr_fd(int n, int fd)
+int	exec_pwd(char **args)
 {
-	char	*number;
-	int		len;
+	char	*cwd;
 
-	number = ft_itoa(n);
-	if (!number)
-		return (0);
-	ft_putstr_fd(number, fd);
-	len = ft_strlen(number);
-	free(number);
-	return (len);
+	(void)args;
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+	{
+		perror("pwd");
+		return (FAILURE);
+	}
+	printf("%s\n", cwd);
+	free(cwd);
+	return (SUCCESS);
 }
+/*
+int	main(int argc,char **argv)
+{
+	(void)argc;
+	return (exec_pwd(argv));
+}
+*/

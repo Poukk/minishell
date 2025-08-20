@@ -1,27 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/14 17:21:12 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/08/20 15:28:32 by elvictor         ###   ########.fr       */
+/*   Created: 2025/08/09 16:57:33 by elvictor          #+#    #+#             */
+/*   Updated: 2025/08/09 17:01:56 by elvictor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_putnbr_fd(int n, int fd)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	char	*number;
-	int		len;
+	size_t	i;
 
-	number = ft_itoa(n);
-	if (!number)
-		return (0);
-	ft_putstr_fd(number, fd);
-	len = ft_strlen(number);
-	free(number);
-	return (len);
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
