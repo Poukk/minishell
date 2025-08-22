@@ -2,7 +2,11 @@
 TARGET = test_runner
 SOURCES =              \
 	../src/gc/gc.c \
+	../src/lexer/lexer.c \
+	../src/lexer/lexer_utils.c \
+	../src/lexer/lexer_handler.c \
 	test_gc.c      \
+	test_lexer.c   \
 
 #---------------- Variables ----------------#
 CC = gcc

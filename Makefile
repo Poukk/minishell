@@ -2,6 +2,10 @@
 NAME    := minishell
 SRCS    := \
 src/main.c \
+src/gc/gc.c \
+src/lexer/lexer.c \
+src/lexer/lexer_utils.c \
+src/lexer/lexer_handler.c \
 
 #---------------- Variables ----------------#
 CC      := cc

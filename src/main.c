@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 #include "libft.h"
+#include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
@@ -20,11 +21,23 @@
 
 static void	handle_line(char *line)
 {
+	t_gc	gc;
+	t_token	*tokens;
+
 	if (!line)
 		return ;
 	if (*line)
 		add_history(line);
-	ft_printf("You typed: %s\n", line);
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, line);
+	if (tokens)
+	{
+		ft_printf("Tokenized input:\n");
+		token_print_list(tokens);
+	}
+	else
+		ft_printf("Error: Failed to tokenize input\n");
+	gc_free_all(&gc);
 }
 
 int	main(void)

@@ -9,11 +9,11 @@ Use this checklist to track progress and identify next steps.
 -   [x] **Readline Loop:** Implement the main loop using `readline` to get user input.
 -   [x] **Handle EOF:** Gracefully exit the shell on `Ctrl-D` (when `readline` returns `NULL`).
 -   [x] **Scoped Allocator:** Implement the `gc_malloc()` and `gc_free_all()` system to manage memory for each command line.
--   [ ] **Lexer (Tokenizer):** Write a function to convert the input string into a linked list of tokens.
--   [ ] **Lexer - Delimiters:** Handle spaces and tabs as token separators.
--   [ ] **Lexer - Metacharacters:** Identify `|`, `<`, `>` as separate tokens.
--   [ ] **Lexer - Quoting:** Correctly handle single (`'`) and double (`"`) quotes, treating their content as a single token.
--   [ ] **Testing:** Create a simple main to print tokens and verify no memory leaks with `valgrind` or `leaks`.
+-   [x] **Lexer (Tokenizer):** Write a function to convert the input string into a linked list of tokens.
+-   [x] **Lexer - Delimiters:** Handle spaces and tabs as token separators.
+-   [x] **Lexer - Metacharacters:** Identify `|`, `<`, `>` as separate tokens.
+-   [x] **Lexer - Quoting:** Correctly handle single (`'`) and double (`"`) quotes, treating their content as a single token.
+-   [x] **Testing:** Create a simple main to print tokens and verify no memory leaks with `valgrind` or `leaks`.
 
 ### Phase 2: The Parser and Abstract Syntax Tree (AST)
 *   **Objective:** Convert the flat list of tokens into a hierarchical command tree (AST).
