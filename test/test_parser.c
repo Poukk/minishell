@@ -67,3 +67,45 @@ Test(parser_tests, test_multiple_pipes) {
 	
 	gc_free_all(&gc);
 }
+
+Test(parser_tests, test_syntax_error_pipe_at_start) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "| ls");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_null(ast);
+	
+	gc_free_all(&gc);
+}
+
+Test(parser_tests, test_syntax_error_double_pipe) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "ls ||");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_null(ast);
+	
+	gc_free_all(&gc);
+}
+
+Test(parser_tests, test_syntax_error_empty_command_between_pipes) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "ls | | grep");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_null(ast);
+	
+	gc_free_all(&gc);
+}
