@@ -21,6 +21,8 @@ t_ast_node	*parser_parse(t_gc *gc, t_token *tokens)
 
 	if (!tokens)
 		return (NULL);
+	if (tokens->type == TOKEN_PIPE)
+		return (NULL);
 	current = tokens;
 	return (parse_pipe(gc, &current));
 }
@@ -35,11 +37,13 @@ static t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens)
 		return (NULL);
 	if (*tokens && (*tokens)->type == TOKEN_PIPE)
 	{
+		*tokens = (*tokens)->next;
+		if (!*tokens || (*tokens)->type == TOKEN_PIPE)
+			return (NULL);
 		pipe_node = ast_node_create(gc, NODE_PIPE);
 		if (!pipe_node)
 			return (NULL);
 		pipe_node->left = left;
-		*tokens = (*tokens)->next;
 		pipe_node->right = parse_pipe(gc, tokens);
 		if (!pipe_node->right)
 			return (NULL);
