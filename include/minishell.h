@@ -39,6 +39,20 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
+typedef enum e_node_type
+{
+	NODE_CMD,
+	NODE_PIPE
+}	t_node_type;
+
+typedef struct s_ast_node
+{
+	t_node_type			type;
+	char				**args;
+	struct s_ast_node	*left;
+	struct s_ast_node	*right;
+}	t_ast_node;
+
 int		sum(int a, int b);
 void	*gc_malloc(t_gc *gc, size_t size);
 void	gc_free_all(t_gc *gc);
@@ -53,4 +67,12 @@ t_token	*handle_metachar(t_gc *gc, const char **input);
 char	*extract_quoted_string(t_gc *gc, const char **input, char quote);
 char	*extract_word(t_gc *gc, const char **input);
 t_token	*handle_word_or_quote(t_gc *gc, const char **input);
+
+t_ast_node	*ast_node_create(t_gc *gc, t_node_type type);
+void		ast_node_set_args(t_gc *gc, t_ast_node *node, char **args);
+void		ast_print(t_ast_node *root, int depth);
+
+t_ast_node	*parser_parse(t_gc *gc, t_token *tokens);
+int			count_command_tokens(t_token *tokens);
+char		**extract_command_args(t_gc *gc, t_token **tokens);
 #endif
