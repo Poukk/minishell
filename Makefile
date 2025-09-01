@@ -6,6 +6,11 @@ src/gc/gc.c \
 src/lexer/lexer.c \
 src/lexer/lexer_utils.c \
 src/lexer/lexer_handler.c \
+src/ast/ast.c \
+src/ast/ast_utils.c \
+src/ast/ast_print.c \
+src/parser/parser.c \
+src/parser/parser_utils.c \
 
 #---------------- Variables ----------------#
 CC      := cc

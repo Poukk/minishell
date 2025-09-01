@@ -18,8 +18,8 @@ Use this checklist to track progress and identify next steps.
 ### Phase 2: The Parser and Abstract Syntax Tree (AST)
 *   **Objective:** Convert the flat list of tokens into a hierarchical command tree (AST).
 
--   [ ] **AST Data Structures:** Define `structs` for tree nodes (`NODE_CMD`, `NODE_PIPE`, etc.).
--   [ ] **Parser Implementation:** Write the main parser function that takes the token list and returns the root of the AST.
+-   [x] **AST Data Structures:** Define `structs` for tree nodes (`NODE_CMD`, `NODE_PIPE`, etc.).
+-   [x] **Parser Implementation:** Write the main parser function that takes the token list and returns the root of the AST.
 -   [ ] **Parser - Simple Commands:** Handle commands without pipes or redirections (e.g., `ls -l`).
 -   [ ] **Parser - Pipes:** Handle the `|` operator, creating `NODE_PIPE` with left and right children.
 -   [ ] **Syntax Error Handling:** Detect and report syntax errors (e.g., `| ls` or `ls ||`) and prevent execution.

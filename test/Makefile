@@ -5,8 +5,15 @@ SOURCES =              \
 	../src/lexer/lexer.c \
 	../src/lexer/lexer_utils.c \
 	../src/lexer/lexer_handler.c \
+	../src/ast/ast.c \
+	../src/ast/ast_utils.c \
+	../src/ast/ast_print.c \
+	../src/parser/parser.c \
+	../src/parser/parser_utils.c \
 	test_gc.c      \
 	test_lexer.c   \
+	test_ast.c     \
+	test_parser.c  \
 
 #---------------- Variables ----------------#
 CC = gcc
