@@ -23,8 +23,8 @@ Use this checklist to track progress and identify next steps.
 -   [x] **Parser - Simple Commands:** Handle commands without pipes or redirections (e.g., `ls -l`).
 -   [x] **Parser - Pipes:** Handle the `|` operator, creating `NODE_PIPE` with left and right children.
 -   [x] **Syntax Error Handling:** Detect and report syntax errors (e.g., `| ls` or `ls ||`) and prevent execution.
--   [ ] **AST Printer:** Create a debug function to visually print the AST to verify parser logic.
--   [ ] **Testing:** Verify the AST structure for commands like `cmd`, `cmd | cmd2`, `cmd1 | cmd2 | cmd3`.
+-   [x] **AST Printer:** Create a debug function to visually print the AST to verify parser logic.
+-   [x] **Testing:** Verify the AST structure for commands like `cmd`, `cmd | cmd2`, `cmd1 | cmd2 | cmd3`.
 
 ### Phase 3: The Executor
 *   **Objective:** Execute simple commands from the AST.

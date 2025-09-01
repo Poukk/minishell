@@ -62,8 +62,19 @@ Test(parser_tests, test_multiple_pipes) {
 	
 	cr_assert_eq(ast->left->type, NODE_CMD);
 	cr_assert_str_eq(ast->left->args[0], "cat");
+	cr_assert_str_eq(ast->left->args[1], "file");
 	
 	cr_assert_eq(ast->right->type, NODE_PIPE);
+	cr_assert_not_null(ast->right->left);
+	cr_assert_not_null(ast->right->right);
+	
+	cr_assert_eq(ast->right->left->type, NODE_CMD);
+	cr_assert_str_eq(ast->right->left->args[0], "grep");
+	cr_assert_str_eq(ast->right->left->args[1], "pattern");
+	
+	cr_assert_eq(ast->right->right->type, NODE_CMD);
+	cr_assert_str_eq(ast->right->right->args[0], "wc");
+	cr_assert_str_eq(ast->right->right->args[1], "-l");
 	
 	gc_free_all(&gc);
 }
