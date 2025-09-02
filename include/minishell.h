@@ -53,26 +53,38 @@ typedef struct s_ast_node
 	struct s_ast_node	*right;
 }	t_ast_node;
 
-int		sum(int a, int b);
-void	*gc_malloc(t_gc *gc, size_t size);
-void	gc_free_all(t_gc *gc);
-void	gc_init(t_gc *gc);
+// gc.c
+void		gc_init(t_gc *gc);
+void		*gc_malloc(t_gc *gc, size_t size);
+void		gc_free_all(t_gc *gc);
 
-t_token	*lexer_tokenize(t_gc *gc, const char *input);
-t_token	*token_create(t_gc *gc, t_token_type type, const char *value);
-void	token_add_back(t_token **head, t_token *new_token);
-void	token_print_list(t_token *tokens);
+// lexer.c
+t_token		*lexer_tokenize(t_gc *gc, const char *input);
+char		*extract_word(t_gc *gc, const char **input);
 
-t_token	*handle_metachar(t_gc *gc, const char **input);
-char	*extract_quoted_string(t_gc *gc, const char **input, char quote);
-char	*extract_word(t_gc *gc, const char **input);
-t_token	*handle_word_or_quote(t_gc *gc, const char **input);
+// lexer_utils.c
+t_token		*token_create(t_gc *gc, t_token_type type, const char *value);
+void		token_add_back(t_token **head, t_token *new_token);
+char		*extract_quoted_string(t_gc *gc, const char **input, char quote);
+void		token_print_list(t_token *tokens);
 
+// lexer_handler.c
+t_token		*handle_metachar(t_gc *gc, const char **input);
+t_token		*handle_word_or_quote(t_gc *gc, const char **input);
+
+// ast.c
 t_ast_node	*ast_node_create(t_gc *gc, t_node_type type);
 void		ast_node_set_args(t_gc *gc, t_ast_node *node, char **args);
+
+// ast_print.c
 void		ast_print(t_ast_node *root, int depth);
 
+// parser.c
 t_ast_node	*parser_parse(t_gc *gc, t_token *tokens);
+t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens);
+t_ast_node	*parse_command(t_gc *gc, t_token **tokens);
+
+// parser_utils.c
 int			count_command_tokens(t_token *tokens);
 char		**extract_command_args(t_gc *gc, t_token **tokens);
 #endif

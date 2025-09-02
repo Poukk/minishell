@@ -12,9 +12,6 @@
 
 #include "minishell.h"
 
-static t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens);
-static t_ast_node	*parse_command(t_gc *gc, t_token **tokens);
-
 t_ast_node	*parser_parse(t_gc *gc, t_token *tokens)
 {
 	t_token	*current;
@@ -27,7 +24,7 @@ t_ast_node	*parser_parse(t_gc *gc, t_token *tokens)
 	return (parse_pipe(gc, &current));
 }
 
-static t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens)
+t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens)
 {
 	t_ast_node	*left;
 	t_ast_node	*pipe_node;
@@ -52,7 +49,7 @@ static t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens)
 	return (left);
 }
 
-static t_ast_node	*parse_command(t_gc *gc, t_token **tokens)
+t_ast_node	*parse_command(t_gc *gc, t_token **tokens)
 {
 	t_ast_node	*cmd_node;
 	char		**args;
