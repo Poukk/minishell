@@ -21,8 +21,9 @@
 
 static void	handle_line(char *line)
 {
-	t_gc	gc;
-	t_token	*tokens;
+	t_gc		gc;
+	t_token		*tokens;
+	t_ast_node	*ast;
 
 	if (!line)
 		return ;
@@ -34,6 +35,15 @@ static void	handle_line(char *line)
 	{
 		ft_printf("Tokenized input:\n");
 		token_print_list(tokens);
+		ft_printf("\n");
+		ast = parser_parse(&gc, tokens);
+		if (ast)
+		{
+			ft_printf("AST Structure:\n");
+			ast_print(ast, 0);
+		}
+		else
+			ft_printf("Syntax error: Invalid command structure\n");
 	}
 	else
 		ft_printf("Error: Failed to tokenize input\n");
