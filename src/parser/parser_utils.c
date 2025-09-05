@@ -23,6 +23,19 @@ int	count_command_tokens(t_token *tokens)
 	{
 		count++;
 		current = current->next;
+		/* TODO: PHASE 5 - Remove this temporary redirection skipping logic.
+		 * This is a Phase 2 workaround to handle pipes mixed with redirections.
+		 * In Phase 5, redirections should be properly parsed and stored in AST.
+		 */
+		while (current && (current->type == TOKEN_REDIR_IN
+				|| current->type == TOKEN_REDIR_OUT
+				|| current->type == TOKEN_REDIR_APPEND
+				|| current->type == TOKEN_HEREDOC))
+		{
+			current = current->next;
+			if (current && current->type == TOKEN_WORD)
+				current = current->next;
+		}
 	}
 	return (count);
 }
@@ -48,6 +61,19 @@ char	**extract_command_args(t_gc *gc, t_token **tokens)
 		ft_strlcpy(args[i], (*tokens)->value, ft_strlen((*tokens)->value) + 1);
 		*tokens = (*tokens)->next;
 		i++;
+		/* TODO: PHASE 5 - Remove this temporary redirection skipping logic.
+		 * This is a Phase 2 workaround to handle pipes mixed with redirections.
+		 * In Phase 5, redirections should be properly parsed and stored in AST.
+		 */
+		while (*tokens && ((*tokens)->type == TOKEN_REDIR_IN
+				|| (*tokens)->type == TOKEN_REDIR_OUT
+				|| (*tokens)->type == TOKEN_REDIR_APPEND
+				|| (*tokens)->type == TOKEN_HEREDOC))
+		{
+			*tokens = (*tokens)->next;
+			if (*tokens && (*tokens)->type == TOKEN_WORD)
+				*tokens = (*tokens)->next;
+		}
 	}
 	args[i] = NULL;
 	return (args);
