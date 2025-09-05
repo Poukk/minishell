@@ -27,3 +27,4 @@ obj/
 
 # Project specific (minishell)
 minishell
+test/test_runner
