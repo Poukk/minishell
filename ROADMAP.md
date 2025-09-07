@@ -29,12 +29,12 @@ Use this checklist to track progress and identify next steps.
 ### Phase 3: The Executor
 *   **Objective:** Execute simple commands from the AST.
 
--   [ ] **Executor Function:** Create the main `execute()` function that recursively traverses the AST.
--   [ ] **Command Execution:** For a `NODE_CMD`, use `fork()` to create a child process.
--   [ ] **`execve` Integration:** In the child process, use `execve()` to run the command.
--   [ ] **`waitpid` Integration:** In the parent process, use `waitpid()` to wait for the child to finish.
--   [ ] **PATH Resolution:** Implement a helper function to find the full path of a command binary (e.g., `ls` -> `/bin/ls`).
--   [ ] **Testing:** Ensure your shell can run basic external commands like `ls`, `wc`, `grep`, etc.
+-   [x] **Executor Function:** Create the main `execute()` function that recursively traverses the AST.
+-   [x] **Command Execution:** For a `NODE_CMD`, use `fork()` to create a child process.
+-   [x] **`execve` Integration:** In the child process, use `execve()` to run the command.
+-   [x] **`waitpid` Integration:** In the parent process, use `waitpid()` to wait for the child to finish.
+-   [x] **PATH Resolution:** Implement a helper function to find the full path of a command binary (e.g., `ls` -> `/bin/ls`).
+-   [x] **Testing:** Ensure your shell can run basic external commands like `ls`, `wc`, `grep`, etc.
 
 ### Phase 4: Implementing Pipes and Built-ins
 *   **Objective:** Handle command pipelines and shell built-in commands.

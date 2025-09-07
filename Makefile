@@ -10,6 +10,8 @@ src/ast/ast.c \
 src/ast/ast_print.c \
 src/parser/parser.c \
 src/parser/parser_utils.c \
+src/executor/executor.c \
+src/executor/executor_utils.c \
 
 #---------------- Variables ----------------#
 CC      := cc
