@@ -9,10 +9,13 @@ SOURCES =              \
 	../src/ast/ast_print.c \
 	../src/parser/parser.c \
 	../src/parser/parser_utils.c \
+	../src/executor/executor.c \
+	../src/executor/executor_utils.c \
 	test_gc.c      \
 	test_lexer.c   \
 	test_ast.c     \
 	test_parser.c  \
+	test_executor.c \
 
 #---------------- Variables ----------------#
 CC = gcc

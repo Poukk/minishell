@@ -24,6 +24,7 @@ static void	handle_line(char *line)
 	t_gc		gc;
 	t_token		*tokens;
 	t_ast_node	*ast;
+	int			exit_code;
 
 	if (!line)
 		return ;
@@ -41,6 +42,9 @@ static void	handle_line(char *line)
 		{
 			ft_printf("AST Structure:\n");
 			ast_print(ast, 0);
+			ft_printf("\nExecuting command...\n");
+			exit_code = executor_execute(ast);
+			ft_printf("Command completed with exit code: %d\n", exit_code);
 		}
 		else
 			ft_printf("Syntax error: Invalid command structure\n");

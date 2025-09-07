@@ -87,4 +87,10 @@ t_ast_node	*parse_command(t_gc *gc, t_token **tokens);
 // parser_utils.c
 int			count_command_tokens(t_token *tokens);
 char		**extract_command_args(t_gc *gc, t_token **tokens);
+
+// executor.c
+int			executor_execute(t_ast_node *ast);
+int			execute_command(char **args);
+char		*resolve_command_path(const char *command);
+
 #endif
