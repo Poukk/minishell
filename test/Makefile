@@ -11,6 +11,7 @@ SOURCES =              \
 	../src/parser/parser_utils.c \
 	../src/executor/executor.c \
 	../src/executor/executor_utils.c \
+	../src/executor/executor_pipes.c \
 	test_gc.c      \
 	test_lexer.c   \
 	test_ast.c     \
