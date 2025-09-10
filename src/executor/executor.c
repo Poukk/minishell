@@ -6,7 +6,7 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 01:36:37 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/07 01:36:38 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/10 13:16:03 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,6 @@ int	executor_execute(t_ast_node *ast)
 	if (ast->type == NODE_CMD)
 		return (execute_command(ast->args));
 	else if (ast->type == NODE_PIPE)
-	{
-		ft_printf("Error: Pipe execution not implemented yet (Phase 4)\n");
-		return (1);
-	}
+		return (execute_pipe(ast));
 	return (1);
 }

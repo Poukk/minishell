@@ -91,6 +91,11 @@ char		**extract_command_args(t_gc *gc, t_token **tokens);
 // executor.c
 int			executor_execute(t_ast_node *ast);
 int			execute_command(char **args);
+
+// executor_utils.c
 char		*resolve_command_path(const char *command);
+
+// executor_pipes.c
+int			execute_pipe(t_ast_node *ast);
 
 #endif

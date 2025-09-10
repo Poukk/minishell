@@ -36,22 +36,16 @@ Use this checklist to track progress and identify next steps.
 -   [x] **PATH Resolution:** Implement a helper function to find the full path of a command binary (e.g., `ls` -> `/bin/ls`).
 -   [x] **Testing:** Ensure your shell can run basic external commands like `ls`, `wc`, `grep`, etc.
 
-### Phase 4: Implementing Pipes and Built-ins
-*   **Objective:** Handle command pipelines and shell built-in commands.
+### Phase 4: Implementing Pipes
+*   **Objective:** Handle command pipelines by connecting stdout of one command to stdin of the next.
 
--   [ ] **Pipe Execution:** Extend the executor to handle `NODE_PIPE`.
--   [ ] **FD Management for Pipes:** Use `pipe()` and `dup2()` to connect the `stdout` of the left command to the `stdin` of the right command.
--   [ ] **Close Unused FDs:** Meticulously close all unused file descriptors in parent and child processes to avoid hanging.
--   [ ] **Identify Built-ins:** Determine which commands are built-ins (`echo`, `cd`, `pwd`, `export`, `unset`, `env`, `exit`).
--   [ ] **Implement `echo`:** Handle the `-n` flag.
--   [ ] **Implement `cd`:** Change the current working directory.
--   [ ] **Implement `pwd`:** Print the current working directory.
--   [ ] **Implement `env`:** Print environment variables.
--   [ ] **Implement `export` and `unset`:** Manage environment variables.
--   [ ] **Implement `exit`:** Terminate the shell.
--   [ ] **Built-in Execution:** Add logic to the executor to run built-ins in the correct process (parent for `cd`, `export`, `unset`, `exit`).
+-   [x] **Pipe Execution:** Extend the executor to handle `NODE_PIPE`.
+-   [x] **FD Management for Pipes:** Use `pipe()` and `dup2()` to connect the `stdout` of the left command to the `stdin` of the right command.
+-   [x] **Close Unused FDs:** Meticulously close all unused file descriptors in parent and child processes to avoid hanging.
+-   [x] **Multiple Pipes:** Handle complex pipe chains like `cmd1 | cmd2 | cmd3`.
+-   [x] **Testing:** Test simple pipes (`ls | grep .c`) and complex chains (`ls | grep .c | wc -l`).
 
-### Phase 5: Implementing Redirections
+### Phase 4.5: Implementing Redirections
 *   **Objective:** Handle input/output redirection and here-documents.
 
 -   [ ] **Extend Lexer/Parser:** Add tokens and parsing logic for `<, >, >>, <<`.
@@ -61,6 +55,18 @@ Use this checklist to track progress and identify next steps.
 -   [ ] **Input Redirection (`<`):** Implement `STDIN_FILENO` redirection.
 -   [ ] **Heredoc (`<<`):** Implement logic to read from `stdin` until a delimiter is found, and use that as the command's input.
 -   [ ] **Testing:** Test each redirection type alone and combined with pipes (e.g., `cat < file1 | grep 'a' > file2`).
+
+### Phase 5: Implementing Built-ins
+*   **Objective:** Implement shell built-in commands.
+
+-   [ ] **Identify Built-ins:** Determine which commands are built-ins (`echo`, `cd`, `pwd`, `export`, `unset`, `env`, `exit`).
+-   [ ] **Implement `echo`:** Handle the `-n` flag.
+-   [ ] **Implement `cd`:** Change the current working directory.
+-   [ ] **Implement `pwd`:** Print the current working directory.
+-   [ ] **Implement `env`:** Print environment variables.
+-   [ ] **Implement `export` and `unset`:** Manage environment variables.
+-   [ ] **Implement `exit`:** Terminate the shell.
+-   [ ] **Built-in Execution:** Add logic to the executor to run built-ins in the correct process (parent for `cd`, `export`, `unset`, `exit`).
 
 ### Phase 6: Signals, Environment, and Exit Codes
 *   **Objective:** Make the shell interactive, responsive, and stateful.

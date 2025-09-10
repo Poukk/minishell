@@ -12,6 +12,7 @@ src/parser/parser.c \
 src/parser/parser_utils.c \
 src/executor/executor.c \
 src/executor/executor_utils.c \
+src/executor/executor_pipes.c \
 
 #---------------- Variables ----------------#
 CC      := cc
