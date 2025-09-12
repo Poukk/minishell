@@ -152,3 +152,139 @@ Test(parser_tests, test_pipes_with_redirections) {
 	
 	gc_free_all(&gc);
 }
+
+Test(parser_tests, test_input_redirection) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "cat < input.txt");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_not_null(ast);
+	cr_assert_eq(ast->type, NODE_CMD);
+	cr_assert_not_null(ast->args);
+	cr_assert_str_eq(ast->args[0], "cat");
+	cr_assert_null(ast->args[1]);
+	
+	cr_assert_not_null(ast->input_redirs);
+	cr_assert_eq(ast->input_redirs->type, TOKEN_REDIR_IN);
+	cr_assert_str_eq(ast->input_redirs->filename, "input.txt");
+	cr_assert_null(ast->output_redirs);
+	
+	gc_free_all(&gc);
+}
+
+Test(parser_tests, test_output_redirection) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "echo hello > output.txt");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_not_null(ast);
+	cr_assert_eq(ast->type, NODE_CMD);
+	cr_assert_not_null(ast->args);
+	cr_assert_str_eq(ast->args[0], "echo");
+	cr_assert_str_eq(ast->args[1], "hello");
+	cr_assert_null(ast->args[2]);
+	
+	cr_assert_null(ast->input_redirs);
+	cr_assert_not_null(ast->output_redirs);
+	cr_assert_eq(ast->output_redirs->type, TOKEN_REDIR_OUT);
+	cr_assert_str_eq(ast->output_redirs->filename, "output.txt");
+	
+	gc_free_all(&gc);
+}
+
+Test(parser_tests, test_both_redirections) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "cat < input.txt > output.txt");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_not_null(ast);
+	cr_assert_eq(ast->type, NODE_CMD);
+	cr_assert_not_null(ast->args);
+	cr_assert_str_eq(ast->args[0], "cat");
+	cr_assert_null(ast->args[1]);
+	
+	cr_assert_not_null(ast->input_redirs);
+	cr_assert_eq(ast->input_redirs->type, TOKEN_REDIR_IN);
+	cr_assert_str_eq(ast->input_redirs->filename, "input.txt");
+	
+	cr_assert_not_null(ast->output_redirs);
+	cr_assert_eq(ast->output_redirs->type, TOKEN_REDIR_OUT);
+	cr_assert_str_eq(ast->output_redirs->filename, "output.txt");
+	
+	gc_free_all(&gc);
+}
+
+Test(parser_tests, test_redirections_mixed_with_args) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "grep pattern < input.txt > output.txt");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_not_null(ast);
+	cr_assert_eq(ast->type, NODE_CMD);
+	cr_assert_not_null(ast->args);
+	cr_assert_str_eq(ast->args[0], "grep");
+	cr_assert_str_eq(ast->args[1], "pattern");
+	cr_assert_null(ast->args[2]);
+	
+	cr_assert_not_null(ast->input_redirs);
+	cr_assert_str_eq(ast->input_redirs->filename, "input.txt");
+	
+	cr_assert_not_null(ast->output_redirs);
+	cr_assert_str_eq(ast->output_redirs->filename, "output.txt");
+	
+	gc_free_all(&gc);
+}
+
+Test(parser_tests, test_multiple_output_redirections) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "echo hello > file1.txt > file2.txt > file3.txt");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_not_null(ast);
+	cr_assert_eq(ast->type, NODE_CMD);
+	cr_assert_not_null(ast->args);
+	cr_assert_str_eq(ast->args[0], "echo");
+	cr_assert_str_eq(ast->args[1], "hello");
+	cr_assert_null(ast->args[2]);
+	
+	cr_assert_null(ast->input_redirs);
+	cr_assert_not_null(ast->output_redirs);
+	
+	// Should have 3 output redirections in the list
+	t_redirection *current = ast->output_redirs;
+	cr_assert_not_null(current);
+	cr_assert_str_eq(current->filename, "file1.txt");
+	
+	current = current->next;
+	cr_assert_not_null(current);
+	cr_assert_str_eq(current->filename, "file2.txt");
+	
+	current = current->next;
+	cr_assert_not_null(current);
+	cr_assert_str_eq(current->filename, "file3.txt");
+	
+	current = current->next;
+	cr_assert_null(current);
+	
+	gc_free_all(&gc);
+}

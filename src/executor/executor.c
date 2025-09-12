@@ -15,8 +15,19 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
-static void	execute_child_process(char **args, char *command_path)
+static void	execute_child_process(char **args, char *command_path,
+		t_redirection *input_redirs, t_redirection *output_redirs)
 {
+	if (setup_multiple_input_redirections(input_redirs) == -1)
+	{
+		free(command_path);
+		exit(1);
+	}
+	if (setup_multiple_output_redirections(output_redirs) == -1)
+	{
+		free(command_path);
+		exit(1);
+	}
 	if (execve(command_path, args, NULL) == -1)
 	{
 		ft_printf("minishell: %s: execution failed\n", args[0]);
@@ -56,7 +67,7 @@ int	execute_command(char **args)
 		return (1);
 	}
 	if (pid == 0)
-		execute_child_process(args, command_path);
+		execute_child_process(args, command_path, NULL, NULL);
 	else
 	{
 		free(command_path);
@@ -65,12 +76,48 @@ int	execute_command(char **args)
 	return (0);
 }
 
+static int	fork_and_execute(t_ast_node *cmd_node, char *command_path)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		free(command_path);
+		return (1);
+	}
+	if (pid == 0)
+		execute_child_process(cmd_node->args, command_path,
+			cmd_node->input_redirs, cmd_node->output_redirs);
+	else
+	{
+		free(command_path);
+		return (wait_for_child(pid));
+	}
+	return (0);
+}
+
+int	execute_command_with_redirections(t_ast_node *cmd_node)
+{
+	char	*command_path;
+
+	if (!cmd_node || !cmd_node->args || !cmd_node->args[0])
+		return (1);
+	command_path = resolve_command_path(cmd_node->args[0]);
+	if (!command_path)
+	{
+		ft_printf("minishell: %s: command not found\n", cmd_node->args[0]);
+		return (127);
+	}
+	return (fork_and_execute(cmd_node, command_path));
+}
+
 int	executor_execute(t_ast_node *ast)
 {
 	if (!ast)
 		return (0);
 	if (ast->type == NODE_CMD)
-		return (execute_command(ast->args));
+		return (execute_command_with_redirections(ast));
 	else if (ast->type == NODE_PIPE)
 		return (execute_pipe(ast));
 	return (1);

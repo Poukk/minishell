@@ -45,12 +45,30 @@ typedef enum e_node_type
 	NODE_PIPE
 }	t_node_type;
 
+typedef struct s_redirection
+{
+	int						type;
+	char					*filename;
+	struct s_redirection	*next;
+}	t_redirection;
+
+typedef struct s_parse_context
+{
+	char			**args;
+	int				*i;
+	int				max_args;
+	t_redirection	**input_redirs;
+	t_redirection	**output_redirs;
+}	t_parse_context;
+
 typedef struct s_ast_node
 {
 	t_node_type			type;
 	char				**args;
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
+	t_redirection		*input_redirs;
+	t_redirection		*output_redirs;
 }	t_ast_node;
 
 // gc.c
@@ -73,6 +91,8 @@ t_token		*handle_metachar(t_gc *gc, const char **input);
 t_token		*handle_word_or_quote(t_gc *gc, const char **input);
 
 // ast.c
+t_redirection	*redirection_create(t_gc *gc, int type, char *filename);
+void		redirection_add_back(t_redirection **head, t_redirection *new_redir);
 t_ast_node	*ast_node_create(t_gc *gc, t_node_type type);
 void		ast_node_set_args(t_gc *gc, t_ast_node *node, char **args);
 
@@ -85,15 +105,23 @@ t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens);
 t_ast_node	*parse_command(t_gc *gc, t_token **tokens);
 
 // parser_utils.c
-int			count_command_tokens(t_token *tokens);
+t_redirection	*parse_redirection(t_gc *gc, t_token **tokens);
 char		**extract_command_args(t_gc *gc, t_token **tokens);
+char		**extract_args_with_redirections(t_gc *gc, t_token **tokens, t_redirection **input_redirs, t_redirection **output_redirs);
+void		parse_redirections(t_gc *gc, t_token **tokens, t_redirection **input_redirs, t_redirection **output_redirs);
+int		count_command_tokens(t_token *tokens);
 
 // executor.c
 int			executor_execute(t_ast_node *ast);
 int			execute_command(char **args);
+int			execute_command_with_redirections(t_ast_node *cmd_node);
 
 // executor_utils.c
 char		*resolve_command_path(const char *command);
+int			setup_input_redirection(t_redirection *redir);
+int			setup_output_redirection(t_redirection *redir);
+int			setup_multiple_input_redirections(t_redirection *input_redirs);
+int			setup_multiple_output_redirections(t_redirection *output_redirs);
 
 // executor_pipes.c
 int			execute_pipe(t_ast_node *ast);

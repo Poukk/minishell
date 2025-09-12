@@ -13,6 +13,7 @@
 #include "minishell.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 static void	free_split_array(char **array)
 {
@@ -98,4 +99,108 @@ char	*resolve_command_path(const char *command)
 	if (!path_dirs)
 		return (NULL);
 	return (search_in_path_dirs(path_dirs, command));
+}
+
+int	setup_input_redirection(t_redirection *redir)
+{
+	int	fd;
+
+	if (!redir)
+		return (0);
+	fd = open(redir->filename, O_RDONLY);
+	if (fd == -1)
+	{
+		if (access(redir->filename, F_OK) == -1)
+			ft_printf("minishell: %s: No such file or directory\n",
+				redir->filename);
+		else
+			ft_printf("minishell: %s: Permission denied\n",
+				redir->filename);
+		return (-1);
+	}
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		close(fd);
+		ft_printf("minishell: redirection failed\n");
+		return (-1);
+	}
+	close(fd);
+	return (0);
+}
+
+int	setup_output_redirection(t_redirection *redir)
+{
+	int	fd;
+
+	if (!redir)
+		return (0);
+	fd = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd == -1)
+	{
+		ft_printf("minishell: %s: Permission denied\n", redir->filename);
+		return (-1);
+	}
+	if (dup2(fd, STDOUT_FILENO) == -1)
+	{
+		close(fd);
+		ft_printf("minishell: redirection failed\n");
+		return (-1);
+	}
+	close(fd);
+	return (0);
+}
+
+static t_redirection	*get_last_redirection(t_redirection *redir_list)
+{
+	t_redirection	*current;
+
+	if (!redir_list)
+		return (NULL);
+	current = redir_list;
+	while (current->next)
+		current = current->next;
+	return (current);
+}
+
+static int	create_all_output_files(t_redirection *output_redirs)
+{
+	t_redirection	*current;
+	int				fd;
+
+	current = output_redirs;
+	while (current)
+	{
+		fd = open(current->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd == -1)
+		{
+			ft_printf("minishell: %s: Permission denied\n",
+				current->filename);
+			return (-1);
+		}
+		close(fd);
+		current = current->next;
+	}
+	return (0);
+}
+
+int	setup_multiple_input_redirections(t_redirection *input_redirs)
+{
+	t_redirection	*last_input;
+
+	if (!input_redirs)
+		return (0);
+	last_input = get_last_redirection(input_redirs);
+	return (setup_input_redirection(last_input));
+}
+
+int	setup_multiple_output_redirections(t_redirection *output_redirs)
+{
+	t_redirection	*last_output;
+
+	if (!output_redirs)
+		return (0);
+	if (create_all_output_files(output_redirs) == -1)
+		return (-1);
+	last_output = get_last_redirection(output_redirs);
+	return (setup_output_redirection(last_output));
 }

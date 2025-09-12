@@ -1,5 +1,7 @@
 #include <criterion/criterion.h>
 #include "minishell.h"
+#include <unistd.h>
+#include <fcntl.h>
 
 Test(executor_tests, test_path_resolution_absolute) {
 	char *result;
@@ -147,6 +149,208 @@ Test(executor_tests, test_multiple_pipes) {
 	
 	result = executor_execute(outer_pipe);
 	cr_assert_eq(result, 0);
+	
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_output_redirection) {
+	t_gc gc;
+	t_ast_node *cmd_node;
+	char *args[] = {"echo", "hello world", NULL};
+	int result;
+	
+	gc_init(&gc);
+	cmd_node = ast_node_create(&gc, NODE_CMD);
+	ast_node_set_args(&gc, cmd_node, args);
+	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_OUT, 
+											   "test_output.txt");
+	
+	result = executor_execute(cmd_node);
+	cr_assert_eq(result, 0);
+	
+	int fd = open("test_output.txt", O_RDONLY);
+	if (fd != -1) {
+		char buffer[50];
+		int bytes_read = read(fd, buffer, 49);
+		if (bytes_read > 0) {
+			buffer[bytes_read] = '\0';
+			cr_assert_str_eq(buffer, "hello world\n");
+		}
+		close(fd);
+		unlink("test_output.txt");
+	}
+	
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_input_redirection) {
+	t_gc gc;
+	t_ast_node *cmd_node;
+	char *args[] = {"cat", NULL};
+	int result;
+	
+	gc_init(&gc);
+	
+	int fd = open("test_input.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd != -1) {
+		write(fd, "test content\n", 13);
+		close(fd);
+	}
+	
+	cmd_node = ast_node_create(&gc, NODE_CMD);
+	ast_node_set_args(&gc, cmd_node, args);
+	cmd_node->input_redirs = redirection_create(&gc, TOKEN_REDIR_IN, 
+											  "test_input.txt");
+	
+	result = executor_execute(cmd_node);
+	cr_assert_eq(result, 0);
+	
+	unlink("test_input.txt");
+	
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_both_redirections) {
+	t_gc gc;
+	t_ast_node *cmd_node;
+	char *args[] = {"cat", NULL};
+	int result;
+	
+	gc_init(&gc);
+	
+	int fd = open("test_input2.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd != -1) {
+		write(fd, "input data\n", 11);
+		close(fd);
+	}
+	
+	cmd_node = ast_node_create(&gc, NODE_CMD);
+	ast_node_set_args(&gc, cmd_node, args);
+	cmd_node->input_redirs = redirection_create(&gc, TOKEN_REDIR_IN, 
+											  "test_input2.txt");
+	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_OUT, 
+											   "test_output2.txt");
+	
+	result = executor_execute(cmd_node);
+	cr_assert_eq(result, 0);
+	
+	fd = open("test_output2.txt", O_RDONLY);
+	if (fd != -1) {
+		char buffer[50];
+		int bytes_read = read(fd, buffer, 49);
+		if (bytes_read > 0) {
+			buffer[bytes_read] = '\0';
+			cr_assert_str_eq(buffer, "input data\n");
+		}
+		close(fd);
+		unlink("test_output2.txt");
+	}
+	
+	unlink("test_input2.txt");
+	
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_pipe_with_redirection) {
+	t_gc gc;
+	t_ast_node *pipe_node, *left_cmd, *right_cmd;
+	char *left_args[] = {"echo", "hello world", NULL};
+	char *right_args[] = {"cat", NULL};
+	int result;
+	
+	gc_init(&gc);
+	
+	pipe_node = ast_node_create(&gc, NODE_PIPE);
+	left_cmd = ast_node_create(&gc, NODE_CMD);
+	right_cmd = ast_node_create(&gc, NODE_CMD);
+	
+	ast_node_set_args(&gc, left_cmd, left_args);
+	ast_node_set_args(&gc, right_cmd, right_args);
+	
+	right_cmd->output_redirs = redirection_create(&gc, TOKEN_REDIR_OUT, 
+												 "pipe_test_output.txt");
+	
+	pipe_node->left = left_cmd;
+	pipe_node->right = right_cmd;
+	
+	result = executor_execute(pipe_node);
+	cr_assert_eq(result, 0);
+	
+	int fd = open("pipe_test_output.txt", O_RDONLY);
+	if (fd != -1) {
+		char buffer[50];
+		int bytes_read = read(fd, buffer, 49);
+		if (bytes_read > 0) {
+			buffer[bytes_read] = '\0';
+			cr_assert_str_eq(buffer, "hello world\n");
+		}
+		close(fd);
+		unlink("pipe_test_output.txt");
+	}
+	
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_multiple_output_redirections) {
+	t_gc gc;
+	t_ast_node *cmd_node;
+	char *args[] = {"echo", "hello", NULL};
+	int result;
+	
+	gc_init(&gc);
+	cmd_node = ast_node_create(&gc, NODE_CMD);
+	ast_node_set_args(&gc, cmd_node, args);
+	
+	// Create a chain of 3 output redirections
+	t_redirection *redir1 = redirection_create(&gc, TOKEN_REDIR_OUT, "test_file1.txt");
+	t_redirection *redir2 = redirection_create(&gc, TOKEN_REDIR_OUT, "test_file2.txt");
+	t_redirection *redir3 = redirection_create(&gc, TOKEN_REDIR_OUT, "test_file3.txt");
+	
+	redir1->next = redir2;
+	redir2->next = redir3;
+	cmd_node->output_redirs = redir1;
+	
+	result = executor_execute(cmd_node);
+	cr_assert_eq(result, 0);
+	
+	// All three files should be created
+	cr_assert_eq(access("test_file1.txt", F_OK), 0);
+	cr_assert_eq(access("test_file2.txt", F_OK), 0);
+	cr_assert_eq(access("test_file3.txt", F_OK), 0);
+	
+	// Only the last file should contain the output
+	int fd = open("test_file3.txt", O_RDONLY);
+	if (fd != -1) {
+		char buffer[50];
+		int bytes_read = read(fd, buffer, 49);
+		if (bytes_read > 0) {
+			buffer[bytes_read] = '\0';
+			cr_assert_str_eq(buffer, "hello\n");
+		}
+		close(fd);
+	}
+	
+	// The first two files should be empty (created but not written to)
+	fd = open("test_file1.txt", O_RDONLY);
+	if (fd != -1) {
+		char buffer[10];
+		int bytes_read = read(fd, buffer, 9);
+		cr_assert_eq(bytes_read, 0); // Should be empty
+		close(fd);
+	}
+	
+	fd = open("test_file2.txt", O_RDONLY);
+	if (fd != -1) {
+		char buffer[10];
+		int bytes_read = read(fd, buffer, 9);
+		cr_assert_eq(bytes_read, 0); // Should be empty
+		close(fd);
+	}
+	
+	// Clean up
+	unlink("test_file1.txt");
+	unlink("test_file2.txt");
+	unlink("test_file3.txt");
 	
 	gc_free_all(&gc);
 }
