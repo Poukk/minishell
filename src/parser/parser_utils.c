@@ -23,14 +23,8 @@ int	count_command_tokens(t_token *tokens)
 	{
 		count++;
 		current = current->next;
-		/* TODO: PHASE 5 - Remove this temporary redirection skipping logic.
-		 * This is a Phase 2 workaround to handle pipes mixed with redirections.
-		 * In Phase 5, redirections should be properly parsed and stored in AST.
-		 */
 		while (current && (current->type == TOKEN_REDIR_IN
-				|| current->type == TOKEN_REDIR_OUT
-				|| current->type == TOKEN_REDIR_APPEND
-				|| current->type == TOKEN_HEREDOC))
+				|| current->type == TOKEN_REDIR_OUT))
 		{
 			current = current->next;
 			if (current && current->type == TOKEN_WORD)
@@ -38,6 +32,17 @@ int	count_command_tokens(t_token *tokens)
 		}
 	}
 	return (count);
+}
+
+static void	skip_redirections(t_token **current)
+{
+	while (*current && ((*current)->type == TOKEN_REDIR_IN
+			|| (*current)->type == TOKEN_REDIR_OUT))
+	{
+		*current = (*current)->next;
+		if (*current && (*current)->type == TOKEN_WORD)
+			*current = (*current)->next;
+	}
 }
 
 char	**extract_command_args(t_gc *gc, t_token **tokens)
@@ -61,19 +66,92 @@ char	**extract_command_args(t_gc *gc, t_token **tokens)
 		ft_strlcpy(args[i], (*tokens)->value, ft_strlen((*tokens)->value) + 1);
 		*tokens = (*tokens)->next;
 		i++;
-		/* TODO: PHASE 5 - Remove this temporary redirection skipping logic.
-		 * This is a Phase 2 workaround to handle pipes mixed with redirections.
-		 * In Phase 5, redirections should be properly parsed and stored in AST.
-		 */
-		while (*tokens && ((*tokens)->type == TOKEN_REDIR_IN
-				|| (*tokens)->type == TOKEN_REDIR_OUT
-				|| (*tokens)->type == TOKEN_REDIR_APPEND
-				|| (*tokens)->type == TOKEN_HEREDOC))
+		skip_redirections(tokens);
+	}
+	args[i] = NULL;
+	return (args);
+}
+
+void	parse_redirections(t_gc *gc, t_token **tokens,
+		t_redirection **input_redirs, t_redirection **output_redirs)
+{
+	t_redirection	*new_redir;
+
+	while (*tokens && ((*tokens)->type == TOKEN_REDIR_IN
+			|| (*tokens)->type == TOKEN_REDIR_OUT))
+	{
+		if ((*tokens)->type == TOKEN_REDIR_IN)
 		{
 			*tokens = (*tokens)->next;
 			if (*tokens && (*tokens)->type == TOKEN_WORD)
+			{
+				new_redir = redirection_create(gc, TOKEN_REDIR_IN,
+						(*tokens)->value);
+				if (new_redir)
+					redirection_add_back(input_redirs, new_redir);
 				*tokens = (*tokens)->next;
+			}
 		}
+		else if ((*tokens)->type == TOKEN_REDIR_OUT)
+		{
+			*tokens = (*tokens)->next;
+			if (*tokens && (*tokens)->type == TOKEN_WORD)
+			{
+				new_redir = redirection_create(gc, TOKEN_REDIR_OUT,
+						(*tokens)->value);
+				if (new_redir)
+					redirection_add_back(output_redirs, new_redir);
+				*tokens = (*tokens)->next;
+			}
+		}
+	}
+}
+
+static void	process_word_token(t_gc *gc, t_token **tokens, t_parse_context *ctx)
+{
+	ctx->args[*(ctx->i)] = gc_malloc(gc, ft_strlen((*tokens)->value) + 1);
+	if (ctx->args[*(ctx->i)])
+	{
+		ft_strlcpy(ctx->args[*(ctx->i)], (*tokens)->value,
+			ft_strlen((*tokens)->value) + 1);
+		*tokens = (*tokens)->next;
+		(*(ctx->i))++;
+	}
+}
+
+static void	process_token(t_gc *gc, t_token **tokens, t_parse_context *ctx)
+{
+	if ((*tokens)->type == TOKEN_WORD && *(ctx->i) < ctx->max_args)
+		process_word_token(gc, tokens, ctx);
+	else
+		parse_redirections(gc, tokens, ctx->input_redirs, ctx->output_redirs);
+}
+
+char	**extract_args_with_redirections(t_gc *gc, t_token **tokens,
+		t_redirection **input_redirs, t_redirection **output_redirs)
+{
+	char			**args;
+	int				count;
+	int				i;
+	t_parse_context	ctx;
+
+	count = count_command_tokens(*tokens);
+	if (count == 0)
+		return (NULL);
+	args = gc_malloc(gc, sizeof(char *) * (count + 1));
+	if (!args)
+		return (NULL);
+	i = 0;
+	ctx.args = args;
+	ctx.i = &i;
+	ctx.max_args = count;
+	ctx.input_redirs = input_redirs;
+	ctx.output_redirs = output_redirs;
+	while (*tokens && ((*tokens)->type == TOKEN_WORD
+			|| (*tokens)->type == TOKEN_REDIR_IN
+			|| (*tokens)->type == TOKEN_REDIR_OUT))
+	{
+		process_token(gc, tokens, &ctx);
 	}
 	args[i] = NULL;
 	return (args);

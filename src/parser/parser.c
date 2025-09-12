@@ -51,15 +51,22 @@ t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens)
 
 t_ast_node	*parse_command(t_gc *gc, t_token **tokens)
 {
-	t_ast_node	*cmd_node;
-	char		**args;
+	t_ast_node		*cmd_node;
+	char			**args;
+	t_redirection	*input_redirs;
+	t_redirection	*output_redirs;
 
 	if (!*tokens || (*tokens)->type != TOKEN_WORD)
 		return (NULL);
 	cmd_node = ast_node_create(gc, NODE_CMD);
 	if (!cmd_node)
 		return (NULL);
-	args = extract_command_args(gc, tokens);
+	input_redirs = NULL;
+	output_redirs = NULL;
+	args = extract_args_with_redirections(gc, tokens,
+			&input_redirs, &output_redirs);
 	cmd_node->args = args;
+	cmd_node->input_redirs = input_redirs;
+	cmd_node->output_redirs = output_redirs;
 	return (cmd_node);
 }

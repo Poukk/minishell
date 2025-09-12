@@ -23,6 +23,8 @@ t_ast_node	*ast_node_create(t_gc *gc, t_node_type type)
 	node->args = NULL;
 	node->left = NULL;
 	node->right = NULL;
+	node->input_redirs = NULL;
+	node->output_redirs = NULL;
 	return (node);
 }
 
@@ -68,4 +70,37 @@ void	ast_node_set_args(t_gc *gc, t_ast_node *node, char **args)
 	if (!node)
 		return ;
 	node->args = copy_args(gc, args);
+}
+
+t_redirection	*redirection_create(t_gc *gc, int type, char *filename)
+{
+	t_redirection	*redir;
+
+	redir = gc_malloc(gc, sizeof(t_redirection));
+	if (!redir)
+		return (NULL);
+	redir->type = type;
+	redir->filename = gc_malloc(gc, ft_strlen(filename) + 1);
+	if (!redir->filename)
+		return (NULL);
+	ft_strlcpy(redir->filename, filename, ft_strlen(filename) + 1);
+	redir->next = NULL;
+	return (redir);
+}
+
+void	redirection_add_back(t_redirection **head, t_redirection *new_redir)
+{
+	t_redirection	*current;
+
+	if (!head || !new_redir)
+		return ;
+	if (!*head)
+	{
+		*head = new_redir;
+		return ;
+	}
+	current = *head;
+	while (current->next)
+		current = current->next;
+	current->next = new_redir;
 }
