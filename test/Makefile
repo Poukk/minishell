@@ -6,11 +6,16 @@ SOURCES =              \
 	../src/lexer/lexer_utils.c \
 	../src/lexer/lexer_handler.c \
 	../src/ast/ast.c \
+	../src/ast/ast_redir.c \
 	../src/ast/ast_print.c \
 	../src/parser/parser.c \
 	../src/parser/parser_utils.c \
+	../src/parser/parser_redir.c \
+	../src/parser/parser_redir_helpers.c \
 	../src/executor/executor.c \
-	../src/executor/executor_utils.c \
+	../src/executor/executor_path.c \
+	../src/executor/executor_redir.c \
+	../src/executor/executor_multi_redir.c \
 	../src/executor/executor_pipes.c \
 	test_gc.c      \
 	test_lexer.c   \

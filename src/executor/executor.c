@@ -6,7 +6,7 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 01:36:37 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/10 13:16:03 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/15 13:16:03 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,14 @@ int	execute_command(char **args)
 	return (0);
 }
 
-static int	fork_and_execute(t_ast_node *cmd_node, char *command_path)
+int	execute_command_with_redirections(t_ast_node *cmd_node)
 {
 	pid_t	pid;
+	char	*command_path;
 
+	command_path = get_validated_command_path(cmd_node);
+	if (!command_path)
+		return (127);
 	pid = fork();
 	if (pid == -1)
 	{
@@ -95,21 +99,6 @@ static int	fork_and_execute(t_ast_node *cmd_node, char *command_path)
 		return (wait_for_child(pid));
 	}
 	return (0);
-}
-
-int	execute_command_with_redirections(t_ast_node *cmd_node)
-{
-	char	*command_path;
-
-	if (!cmd_node || !cmd_node->args || !cmd_node->args[0])
-		return (1);
-	command_path = resolve_command_path(cmd_node->args[0]);
-	if (!command_path)
-	{
-		ft_printf("minishell: %s: command not found\n", cmd_node->args[0]);
-		return (127);
-	}
-	return (fork_and_execute(cmd_node, command_path));
 }
 
 int	executor_execute(t_ast_node *ast)

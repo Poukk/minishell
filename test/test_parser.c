@@ -288,3 +288,110 @@ Test(parser_tests, test_multiple_output_redirections) {
 	
 	gc_free_all(&gc);
 }
+
+Test(parser_tests, test_simple_append_redirection) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "echo hello >> output.txt");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_not_null(ast);
+	cr_assert_eq(ast->type, NODE_CMD);
+	cr_assert_not_null(ast->args);
+	cr_assert_str_eq(ast->args[0], "echo");
+	cr_assert_str_eq(ast->args[1], "hello");
+	cr_assert_null(ast->args[2]);
+	
+	cr_assert_null(ast->input_redirs);
+	cr_assert_not_null(ast->output_redirs);
+	cr_assert_eq(ast->output_redirs->type, TOKEN_REDIR_APPEND);
+	cr_assert_str_eq(ast->output_redirs->filename, "output.txt");
+	cr_assert_null(ast->output_redirs->next);
+	
+	gc_free_all(&gc);
+}
+
+Test(parser_tests, test_multiple_append_redirections) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "echo hello >> file1.txt >> file2.txt >> file3.txt");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_not_null(ast);
+	cr_assert_eq(ast->type, NODE_CMD);
+	cr_assert_not_null(ast->args);
+	cr_assert_str_eq(ast->args[0], "echo");
+	cr_assert_str_eq(ast->args[1], "hello");
+	cr_assert_null(ast->args[2]);
+	
+	cr_assert_null(ast->input_redirs);
+	cr_assert_not_null(ast->output_redirs);
+	
+	// Should have 3 append redirections in the list
+	t_redirection *current = ast->output_redirs;
+	cr_assert_not_null(current);
+	cr_assert_eq(current->type, TOKEN_REDIR_APPEND);
+	cr_assert_str_eq(current->filename, "file1.txt");
+	
+	current = current->next;
+	cr_assert_not_null(current);
+	cr_assert_eq(current->type, TOKEN_REDIR_APPEND);
+	cr_assert_str_eq(current->filename, "file2.txt");
+	
+	current = current->next;
+	cr_assert_not_null(current);
+	cr_assert_eq(current->type, TOKEN_REDIR_APPEND);
+	cr_assert_str_eq(current->filename, "file3.txt");
+	
+	current = current->next;
+	cr_assert_null(current);
+	
+	gc_free_all(&gc);
+}
+
+Test(parser_tests, test_mixed_truncate_append_redirections) {
+	t_gc gc;
+	t_token *tokens;
+	t_ast_node *ast;
+	
+	gc_init(&gc);
+	tokens = lexer_tokenize(&gc, "echo hello > file1.txt >> file2.txt > file3.txt");
+	ast = parser_parse(&gc, tokens);
+	
+	cr_assert_not_null(ast);
+	cr_assert_eq(ast->type, NODE_CMD);
+	cr_assert_not_null(ast->args);
+	cr_assert_str_eq(ast->args[0], "echo");
+	cr_assert_str_eq(ast->args[1], "hello");
+	cr_assert_null(ast->args[2]);
+	
+	cr_assert_null(ast->input_redirs);
+	cr_assert_not_null(ast->output_redirs);
+	
+	// Should have mixed redirections: > >> >
+	t_redirection *current = ast->output_redirs;
+	cr_assert_not_null(current);
+	cr_assert_eq(current->type, TOKEN_REDIR_OUT);
+	cr_assert_str_eq(current->filename, "file1.txt");
+	
+	current = current->next;
+	cr_assert_not_null(current);
+	cr_assert_eq(current->type, TOKEN_REDIR_APPEND);
+	cr_assert_str_eq(current->filename, "file2.txt");
+	
+	current = current->next;
+	cr_assert_not_null(current);
+	cr_assert_eq(current->type, TOKEN_REDIR_OUT);
+	cr_assert_str_eq(current->filename, "file3.txt");
+	
+	current = current->next;
+	cr_assert_null(current);
+	
+	gc_free_all(&gc);
+}

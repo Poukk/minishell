@@ -2,6 +2,7 @@
 #include "minishell.h"
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 Test(executor_tests, test_path_resolution_absolute) {
 	char *result;
@@ -351,6 +352,176 @@ Test(executor_tests, test_multiple_output_redirections) {
 	unlink("test_file1.txt");
 	unlink("test_file2.txt");
 	unlink("test_file3.txt");
+	
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_append_redirection_basic) {
+	t_gc gc;
+	t_ast_node *cmd_node;
+	char *args[] = {"echo", "hello", NULL};
+	
+	gc_init(&gc);
+	
+	// Create a command with append redirection
+	cmd_node = ast_node_create(&gc, NODE_CMD);
+	ast_node_set_args(&gc, cmd_node, args);
+	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append.txt");
+	
+	// Execute the command
+	cr_assert_eq(executor_execute(cmd_node), 0);
+	
+	// Check file exists and contains "hello"
+	FILE *file = fopen("test_append.txt", "r");
+	cr_assert_not_null(file);
+	
+	char buffer[256];
+	cr_assert_not_null(fgets(buffer, sizeof(buffer), file));
+	cr_assert_str_eq(buffer, "hello\n");
+	
+	fclose(file);
+	unlink("test_append.txt");
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_append_redirection_existing_file) {
+	t_gc gc;
+	t_ast_node *cmd_node;
+	char *args[] = {"echo", "world", NULL};
+	
+	gc_init(&gc);
+	
+	// Create file with initial content
+	FILE *file = fopen("test_append_existing.txt", "w");
+	fprintf(file, "hello\n");
+	fclose(file);
+	
+	// Create command with append redirection
+	cmd_node = ast_node_create(&gc, NODE_CMD);
+	ast_node_set_args(&gc, cmd_node, args);
+	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append_existing.txt");
+	
+	// Execute the command
+	cr_assert_eq(executor_execute(cmd_node), 0);
+	
+	// Check file contains both "hello" and "world"
+	file = fopen("test_append_existing.txt", "r");
+	cr_assert_not_null(file);
+	
+	char buffer[256];
+	cr_assert_not_null(fgets(buffer, sizeof(buffer), file));
+	cr_assert_str_eq(buffer, "hello\n");
+	
+	cr_assert_not_null(fgets(buffer, sizeof(buffer), file));
+	cr_assert_str_eq(buffer, "world\n");
+	
+	fclose(file);
+	unlink("test_append_existing.txt");
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_multiple_append_redirections) {
+	t_gc gc;
+	t_ast_node *cmd_node;
+	char *args[] = {"echo", "test", NULL};
+	
+	gc_init(&gc);
+	
+	// Create multiple append redirections
+	t_redirection *redir1 = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append1.txt");
+	t_redirection *redir2 = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append2.txt");
+	t_redirection *redir3 = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append3.txt");
+	
+	redir1->next = redir2;
+	redir2->next = redir3;
+	
+	cmd_node = ast_node_create(&gc, NODE_CMD);
+	ast_node_set_args(&gc, cmd_node, args);
+	cmd_node->output_redirs = redir1;
+	
+	// Execute the command
+	cr_assert_eq(executor_execute(cmd_node), 0);
+	
+	// Check that all files were created
+	cr_assert_eq(access("test_append1.txt", F_OK), 0);
+	cr_assert_eq(access("test_append2.txt", F_OK), 0);
+	cr_assert_eq(access("test_append3.txt", F_OK), 0);
+	
+	// Check that only the last file contains output
+	FILE *file1 = fopen("test_append1.txt", "r");
+	FILE *file2 = fopen("test_append2.txt", "r");
+	FILE *file3 = fopen("test_append3.txt", "r");
+	
+	char buffer[256];
+	
+	// First two files should be empty
+	cr_assert_null(fgets(buffer, sizeof(buffer), file1));
+	cr_assert_null(fgets(buffer, sizeof(buffer), file2));
+	
+	// Last file should contain output
+	cr_assert_not_null(fgets(buffer, sizeof(buffer), file3));
+	cr_assert_str_eq(buffer, "test\n");
+	
+	fclose(file1);
+	fclose(file2);
+	fclose(file3);
+	
+	unlink("test_append1.txt");
+	unlink("test_append2.txt");
+	unlink("test_append3.txt");
+	
+	gc_free_all(&gc);
+}
+
+Test(executor_tests, test_mixed_truncate_append_redirections) {
+	t_gc gc;
+	t_ast_node *cmd_node;
+	char *args[] = {"echo", "mixed", NULL};
+	
+	gc_init(&gc);
+	
+	// Create mixed redirections: > >> >
+	t_redirection *redir1 = redirection_create(&gc, TOKEN_REDIR_OUT, "test_mixed1.txt");
+	t_redirection *redir2 = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_mixed2.txt");
+	t_redirection *redir3 = redirection_create(&gc, TOKEN_REDIR_OUT, "test_mixed3.txt");
+	
+	redir1->next = redir2;
+	redir2->next = redir3;
+	
+	cmd_node = ast_node_create(&gc, NODE_CMD);
+	ast_node_set_args(&gc, cmd_node, args);
+	cmd_node->output_redirs = redir1;
+	
+	// Execute the command
+	cr_assert_eq(executor_execute(cmd_node), 0);
+	
+	// Check that all files were created
+	cr_assert_eq(access("test_mixed1.txt", F_OK), 0);
+	cr_assert_eq(access("test_mixed2.txt", F_OK), 0);
+	cr_assert_eq(access("test_mixed3.txt", F_OK), 0);
+	
+	// Check that only the last file contains output
+	FILE *file1 = fopen("test_mixed1.txt", "r");
+	FILE *file2 = fopen("test_mixed2.txt", "r");
+	FILE *file3 = fopen("test_mixed3.txt", "r");
+	
+	char buffer[256];
+	
+	// First two files should be empty
+	cr_assert_null(fgets(buffer, sizeof(buffer), file1));
+	cr_assert_null(fgets(buffer, sizeof(buffer), file2));
+	
+	// Last file should contain output (truncated)
+	cr_assert_not_null(fgets(buffer, sizeof(buffer), file3));
+	cr_assert_str_eq(buffer, "mixed\n");
+	
+	fclose(file1);
+	fclose(file2);
+	fclose(file3);
+	
+	unlink("test_mixed1.txt");
+	unlink("test_mixed2.txt");
+	unlink("test_mixed3.txt");
 	
 	gc_free_all(&gc);
 }
