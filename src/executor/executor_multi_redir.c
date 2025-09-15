@@ -28,7 +28,7 @@ void	free_split_array(char **array)
 	free(array);
 }
 
-int	setup_multiple_input_redirections(t_redirection *input_redirs)
+int	setup_multiple_in_redirections(t_redirection *input_redirs)
 {
 	t_redirection	*current;
 
@@ -40,7 +40,7 @@ int	setup_multiple_input_redirections(t_redirection *input_redirs)
 	return (setup_input_redirection(current));
 }
 
-int	setup_multiple_output_redirections(t_redirection *output_redirs)
+int	setup_multiple_out_redirections(t_redirection *output_redirs)
 {
 	t_redirection	*current;
 
