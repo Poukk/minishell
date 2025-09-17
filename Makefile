@@ -18,6 +18,13 @@ src/executor/executor_path.c \
 src/executor/executor_redir.c \
 src/executor/executor_multi_redir.c \
 src/executor/executor_pipes.c \
+src/heredoc/heredoc_collection.c \
+src/heredoc/heredoc_main.c \
+src/heredoc/heredoc_expansion_vars.c \
+src/heredoc/heredoc_expansion_utils.c \
+src/heredoc/heredoc_expansion_loop.c \
+src/heredoc/heredoc_redirection.c \
+src/error/error.c \
 
 #---------------- Variables ----------------#
 CC      := cc

@@ -1,5 +1,9 @@
 #include <criterion/criterion.h>
 #include "minishell.h"
+#include <unistd.h>
+#include <sys/wait.h>
+#include <string.h>
+#include <stdlib.h>
 
 Test(parser_tests, test_simple_command) {
 	t_gc gc;

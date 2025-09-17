@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_redir.c                                  :+:      :+:    :+:   */
+/*   executor_redir.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 01:36:44 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/15 01:36:45 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/17 02:05:04 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-int	setup_input_redirection(t_redirection *redir)
+static int	setup_file_input_redirection(char *filename)
 {
 	int	fd;
 
-	if (!redir)
-		return (0);
-	fd = open(redir->filename, O_RDONLY);
+	fd = open(filename, O_RDONLY);
 	if (fd == -1)
-	{
-		if (access(redir->filename, F_OK) == -1)
-			ft_printf("minishell: %s: No such file or directory\n",
-				redir->filename);
-		else
-			ft_printf("minishell: %s: Permission denied\n",
-				redir->filename);
-		return (-1);
-	}
+		return (handle_file_open_error(filename));
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		close(fd);
@@ -39,6 +29,15 @@ int	setup_input_redirection(t_redirection *redir)
 	}
 	close(fd);
 	return (0);
+}
+
+int	setup_input_redirection(t_redirection *redir)
+{
+	if (!redir)
+		return (0);
+	if (redir->type == TOKEN_HEREDOC)
+		return (setup_heredoc_redirection(redir));
+	return (setup_file_input_redirection(redir->filename));
 }
 
 static int	get_output_flags(int redir_type)
