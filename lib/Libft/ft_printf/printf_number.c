@@ -6,13 +6,13 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 14:37:15 by alexanfe          #+#    #+#             */
-/*   Updated: 2024/11/07 14:37:15 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/17 17:16:36 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf.h"
+#include "ft_printf.h"
 
-int	ft_putnbr(int nbr)
+int	ft_putnbr(int fd, int nbr)
 {
 	long	num;
 	int		count;
@@ -21,22 +21,22 @@ int	ft_putnbr(int nbr)
 	count = 0;
 	if (num < 0)
 	{
-		count += ft_putchar('-');
+		count += ft_putchar(fd, '-');
 		num = -num;
 	}
 	if (num >= 10)
-		count += ft_putnbr(num / 10);
-	count += ft_putchar((num % 10) + '0');
+		count += ft_putnbr(fd, num / 10);
+	count += ft_putchar(fd, (num % 10) + '0');
 	return (count);
 }
 
-int	ft_putunbr(unsigned int nbr)
+int	ft_putunbr(int fd, unsigned int nbr)
 {
 	int		count;
 
 	count = 0;
 	if (nbr >= 10)
-		count += ft_putunbr(nbr / 10);
-	count += ft_putchar((nbr % 10) + '0');
+		count += ft_putunbr(fd, nbr / 10);
+	count += ft_putchar(fd, (nbr % 10) + '0');
 	return (count);
 }

@@ -16,13 +16,13 @@
 # include <stdarg.h>
 # include <unistd.h>
 
-int	vft_printf(const char *fmt, va_list ap);
 int	ft_printf(const char *fmt, ...);
-int	ft_puthex(unsigned long num);
-int	ft_putupperhex(unsigned long num);
-int	ft_putptr(unsigned long ptr);
-int	ft_putnbr(int nbr);
-int	ft_putunbr(unsigned int nbr);
-int	ft_putchar(char c);
-int	ft_putstr(char *str);
+int	ft_dprintf(int fd, const char *fmt, ...);
+int	ft_puthex(int fd, unsigned long num);
+int	ft_putupperhex(int fd, unsigned long num);
+int	ft_putptr(int fd, unsigned long ptr);
+int	ft_putnbr(int fd, int nbr);
+int	ft_putunbr(int fd, unsigned int nbr);
+int	ft_putchar(int fd, char c);
+int	ft_putstr(int fd, char *str);
 #endif
