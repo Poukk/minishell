@@ -19,6 +19,8 @@ void	parse_redirections(t_gc *gc, t_token **tokens,
 	{
 		if ((*tokens)->type == TOKEN_REDIR_IN)
 			process_input_redirection(gc, tokens, input_redirs);
+		else if ((*tokens)->type == TOKEN_HEREDOC)
+			process_heredoc_redirection(gc, tokens, input_redirs);
 		else if ((*tokens)->type == TOKEN_REDIR_OUT)
 			process_output_redirection(gc, tokens, output_redirs,
 				TOKEN_REDIR_OUT);
@@ -31,7 +33,8 @@ void	parse_redirections(t_gc *gc, t_token **tokens,
 static int	is_word_or_redirection_token(t_token_type type)
 {
 	return (type == TOKEN_WORD || type == TOKEN_REDIR_IN
-		|| type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND);
+		|| type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND
+		|| type == TOKEN_HEREDOC);
 }
 
 static char	**init_args_array(t_gc *gc, t_token *tokens)

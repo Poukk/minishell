@@ -6,7 +6,7 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 23:29:54 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/08/22 17:27:22 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/17 02:05:00 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_redirection
 {
 	int						type;
 	char					*filename;
+	char					*heredoc_content;
 	struct s_redirection	*next;
 }	t_redirection;
 
@@ -71,8 +72,19 @@ typedef struct s_ast_node
 	t_redirection		*output_redirs;
 }	t_ast_node;
 
+typedef struct s_expansion_state
+{
+	char	*content;
+	char	*result;
+	size_t	result_len;
+	size_t	i;
+	t_gc	*gc;
+}	t_expansion_state;
+
 //ast_redir.c
 t_redirection	*redirection_create(t_gc *gc, int type, char *filename);
+t_redirection	*heredoc_redirection_create(t_gc *gc, char *delimiter,
+					char *content);
 void			redirection_add_back(t_redirection **head,
 					t_redirection *new_redir);
 // gc.c
@@ -122,6 +134,8 @@ void			parse_redirections(t_gc *gc, t_token **tokens,
 // parser_redir_helpers.c
 void			process_input_redirection(t_gc *gc, t_token **tokens,
 					t_redirection **input_redirs);
+void			process_heredoc_redirection(t_gc *gc, t_token **tokens,
+					t_redirection **input_redirs);
 void			process_output_redirection(t_gc *gc, t_token **tokens,
 					t_redirection **output_redirs, t_token_type type);
 void			process_word_token(t_gc *gc, t_token **tokens,
@@ -143,6 +157,39 @@ int				setup_input_redirection(t_redirection *redir);
 int				setup_output_redirection(t_redirection *redir);
 int				create_all_output_files(t_redirection *output_redirs);
 
+// heredoc_collection.c
+int				is_delimiter_match(char *line, char *delimiter);
+char			*append_line_to_content(t_gc *gc, char *content, char *line,
+					size_t content_len);
+void			process_heredoc_line(char *line);
+
+// heredoc_main.c
+char			*process_heredoc_loop(t_gc *gc, char *delimiter, char *content,
+					int *line_count);
+char			*collect_heredoc_content(t_gc *gc, char *delimiter);
+
+// heredoc_expansion_vars.c
+char			*process_variable_expansion(t_gc *gc, char *content, size_t *i);
+int				should_expand_variable(char *content, size_t i);
+char			*expand_heredoc_variables(t_gc *gc, char *content,
+					char *delimiter);
+
+// heredoc_expansion_utils.c
+char			*init_expansion_result(t_gc *gc);
+char			*append_variable_to_result(t_gc *gc, char *result,
+					char *var_value, size_t result_len);
+char			*append_char_to_result(t_gc *gc, char *result,
+					char c, size_t result_len);
+void			handle_double_dollar(t_expansion_state *state);
+void			handle_regular_char(t_expansion_state *state);
+
+// heredoc_expansion_loop.c
+void			handle_variable_expansion(t_expansion_state *state);
+char			*process_expansion_loop(t_gc *gc, char *content, char *result);
+
+// heredoc_redirection.c
+int				setup_heredoc_redirection(t_redirection *redir);
+
 // executor_multi_redir.c
 void			free_split_array(char **array);
 int				setup_multiple_in_redirections(t_redirection *input_redirs);
@@ -150,5 +197,8 @@ int				setup_multiple_out_redirections(t_redirection *output_redirs);
 
 // executor_pipes.c
 int				execute_pipe(t_ast_node *ast);
+
+// error.c
+int				handle_file_open_error(char *filename);
 
 #endif

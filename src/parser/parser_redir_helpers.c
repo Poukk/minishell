@@ -45,7 +45,7 @@ void	process_output_redirection(t_gc *gc, t_token **tokens,
 int	is_redirection_token(t_token_type type)
 {
 	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
-		|| type == TOKEN_REDIR_APPEND);
+		|| type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
 }
 
 void	process_word_token(t_gc *gc, t_token **tokens, t_parse_context *ctx)

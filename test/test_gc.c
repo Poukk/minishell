@@ -79,6 +79,8 @@ Test(gc_tests, test_gc_free_all_with_allocations) {
     ptr1 = gc_malloc(&gc, 50);
     ptr2 = gc_malloc(&gc, 100);
     
+    cr_assert_not_null(ptr1, "Expected ptr1 to be allocated");
+    cr_assert_not_null(ptr2, "Expected ptr2 to be allocated");
     cr_assert_not_null(gc.allocated_ptrs, "Expected allocated_ptrs to exist before gc_free_all");
     
     gc_free_all(&gc);
@@ -92,6 +94,8 @@ Test(gc_tests, test_gc_multiple_free_all) {
     
     gc_init(&gc);
     ptr = gc_malloc(&gc, 50);
+    
+    cr_assert_not_null(ptr, "Expected ptr to be allocated");
     
     gc_free_all(&gc);
     cr_assert_null(gc.allocated_ptrs, "Expected allocated_ptrs to be NULL after first gc_free_all");
