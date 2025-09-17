@@ -48,13 +48,13 @@ Use this checklist to track progress and identify next steps.
 ### Phase 4.5: Implementing Redirections
 *   **Objective:** Handle input/output redirection and here-documents.
 
--   [ ] **Extend Lexer/Parser:** Add tokens and parsing logic for `<, >, >>, <<`.
--   [ ] **Update AST:** Store redirection information within the `NODE_CMD` structure.
--   [ ] **Output Redirection (`>`):** Implement `STDOUT_FILENO` redirection using `open()` and `dup2()`.
--   [ ] **Append Redirection (`>>`):** Implement appending output.
--   [ ] **Input Redirection (`<`):** Implement `STDIN_FILENO` redirection.
--   [ ] **Heredoc (`<<`):** Implement logic to read from `stdin` until a delimiter is found, and use that as the command's input.
--   [ ] **Testing:** Test each redirection type alone and combined with pipes (e.g., `cat < file1 | grep 'a' > file2`).
+-   [x] **Extend Lexer/Parser:** Add tokens and parsing logic for `<, >, >>, <<`.
+-   [x] **Update AST:** Store redirection information within the `NODE_CMD` structure.
+-   [x] **Output Redirection (`>`):** Implement `STDOUT_FILENO` redirection using `open()` and `dup2()`.
+-   [x] **Append Redirection (`>>`):** Implement appending output.
+-   [x] **Input Redirection (`<`):** Implement `STDIN_FILENO` redirection.
+-   [x] **Heredoc (`<<`):** Implement logic to read from `stdin` until a delimiter is found, and use that as the command's input.
+-   [x} **Testing:** Test each redirection type alone and combined with pipes (e.g., `cat < file1 | grep 'a' > file2`).
 
 ### Phase 5: Implementing Built-ins
 *   **Objective:** Implement shell built-in commands.
