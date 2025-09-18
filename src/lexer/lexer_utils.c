@@ -77,7 +77,7 @@ void	token_print_list(t_token *tokens)
 {
 	const char	*type_names[] = {
 		"WORD", "PIPE", "REDIR_IN", "REDIR_OUT",
-		"REDIR_APPEND", "HEREDOC", "EOF"
+		"REDIR_APPEND", "HEREDOC", "VARIABLE", "EOF"
 	};
 
 	while (tokens)

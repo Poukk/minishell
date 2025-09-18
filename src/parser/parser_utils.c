@@ -12,64 +12,77 @@
 
 #include "minishell.h"
 
-int	count_command_tokens(t_token *tokens)
+static char	*process_variable_token(t_gc *gc, t_token *token, t_shell_env *env)
 {
-	int		count;
-	t_token	*current;
+	char	*var_with_dollar;
+	size_t	len;
 
-	count = 0;
-	current = tokens;
-	while (current && current->type == TOKEN_WORD)
-	{
-		count++;
-		current = current->next;
-		while (current && (current->type == TOKEN_REDIR_IN
-				|| current->type == TOKEN_REDIR_OUT
-				|| current->type == TOKEN_REDIR_APPEND))
-		{
-			current = current->next;
-			if (current && current->type == TOKEN_WORD)
-				current = current->next;
-		}
-	}
-	return (count);
+	(void)env;
+	len = ft_strlen(token->value) + 2;
+	var_with_dollar = gc_malloc(gc, len);
+	if (!var_with_dollar)
+		return (NULL);
+	var_with_dollar[0] = '$';
+	ft_strlcpy(var_with_dollar + 1, token->value, len - 1);
+	return (var_with_dollar);
 }
 
-static void	skip_redirections(t_token **current)
+static char	*process_word_token_internal(t_gc *gc, t_token *token)
 {
-	while (*current && ((*current)->type == TOKEN_REDIR_IN
-			|| (*current)->type == TOKEN_REDIR_OUT
-			|| (*current)->type == TOKEN_REDIR_APPEND))
-	{
-		*current = (*current)->next;
-		if (*current && (*current)->type == TOKEN_WORD)
-			*current = (*current)->next;
-	}
+	char	*arg;
+
+	arg = gc_malloc(gc, ft_strlen(token->value) + 1);
+	if (!arg)
+		return (NULL);
+	ft_strlcpy(arg, token->value, ft_strlen(token->value) + 1);
+	return (arg);
 }
 
-char	**extract_command_args(t_gc *gc, t_token **tokens)
+static char	**allocate_args_array(t_gc *gc, int count)
 {
 	char	**args;
-	int		count;
-	int		i;
 
-	count = count_command_tokens(*tokens);
 	if (count == 0)
 		return (NULL);
 	args = gc_malloc(gc, sizeof(char *) * (count + 1));
-	if (!args)
-		return (NULL);
-	i = 0;
-	while (i < count && *tokens && (*tokens)->type == TOKEN_WORD)
-	{
-		args[i] = gc_malloc(gc, ft_strlen((*tokens)->value) + 1);
-		if (!args[i])
-			return (NULL);
-		ft_strlcpy(args[i], (*tokens)->value, ft_strlen((*tokens)->value) + 1);
-		*tokens = (*tokens)->next;
-		i++;
-		skip_redirections(tokens);
-	}
-	args[i] = NULL;
 	return (args);
+}
+
+static int	process_token_to_args(t_gc *gc, t_token **tokens,
+		t_token_process_data *data)
+{
+	if ((*tokens)->type == TOKEN_VARIABLE)
+		data->args[data->index] = process_variable_token(gc, *tokens,
+				data->env);
+	else
+		data->args[data->index] = process_word_token_internal(gc, *tokens);
+	if (!data->args[data->index])
+		return (-1);
+	*tokens = (*tokens)->next;
+	skip_redirections(tokens);
+	return (0);
+}
+
+char	**extract_command_args(t_gc *gc, t_token **tokens, t_shell_env *env)
+{
+	t_token_process_data	data;
+	int						count;
+	int						i;
+
+	count = count_command_tokens(*tokens);
+	data.args = allocate_args_array(gc, count);
+	if (!data.args)
+		return (NULL);
+	data.env = env;
+	i = 0;
+	while (i < count && *tokens && ((*tokens)->type == TOKEN_WORD
+			|| (*tokens)->type == TOKEN_VARIABLE))
+	{
+		data.index = i;
+		if (process_token_to_args(gc, tokens, &data) == -1)
+			return (NULL);
+		i++;
+	}
+	data.args[i] = NULL;
+	return (data.args);
 }

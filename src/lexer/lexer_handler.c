@@ -40,6 +40,31 @@ static t_token	*handle_redirect_out(t_gc *gc, const char **input)
 	return (token_create(gc, TOKEN_REDIR_OUT, ">"));
 }
 
+static t_token	*handle_variable(t_gc *gc, const char **input)
+{
+	const char	*start;
+	size_t		len;
+	char		*var_name;
+
+	(*input)++;
+	start = *input;
+	if (**input == '?')
+	{
+		(*input)++;
+		return (token_create(gc, TOKEN_VARIABLE, "?"));
+	}
+	while (**input && (ft_isalnum(**input) || **input == '_'))
+		(*input)++;
+	len = *input - start;
+	if (len == 0)
+		return (token_create(gc, TOKEN_WORD, "$"));
+	var_name = (char *)gc_malloc(gc, len + 1);
+	if (!var_name)
+		return (NULL);
+	ft_strlcpy(var_name, start, len + 1);
+	return (token_create(gc, TOKEN_VARIABLE, var_name));
+}
+
 t_token	*handle_metachar(t_gc *gc, const char **input)
 {
 	if (**input == '|')
@@ -48,32 +73,7 @@ t_token	*handle_metachar(t_gc *gc, const char **input)
 		return (handle_redirect_in(gc, input));
 	else if (**input == '>')
 		return (handle_redirect_out(gc, input));
+	else if (**input == '$')
+		return (handle_variable(gc, input));
 	return (NULL);
-}
-
-t_token	*handle_word_or_quote(t_gc *gc, const char **input)
-{
-	char	*value;
-
-	if (**input == '\'')
-	{
-		value = extract_quoted_string(gc, input, '\'');
-		if (!value)
-			return (NULL);
-		return (token_create(gc, TOKEN_WORD, value));
-	}
-	else if (**input == '"')
-	{
-		value = extract_quoted_string(gc, input, '"');
-		if (!value)
-			return (NULL);
-		return (token_create(gc, TOKEN_WORD, value));
-	}
-	else
-	{
-		value = extract_word(gc, input);
-		if (!value)
-			return (NULL);
-		return (token_create(gc, TOKEN_WORD, value));
-	}
 }

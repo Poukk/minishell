@@ -19,7 +19,7 @@ static int	is_whitespace(char c)
 
 static int	is_metachar(char c)
 {
-	return (c == '|' || c == '<' || c == '>');
+	return (c == '|' || c == '<' || c == '>' || c == '$');
 }
 
 static void	skip_whitespace(const char **input)

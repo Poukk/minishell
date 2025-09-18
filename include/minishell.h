@@ -16,6 +16,9 @@
 # include "libft.h"
 # include <stdlib.h>
 # include <stdio.h>
+# include <errno.h>
+# include <sys/stat.h>
+# include <sys/types.h>
 # include <readline/readline.h>
 
 typedef struct s_gc
@@ -31,6 +34,7 @@ typedef enum e_token_type
 	TOKEN_REDIR_OUT,
 	TOKEN_REDIR_APPEND,
 	TOKEN_HEREDOC,
+	TOKEN_VARIABLE,
 	TOKEN_EOF
 }	t_token_type;
 
@@ -83,6 +87,40 @@ typedef struct s_expansion_state
 	t_gc	*gc;
 }	t_expansion_state;
 
+typedef struct s_env_var
+{
+	char				*key;
+	char				*value;
+	struct s_env_var	*next;
+}	t_env_var;
+
+typedef struct s_shell_env
+{
+	t_env_var	*vars;
+	int			last_exit_code;
+	char		*cwd;
+}	t_shell_env;
+
+typedef struct s_shell_context
+{
+	t_shell_env	*env;
+	t_gc		*gc;
+}	t_shell_context;
+
+typedef struct s_redir_params
+{
+	t_redirection	**input_redirs;
+	t_redirection	**output_redirs;
+	t_shell_env		*env;
+}	t_redir_params;
+
+typedef struct s_token_process_data
+{
+	char		**args;
+	int			index;
+	t_shell_env	*env;
+}	t_token_process_data;
+
 //ast_redir.c
 t_redirection	*redirection_create(t_gc *gc, int type, char *filename);
 t_redirection	*heredoc_redirection_create(t_gc *gc, char *delimiter,
@@ -118,18 +156,17 @@ void			ast_node_set_args(t_gc *gc, t_ast_node *node, char **args);
 void			ast_print(t_ast_node *root, int depth);
 
 // parser.c
-t_ast_node		*parser_parse(t_gc *gc, t_token *tokens);
-t_ast_node		*parse_pipe(t_gc *gc, t_token **tokens);
-t_ast_node		*parse_command(t_gc *gc, t_token **tokens);
+t_ast_node		*parser_parse(t_gc *gc, t_token *tokens, t_shell_env *env);
+t_ast_node		*parse_pipe(t_gc *gc, t_token **tokens, t_shell_env *env);
+t_ast_node		*parse_command(t_gc *gc, t_token **tokens, t_shell_env *env);
 
 // parser_utils.c
-char			**extract_command_args(t_gc *gc, t_token **tokens);
-int				count_command_tokens(t_token *tokens);
+char			**extract_command_args(t_gc *gc, t_token **tokens,
+					t_shell_env *env);
 
 // parser_redir.c
-char			**extract_args_with_redirections(t_gc *gc, t_token **tokens,
-					t_redirection **input_redirs,
-					t_redirection **output_redirs);
+char			**extract_args_with_redirections(t_gc *gc,
+					t_token **tokens, t_redir_params *params);
 void			parse_redirections(t_gc *gc, t_token **tokens,
 					t_redirection **input_redirs,
 					t_redirection **output_redirs);
@@ -142,14 +179,40 @@ void			process_heredoc_redirection(t_gc *gc, t_token **tokens,
 void			process_output_redirection(t_gc *gc, t_token **tokens,
 					t_redirection **output_redirs, t_token_type type);
 void			process_word_token(t_gc *gc, t_token **tokens,
-					t_parse_context *ctx);
-void			process_token(t_gc *gc, t_token **tokens, t_parse_context *ctx);
+					t_parse_context *ctx, t_shell_env *env);
+void			process_token(t_gc *gc, t_token **tokens, t_parse_context *ctx,
+					t_shell_env *env);
 int				is_redirection_token(t_token_type type);
+int				count_command_tokens(t_token *tokens);
+void			skip_redirections(t_token **current);
+
+// parser_expansion.c
+char			*expand_variable(t_gc *gc, const char *var_name,
+					t_shell_env *env);
+
+typedef struct s_cmd_setup
+{
+	char	**expanded_args;
+	char	*command_path;
+	t_gc	*gc;
+}	t_cmd_setup;
 
 // executor.c
-int				executor_execute(t_ast_node *ast);
+int				executor_execute(t_ast_node *ast, t_shell_env *env);
 int				execute_command(char **args);
-int				execute_command_with_redirections(t_ast_node *cmd_node);
+int				execute_command_with_redirections(t_ast_node *cmd_node,
+					t_shell_env *env);
+
+// executor_utils.c
+void			handle_execve_error(char **args, char *command_path);
+int				wait_for_child(pid_t pid);
+
+// executor_expansion.c
+int				count_args(char **args);
+char			*process_single_arg(t_gc *gc, char *arg, t_shell_env *env);
+char			**expand_command_args(t_gc *gc, char **args, t_shell_env *env);
+int				handle_command_setup(t_ast_node *cmd_node, t_shell_env *env,
+					t_cmd_setup *setup);
 
 // executor_path.c
 char			*resolve_command_path(const char *command);
@@ -199,9 +262,27 @@ int				setup_multiple_in_redirections(t_redirection *input_redirs);
 int				setup_multiple_out_redirections(t_redirection *output_redirs);
 
 // executor_pipes.c
-int				execute_pipe(t_ast_node *ast);
+int				execute_pipe(t_ast_node *ast, t_shell_env *env);
 
 // error.c
 int				handle_file_open_error(char *filename);
+
+// env_storage.c
+t_shell_env		*env_create(t_gc *gc);
+t_env_var		*env_find_var(t_shell_env *env, const char *key);
+int				env_set_var(t_gc *gc, t_shell_env *env, const char *key,
+					const char *value);
+int				env_unset_var(t_shell_env *env, const char *key);
+char			*env_get_value(t_shell_env *env, const char *key);
+
+// env_init.c
+t_shell_env		*env_init_from_system(t_gc *gc, char **envp);
+void			env_update_pwd(t_gc *gc, t_shell_env *env);
+void			env_set_exit_code(t_shell_env *env, int exit_code);
+
+// env_utils.c
+char			**env_to_array(t_gc *gc, t_shell_env *env);
+void			env_print_all(t_shell_env *env);
+int				env_is_valid_name(const char *name);
 
 #endif

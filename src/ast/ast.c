@@ -28,7 +28,7 @@ t_ast_node	*ast_node_create(t_gc *gc, t_node_type type)
 	return (node);
 }
 
-static int	count_args(char **args)
+static int	count_ast_args(char **args)
 {
 	int	count;
 
@@ -46,7 +46,7 @@ static char	**copy_args(t_gc *gc, char **args)
 	int		i;
 	int		len;
 
-	len = count_args(args);
+	len = count_ast_args(args);
 	if (len == 0)
 		return (NULL);
 	new_args = gc_malloc(gc, sizeof(char *) * (len + 1));

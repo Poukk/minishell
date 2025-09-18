@@ -48,22 +48,38 @@ int	is_redirection_token(t_token_type type)
 		|| type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
 }
 
-void	process_word_token(t_gc *gc, t_token **tokens, t_parse_context *ctx)
+int	count_command_tokens(t_token *tokens)
 {
-	ctx->args[*(ctx->i)] = gc_malloc(gc, ft_strlen((*tokens)->value) + 1);
-	if (ctx->args[*(ctx->i)])
+	int		count;
+	t_token	*current;
+
+	count = 0;
+	current = tokens;
+	while (current && (current->type == TOKEN_WORD
+			|| current->type == TOKEN_VARIABLE))
 	{
-		ft_strlcpy(ctx->args[*(ctx->i)], (*tokens)->value,
-			ft_strlen((*tokens)->value) + 1);
-		*tokens = (*tokens)->next;
-		(*(ctx->i))++;
+		count++;
+		current = current->next;
+		while (current && (current->type == TOKEN_REDIR_IN
+				|| current->type == TOKEN_REDIR_OUT
+				|| current->type == TOKEN_REDIR_APPEND))
+		{
+			current = current->next;
+			if (current && current->type == TOKEN_WORD)
+				current = current->next;
+		}
 	}
+	return (count);
 }
 
-void	process_token(t_gc *gc, t_token **tokens, t_parse_context *ctx)
+void	skip_redirections(t_token **current)
 {
-	if ((*tokens)->type == TOKEN_WORD && *(ctx->i) < ctx->max_args)
-		process_word_token(gc, tokens, ctx);
-	else
-		parse_redirections(gc, tokens, ctx->input_redirs, ctx->output_redirs);
+	while (*current && ((*current)->type == TOKEN_REDIR_IN
+			|| (*current)->type == TOKEN_REDIR_OUT
+			|| (*current)->type == TOKEN_REDIR_APPEND))
+	{
+		*current = (*current)->next;
+		if (*current && (*current)->type == TOKEN_WORD)
+			*current = (*current)->next;
+	}
 }

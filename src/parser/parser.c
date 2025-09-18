@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-t_ast_node	*parser_parse(t_gc *gc, t_token *tokens)
+t_ast_node	*parser_parse(t_gc *gc, t_token *tokens, t_shell_env *env)
 {
 	t_token	*current;
 
@@ -21,15 +21,15 @@ t_ast_node	*parser_parse(t_gc *gc, t_token *tokens)
 	if (tokens->type == TOKEN_PIPE)
 		return (NULL);
 	current = tokens;
-	return (parse_pipe(gc, &current));
+	return (parse_pipe(gc, &current, env));
 }
 
-t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens)
+t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens, t_shell_env *env)
 {
 	t_ast_node	*left;
 	t_ast_node	*pipe_node;
 
-	left = parse_command(gc, tokens);
+	left = parse_command(gc, tokens, env);
 	if (!left)
 		return (NULL);
 	if (*tokens && (*tokens)->type == TOKEN_PIPE)
@@ -41,7 +41,7 @@ t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens)
 		if (!pipe_node)
 			return (NULL);
 		pipe_node->left = left;
-		pipe_node->right = parse_pipe(gc, tokens);
+		pipe_node->right = parse_pipe(gc, tokens, env);
 		if (!pipe_node->right)
 			return (NULL);
 		return (pipe_node);
@@ -49,22 +49,26 @@ t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens)
 	return (left);
 }
 
-t_ast_node	*parse_command(t_gc *gc, t_token **tokens)
+t_ast_node	*parse_command(t_gc *gc, t_token **tokens, t_shell_env *env)
 {
 	t_ast_node		*cmd_node;
 	char			**args;
 	t_redirection	*input_redirs;
 	t_redirection	*output_redirs;
+	t_redir_params	params;
 
-	if (!*tokens || (*tokens)->type != TOKEN_WORD)
+	if (!*tokens || ((*tokens)->type != TOKEN_WORD
+			&& (*tokens)->type != TOKEN_VARIABLE))
 		return (NULL);
 	cmd_node = ast_node_create(gc, NODE_CMD);
 	if (!cmd_node)
 		return (NULL);
 	input_redirs = NULL;
 	output_redirs = NULL;
-	args = extract_args_with_redirections(gc, tokens,
-			&input_redirs, &output_redirs);
+	params.input_redirs = &input_redirs;
+	params.output_redirs = &output_redirs;
+	params.env = env;
+	args = extract_args_with_redirections(gc, tokens, &params);
 	cmd_node->args = args;
 	cmd_node->input_redirs = input_redirs;
 	cmd_node->output_redirs = output_redirs;
