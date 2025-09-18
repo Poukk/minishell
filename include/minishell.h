@@ -15,6 +15,8 @@
 
 # include "libft.h"
 # include <stdlib.h>
+# include <stdio.h>
+# include <readline/readline.h>
 
 typedef struct s_gc
 {
@@ -91,6 +93,7 @@ void			redirection_add_back(t_redirection **head,
 void			gc_init(t_gc *gc);
 void			*gc_malloc(t_gc *gc, size_t size);
 void			gc_free_all(t_gc *gc);
+char			*gc_readline(t_gc *gc, const char *prompt);
 
 // lexer.c
 t_token			*lexer_tokenize(t_gc *gc, const char *input);

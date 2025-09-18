@@ -31,22 +31,16 @@ char	*process_heredoc_loop(t_gc *gc, char *delimiter, char *content,
 	size_t	content_len;
 
 	content_len = 0;
-	ft_printf("> ");
-	line = get_next_line(STDIN_FILENO);
+	line = gc_readline(gc, "> ");
 	while (line != NULL)
 	{
 		process_heredoc_line(line);
 		if (is_delimiter_match(line, delimiter))
-		{
-			free(line);
 			break ;
-		}
 		content = append_line_to_content(gc, content, line, content_len);
 		content_len = ft_strlen(content);
-		free(line);
 		(*line_count)++;
-		ft_printf("> ");
-		line = get_next_line(STDIN_FILENO);
+		line = gc_readline(gc, "> ");
 	}
 	return (content);
 }

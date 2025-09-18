@@ -36,7 +36,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 CRITERION_LIB_DIR = ./criterion/lib
 CRITERION_INCLUDE_DIR = ./criterion/include
-LINKFLAGS = -L$(CRITERION_LIB_DIR) -lcriterion ../lib/Libft/libft.a
+LINKFLAGS = -L$(CRITERION_LIB_DIR) -lcriterion ../lib/Libft/libft.a -lreadline
 
 #----------------- Targets ----------------#
 all: $(TARGET)
