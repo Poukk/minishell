@@ -68,23 +68,23 @@ Use this checklist to track progress and identify next steps.
 ### Phase 5B: Built-ins Infrastructure
 *   **Objective:** Create the framework for built-in command execution.
 
--   [ ] **Built-in Detection:** Add function to identify built-in commands (`echo`, `cd`, `pwd`, `env`, `export`, `unset`, `exit`).
--   [ ] **Process Context Handling:** Determine whether built-ins run in parent or child process.
--   [ ] **Built-in Function Registry:** Create a dispatch system for built-in commands.
--   [ ] **Environment Integration:** Connect built-ins to the environment system.
--   [ ] **Testing:** Test built-in detection and process context switching.
+-   [x] **Built-in Detection:** Add function to identify built-in commands (`echo`, `cd`, `pwd`, `env`, `export`, `unset`, `exit`).
+-   [x] **Process Context Handling:** Determine whether built-ins run in parent or child process.
+-   [x] **Built-in Function Registry:** Create a dispatch system for built-in commands.
+-   [x] **Environment Integration:** Connect built-ins to the environment system.
+-   [x] **Testing:** Test built-in detection and process context switching.
 
 ### Phase 5C: Built-ins Implementation
 *   **Objective:** Implement individual built-in commands in dependency order.
 
--   [ ] **Implement `exit`:** Terminate the shell with optional exit code.
--   [ ] **Implement `env`:** Print all environment variables.
--   [ ] **Implement `export`:** Add/modify environment variables.
--   [ ] **Implement `unset`:** Remove environment variables.
--   [ ] **Implement `pwd`:** Print current working directory.
--   [ ] **Implement `cd`:** Change directory (requires `$HOME` expansion).
--   [ ] **Implement `echo`:** Print arguments with `-n` flag support (requires variable expansion).
--   [ ] **Testing:** Test each built-in individually and in combination.
+-   [x] **Implement `exit`:** Terminate the shell with optional exit code.
+-   [x] **Implement `env`:** Print all environment variables.
+-   [x] **Implement `export`:** Add/modify environment variables.
+-   [x] **Implement `unset`:** Remove environment variables.
+-   [x] **Implement `pwd`:** Print current working directory.
+-   [x] **Implement `cd`:** Change directory (requires `$HOME` expansion).
+-   [x] **Implement `echo`:** Print arguments with `-n` flag support (requires variable expansion).
+-   [x] **Testing:** Test each built-in individually and in combination.
 
 ### Phase 6: Signals and Interactive Features
 *   **Objective:** Make the shell responsive to signals and properly interactive.
