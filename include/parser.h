@@ -13,8 +13,8 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "gc.h"
-# include "lexer.h"
+# include "memory.h"
+# include "tokenizer.h"
 # include "ast.h"
 # include "env.h"
 

@@ -13,7 +13,7 @@
 #ifndef ENV_H
 # define ENV_H
 
-# include "gc.h"
+# include "memory.h"
 
 typedef struct s_env_var
 {

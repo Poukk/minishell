@@ -30,7 +30,7 @@ int	execute_command(char **args)
 		return (1);
 	}
 	if (pid == 0)
-		execute_child_process(args, command_path, NULL, NULL);
+		execute_simple_command_child(args, command_path);
 	else
 	{
 		free(command_path);
@@ -63,17 +63,23 @@ static int	check_directory_and_fork(char *command_path, char **expanded_args,
 }
 
 static int	execute_external_command(t_cmd_setup *setup, t_ast_node *cmd_node,
-		t_gc *gc)
+		t_gc *gc, t_shell_context *ctx)
 {
-	pid_t	pid;
+	t_child_exec_ctx	exec_ctx;
+	pid_t				pid;
 
 	pid = check_directory_and_fork(setup->command_path, setup->expanded_args,
 			gc);
 	if (pid == 1 || pid == 126)
 		return (pid);
 	if (pid == 0)
-		execute_child_process(setup->expanded_args, setup->command_path,
-			cmd_node->input_redirs, cmd_node->output_redirs);
+	{
+		exec_ctx.input_redirs = cmd_node->input_redirs;
+		exec_ctx.output_redirs = cmd_node->output_redirs;
+		exec_ctx.env = ctx->env;
+		execute_child_process(setup->expanded_args,
+			setup->command_path, &exec_ctx);
+	}
 	else
 	{
 		free(setup->command_path);
@@ -99,7 +105,7 @@ int	execute_command_with_redirections(t_ast_node *cmd_node,
 	result = handle_command_setup(cmd_node, ctx->env, &setup);
 	if (result != 0)
 		return (result);
-	return (execute_external_command(&setup, cmd_node, &gc));
+	return (execute_external_command(&setup, cmd_node, &gc, ctx));
 }
 
 int	execute(t_ast_node *ast, t_shell_context *ctx)

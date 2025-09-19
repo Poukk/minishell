@@ -13,7 +13,7 @@
 #ifndef AST_H
 # define AST_H
 
-# include "gc.h"
+# include "memory.h"
 
 typedef enum e_node_type
 {

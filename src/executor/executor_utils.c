@@ -13,6 +13,21 @@
 #include "minishell.h"
 #include <errno.h>
 
+void	init_empty_exec_ctx(t_child_exec_ctx *ctx)
+{
+	ctx->input_redirs = NULL;
+	ctx->output_redirs = NULL;
+	ctx->env = NULL;
+}
+
+void	execute_simple_command_child(char **args, char *command_path)
+{
+	t_child_exec_ctx	ctx;
+
+	init_empty_exec_ctx(&ctx);
+	execute_child_process(args, command_path, &ctx);
+}
+
 void	handle_execve_error(char **args, char *command_path)
 {
 	if (errno == EACCES)
@@ -45,19 +60,27 @@ int	wait_for_child(pid_t pid)
 }
 
 void	execute_child_process(char **args, char *command_path,
-		t_redirection *input_redirs, t_redirection *output_redirs)
+		t_child_exec_ctx *ctx)
 {
+	t_gc	gc;
+	char	**env_array;
+
+	gc_init(&gc);
 	setup_command_signals();
-	if (setup_multiple_in_redirections(input_redirs) == -1)
+	if (setup_multiple_in_redirections(ctx->input_redirs) == -1)
 	{
 		free(command_path);
 		exit(1);
 	}
-	if (setup_multiple_out_redirections(output_redirs) == -1)
+	if (setup_multiple_out_redirections(ctx->output_redirs) == -1)
 	{
 		free(command_path);
 		exit(1);
 	}
-	if (execve(command_path, args, NULL) == -1)
+	env_array = NULL;
+	if (ctx->env)
+		env_array = env_to_array(&gc, ctx->env);
+	if (execve(command_path, args, env_array) == -1)
 		handle_execve_error(args, command_path);
+	gc_free_all(&gc);
 }

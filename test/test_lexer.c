@@ -6,7 +6,7 @@ Test(lexer_tests, test_empty_input) {
     t_token *tokens;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "");
+    tokens = tokenize(&gc, "");
     
     cr_assert_not_null(tokens, "Expected tokens to be created for empty input");
     cr_assert_eq(tokens->type, TOKEN_EOF, "Expected EOF token for empty input");
@@ -20,7 +20,7 @@ Test(lexer_tests, test_whitespace_only) {
     t_token *tokens;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "   \t  ");
+    tokens = tokenize(&gc, "   \t  ");
     
     cr_assert_not_null(tokens, "Expected tokens to be created for whitespace-only input");
     cr_assert_eq(tokens->type, TOKEN_EOF, "Expected EOF token for whitespace-only input");
@@ -34,7 +34,7 @@ Test(lexer_tests, test_simple_command) {
     t_token *tokens;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "ls");
+    tokens = tokenize(&gc, "ls");
     
     cr_assert_not_null(tokens, "Expected tokens to be created");
     cr_assert_eq(tokens->type, TOKEN_WORD, "Expected first token to be WORD");
@@ -53,7 +53,7 @@ Test(lexer_tests, test_command_with_args) {
     t_token *current;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "ls -la");
+    tokens = tokenize(&gc, "ls -la");
     
     current = tokens;
     cr_assert_not_null(current, "Expected first token");
@@ -79,7 +79,7 @@ Test(lexer_tests, test_pipe_simple) {
     t_token *current;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "ls | wc");
+    tokens = tokenize(&gc, "ls | wc");
     
     current = tokens;
     cr_assert_eq(current->type, TOKEN_WORD, "Expected first token to be WORD");
@@ -105,7 +105,7 @@ Test(lexer_tests, test_redirections) {
     t_token *current;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "cat < input > output");
+    tokens = tokenize(&gc, "cat < input > output");
     
     current = tokens;
     cr_assert_eq(current->type, TOKEN_WORD, "Expected first token to be WORD");
@@ -139,7 +139,7 @@ Test(lexer_tests, test_append_redirect) {
     t_token *current;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "echo hello >> file");
+    tokens = tokenize(&gc, "echo hello >> file");
     
     current = tokens;
     cr_assert_eq(current->type, TOKEN_WORD, "Expected first token to be WORD");
@@ -163,7 +163,7 @@ Test(lexer_tests, test_heredoc) {
     t_token *current;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "cat << EOF");
+    tokens = tokenize(&gc, "cat << EOF");
     
     current = tokens;
     cr_assert_eq(current->type, TOKEN_WORD, "Expected first token to be WORD");
@@ -184,7 +184,7 @@ Test(lexer_tests, test_single_quotes) {
     t_token *tokens;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "echo 'hello world'");
+    tokens = tokenize(&gc, "echo 'hello world'");
     
     cr_assert_eq(tokens->type, TOKEN_WORD, "Expected first token to be WORD");
     cr_assert_str_eq(tokens->value, "echo", "Expected first token value to be 'echo'");
@@ -200,7 +200,7 @@ Test(lexer_tests, test_double_quotes) {
     t_token *tokens;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "echo \"hello world\"");
+    tokens = tokenize(&gc, "echo \"hello world\"");
     
     cr_assert_eq(tokens->type, TOKEN_WORD, "Expected first token to be WORD");
     cr_assert_str_eq(tokens->value, "echo", "Expected first token value to be 'echo'");
@@ -216,7 +216,7 @@ Test(lexer_tests, test_multiple_spaces) {
     t_token *tokens;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "ls    -la");
+    tokens = tokenize(&gc, "ls    -la");
     
     cr_assert_eq(tokens->type, TOKEN_WORD, "Expected first token to be WORD");
     cr_assert_str_eq(tokens->value, "ls", "Expected first token value to be 'ls'");
@@ -236,7 +236,7 @@ Test(lexer_tests, test_complex_pipeline) {
     int token_count = 0;
     
     gc_init(&gc);
-    tokens = lexer_tokenize(&gc, "cat file | grep test | wc -l");
+    tokens = tokenize(&gc, "cat file | grep test | wc -l");
     
     current = tokens;
     while (current && current->type != TOKEN_EOF) {

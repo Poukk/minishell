@@ -13,6 +13,8 @@
 #ifndef SIGNALS_H
 # define SIGNALS_H
 
+# include <signal.h>
+
 extern int	g_signal_received;
 
 void	setup_shell_signals(void);

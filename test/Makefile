@@ -1,11 +1,12 @@
 #------------------ Config -----------------#
 TARGET = test_runner
 SOURCES =              \
-	../src/gc/gc.c \
-	../src/lexer/lexer.c \
-	../src/lexer/lexer_utils.c \
-	../src/lexer/lexer_handler.c \
-	../src/lexer/lexer_quotes.c \
+	../src/core/memory.c \
+	../src/tokenizer/tokenizer.c \
+	../src/tokenizer/content.c \
+	../src/tokenizer/handler.c \
+	../src/tokenizer/syntax.c \
+	../src/tokenizer/utils.c \
 	../src/ast/ast.c \
 	../src/ast/ast_redir.c \
 	../src/debug/ast_print.c \
@@ -15,8 +16,23 @@ SOURCES =              \
 	../src/parser/parser_redir.c \
 	../src/parser/parser_redir_helpers.c \
 	../src/parser/parser_redir_process.c \
-	../src/parser/parser_expansion.c \
+	../src/expansion/variables.c \
+	../src/expansion/expansion.c \
+	../src/expansion/utils.c \
+	../src/expansion/heredoc_vars.c \
+	../src/expansion/heredoc_utils.c \
+	../src/expansion/heredoc_loop.c \
 	../src/executor/executor.c \
+	../src/executor/executor_utils.c \
+	../src/executor/executor_cmd_setup.c \
+	../src/executor/executor_path.c \
+	../src/executor/executor_builtins.c \
+	../src/executor/executor_pipes.c \
+	../src/io/basic_redir.c \
+	../src/io/heredoc.c \
+	../src/io/heredoc_collection.c \
+	../src/io/multi_redir.c \
+	../src/io/redirection.c \
 	../src/builtins/builtins.c \
 	../src/builtins/echo.c \
 	../src/builtins/cd.c \
@@ -25,27 +41,14 @@ SOURCES =              \
 	../src/builtins/export.c \
 	../src/builtins/unset.c \
 	../src/builtins/exit.c \
-	../src/executor/executor_utils.c \
-	../src/executor/executor_expansion.c \
-	../src/executor/executor_expansion_utils.c \
-	../src/executor/executor_path.c \
-	../src/executor/executor_redir.c \
-	../src/executor/executor_builtins.c \
-	../src/executor/executor_multi_redir.c \
-	../src/executor/executor_pipes.c \
-	../src/heredoc/heredoc_collection.c \
-	../src/heredoc/heredoc_main.c \
-	../src/heredoc/heredoc_expansion_vars.c \
-	../src/heredoc/heredoc_expansion_utils.c \
-	../src/heredoc/heredoc_expansion_loop.c \
-	../src/heredoc/heredoc_redirection.c \
-	../src/env/env_storage.c \
-	../src/env/env_init.c \
-	../src/env/env_utils.c \
-	../src/env/env_print.c \
+	../src/environment/env_storage.c \
+	../src/environment/env_init.c \
+	../src/environment/env_utils.c \
+	../src/environment/env_print.c \
 	../src/error/error.c \
 	../src/signals/signal_handler.c \
 	../src/signals/signal_state.c \
+	../src/utils/str.c \
 	test_gc.c      \
 	test_lexer.c   \
 	test_ast.c     \

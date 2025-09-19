@@ -64,7 +64,7 @@ Test(executor_tests, test_executor_simple_command) {
 	node = ast_node_create(&gc, NODE_CMD);
 	ast_node_set_args(&gc, node, args);
 	
-	result = executor_execute(node, ctx);
+	result = execute(node, ctx);
 	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
@@ -82,7 +82,7 @@ Test(executor_tests, test_executor_invalid_command) {
 	node = ast_node_create(&gc, NODE_CMD);
 	ast_node_set_args(&gc, node, args);
 	
-	result = executor_execute(node, ctx);
+	result = execute(node, ctx);
 	cr_assert_eq(result, 127);
 	
 	gc_free_all(&gc);
@@ -109,7 +109,7 @@ Test(executor_tests, test_simple_pipe) {
 	pipe_node->left = left_cmd;
 	pipe_node->right = right_cmd;
 	
-	result = executor_execute(pipe_node, ctx);
+	result = execute(pipe_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
@@ -136,7 +136,7 @@ Test(executor_tests, test_pipe_with_grep) {
 	pipe_node->left = left_cmd;
 	pipe_node->right = right_cmd;
 	
-	result = executor_execute(pipe_node, ctx);
+	result = execute(pipe_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
@@ -169,7 +169,7 @@ Test(executor_tests, test_multiple_pipes) {
 	outer_pipe->left = inner_pipe;
 	outer_pipe->right = cmd3;
 	
-	result = executor_execute(outer_pipe, ctx);
+	result = execute(outer_pipe, ctx);
 	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
@@ -189,7 +189,7 @@ Test(executor_tests, test_output_redirection) {
 	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_OUT, 
 											   "test_output.txt");
 	
-	result = executor_execute(cmd_node, ctx);
+	result = execute(cmd_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	int fd = open("test_output.txt", O_RDONLY);
@@ -228,7 +228,7 @@ Test(executor_tests, test_input_redirection) {
 	cmd_node->input_redirs = redirection_create(&gc, TOKEN_REDIR_IN, 
 											  "test_input.txt");
 	
-	result = executor_execute(cmd_node, ctx);
+	result = execute(cmd_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	unlink("test_input.txt");
@@ -259,7 +259,7 @@ Test(executor_tests, test_both_redirections) {
 	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_OUT, 
 											   "test_output2.txt");
 	
-	result = executor_execute(cmd_node, ctx);
+	result = execute(cmd_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	fd = open("test_output2.txt", O_RDONLY);
@@ -303,7 +303,7 @@ Test(executor_tests, test_pipe_with_redirection) {
 	pipe_node->left = left_cmd;
 	pipe_node->right = right_cmd;
 	
-	result = executor_execute(pipe_node, ctx);
+	result = execute(pipe_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	int fd = open("pipe_test_output.txt", O_RDONLY);
@@ -342,7 +342,7 @@ Test(executor_tests, test_multiple_output_redirections) {
 	redir2->next = redir3;
 	cmd_node->output_redirs = redir1;
 	
-	result = executor_execute(cmd_node, ctx);
+	result = execute(cmd_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	// All three files should be created
@@ -402,7 +402,7 @@ Test(executor_tests, test_append_redirection_basic) {
 	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append.txt");
 	
 	// Execute the command
-	cr_assert_eq(executor_execute(cmd_node, ctx), 0);
+	cr_assert_eq(execute(cmd_node, ctx), 0);
 	
 	// Check file exists and contains "hello"
 	FILE *file = fopen("test_append.txt", "r");
@@ -437,7 +437,7 @@ Test(executor_tests, test_append_redirection_existing_file) {
 	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append_existing.txt");
 	
 	// Execute the command
-	cr_assert_eq(executor_execute(cmd_node, ctx), 0);
+	cr_assert_eq(execute(cmd_node, ctx), 0);
 	
 	// Check file contains both "hello" and "world"
 	file = fopen("test_append_existing.txt", "r");
@@ -477,7 +477,7 @@ Test(executor_tests, test_multiple_append_redirections) {
 	cmd_node->output_redirs = redir1;
 	
 	// Execute the command
-	cr_assert_eq(executor_execute(cmd_node, ctx), 0);
+	cr_assert_eq(execute(cmd_node, ctx), 0);
 	
 	// Check that all files were created
 	cr_assert_eq(access("test_append1.txt", F_OK), 0);
@@ -532,7 +532,7 @@ Test(executor_tests, test_mixed_truncate_append_redirections) {
 	cmd_node->output_redirs = redir1;
 	
 	// Execute the command
-	cr_assert_eq(executor_execute(cmd_node, ctx), 0);
+	cr_assert_eq(execute(cmd_node, ctx), 0);
 	
 	// Check that all files were created
 	cr_assert_eq(access("test_mixed1.txt", F_OK), 0);

@@ -22,8 +22,8 @@ Test(parser_tests, test_simple_command) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "ls -l");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "ls -l");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);
@@ -45,8 +45,8 @@ Test(parser_tests, test_simple_pipe) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "ls | grep txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "ls | grep txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_PIPE);
@@ -71,8 +71,8 @@ Test(parser_tests, test_multiple_pipes) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "cat file | grep pattern | wc -l");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "cat file | grep pattern | wc -l");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_PIPE);
@@ -106,8 +106,8 @@ Test(parser_tests, test_syntax_error_pipe_at_start) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "| ls");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "| ls");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_null(ast);
 	
@@ -122,8 +122,8 @@ Test(parser_tests, test_syntax_error_double_pipe) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "ls ||");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "ls ||");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_null(ast);
 	
@@ -138,8 +138,8 @@ Test(parser_tests, test_syntax_error_empty_command_between_pipes) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "ls | | grep");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "ls | | grep");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_null(ast);
 	
@@ -154,8 +154,8 @@ Test(parser_tests, test_pipes_with_redirections) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "ls | echo hello > file.txt | cat file.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "ls | echo hello > file.txt | cat file.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_PIPE);
@@ -188,8 +188,8 @@ Test(parser_tests, test_input_redirection) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "cat < input.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "cat < input.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);
@@ -213,8 +213,8 @@ Test(parser_tests, test_output_redirection) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "echo hello > output.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "echo hello > output.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);
@@ -239,8 +239,8 @@ Test(parser_tests, test_both_redirections) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "cat < input.txt > output.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "cat < input.txt > output.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);
@@ -267,8 +267,8 @@ Test(parser_tests, test_redirections_mixed_with_args) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "grep pattern < input.txt > output.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "grep pattern < input.txt > output.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);
@@ -294,8 +294,8 @@ Test(parser_tests, test_multiple_output_redirections) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "echo hello > file1.txt > file2.txt > file3.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "echo hello > file1.txt > file2.txt > file3.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);
@@ -334,8 +334,8 @@ Test(parser_tests, test_simple_append_redirection) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "echo hello >> output.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "echo hello >> output.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);
@@ -361,8 +361,8 @@ Test(parser_tests, test_multiple_append_redirections) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "echo hello >> file1.txt >> file2.txt >> file3.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "echo hello >> file1.txt >> file2.txt >> file3.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);
@@ -404,8 +404,8 @@ Test(parser_tests, test_mixed_truncate_append_redirections) {
 	
 	gc_init(&gc);
 	env = create_test_env(&gc);
-	tokens = lexer_tokenize(&gc, "echo hello > file1.txt >> file2.txt > file3.txt");
-	ast = parser_parse(&gc, tokens, env);
+	tokens = tokenize(&gc, "echo hello > file1.txt >> file2.txt > file3.txt");
+	ast = parse(&gc, tokens, env);
 	
 	cr_assert_not_null(ast);
 	cr_assert_eq(ast->type, NODE_CMD);

@@ -25,8 +25,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-# include "gc.h"
-# include "lexer.h"
+# include "memory.h"
+# include "tokenizer.h"
 # include "ast.h"
 # include "env.h"
 # include "parser.h"

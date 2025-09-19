@@ -13,7 +13,7 @@
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
-# include "gc.h"
+# include "memory.h"
 # include "ast.h"
 # include "env.h"
 # include <sys/types.h>
@@ -34,6 +34,13 @@ typedef struct s_expansion_state
 	t_gc	*gc;
 }	t_expansion_state;
 
+typedef struct s_child_exec_ctx
+{
+	t_redirection	*input_redirs;
+	t_redirection	*output_redirs;
+	t_shell_env		*env;
+}	t_child_exec_ctx;
+
 int		execute(t_ast_node *ast, t_shell_context *ctx);
 int		execute_command(char **args);
 int		execute_command_with_redirections(t_ast_node *cmd_node,
@@ -41,7 +48,9 @@ int		execute_command_with_redirections(t_ast_node *cmd_node,
 void	handle_execve_error(char **args, char *command_path);
 int		wait_for_child(pid_t pid);
 void	execute_child_process(char **args, char *command_path,
-			t_redirection *input_redirs, t_redirection *output_redirs);
+			t_child_exec_ctx *ctx);
+void	init_empty_exec_ctx(t_child_exec_ctx *ctx);
+void	execute_simple_command_child(char **args, char *command_path);
 char	*expand_variable_in_string(t_gc *gc, char *str, t_shell_env *env);
 char	*process_single_arg(t_gc *gc, char *arg, t_shell_env *env);
 char	**expand_command_args(t_gc *gc, char **args, t_shell_env *env);
