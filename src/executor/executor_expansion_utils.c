@@ -13,7 +13,6 @@
 #include "minishell.h"
 #include <unistd.h>
 #include <sys/wait.h>
-#include <stdlib.h>
 
 char	*process_variable_char(t_gc *gc, char **current, t_shell_env *env,
 		char *result)

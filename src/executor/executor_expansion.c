@@ -13,7 +13,6 @@
 #include "minishell.h"
 #include <unistd.h>
 #include <sys/wait.h>
-#include <stdlib.h>
 
 static int	count_args(char **args)
 {
