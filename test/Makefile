@@ -53,6 +53,8 @@ SOURCES =              \
 	test_builtins.c \
 	test_heredoc.c \
 	test_env.c \
+	test_signals.c \
+	test_error.c \
 
 #---------------- Variables ----------------#
 CC = gcc

@@ -93,6 +93,6 @@ char	*get_validated_command_path(t_ast_node *cmd_node)
 		return (NULL);
 	command_path = resolve_command_path(cmd_node->args[0]);
 	if (!command_path)
-		ft_printf("minishell: %s: command not found\n", cmd_node->args[0]);
+		print_command_error(cmd_node->args[0], "command not found");
 	return (command_path);
 }

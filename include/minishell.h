@@ -19,7 +19,11 @@
 # include <errno.h>
 # include <sys/stat.h>
 # include <sys/types.h>
+# include <sys/wait.h>
+# include <signal.h>
+# include <unistd.h>
 # include <readline/readline.h>
+# include <readline/history.h>
 
 typedef struct s_gc
 {
@@ -119,6 +123,13 @@ typedef enum e_builtin_type
 	BUILTIN_UNSET,
 	BUILTIN_EXIT
 }	t_builtin_type;
+
+// Standard shell error codes
+# define EXIT_SUCCESS		0
+# define EXIT_GENERAL_ERROR	1
+# define EXIT_MISUSE		2
+# define EXIT_EXEC_FAILED	126
+# define EXIT_CMD_NOT_FOUND	127
 
 typedef struct s_redir_params
 {
@@ -293,6 +304,11 @@ int				execute_pipe(t_ast_node *ast, t_shell_context *ctx);
 
 // error.c
 int				handle_file_open_error(char *filename);
+void			print_error(const char *command, const char *arg, 
+					const char *message);
+void			print_command_error(const char *command, const char *message);
+int				return_error_code(int error_code, const char *command, 
+					const char *arg, const char *message);
 
 // executor_builtins.c
 t_builtin_type	is_builtin_command(const char *cmd_name);
@@ -323,5 +339,16 @@ void			env_set_exit_code(t_shell_env *env, int exit_code);
 char			**env_to_array(t_gc *gc, t_shell_env *env);
 void			env_print_all(t_shell_env *env);
 int				env_is_valid_name(const char *name);
+
+// signal_handler.c
+void			setup_shell_signals(void);
+void			setup_command_signals(void);
+void			handle_sigint(int sig);
+
+// signal_state.c
+extern int		g_signal_received;
+int				get_signal_received(void);
+void			reset_signal_received(void);
+int				process_child_status(int status);
 
 #endif

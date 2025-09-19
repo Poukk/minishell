@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "signals.h"
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdlib.h>
@@ -20,21 +19,21 @@ void	handle_execve_error(char **args, char *command_path)
 {
 	if (errno == EACCES)
 	{
-		ft_printf("minishell: %s: Permission denied\n", args[0]);
+		print_command_error(args[0], "Permission denied");
 		free(command_path);
-		exit(126);
+		exit(EXIT_EXEC_FAILED);
 	}
 	else if (errno == EISDIR)
 	{
-		ft_printf("minishell: %s: Is a directory\n", args[0]);
+		print_command_error(args[0], "Is a directory");
 		free(command_path);
-		exit(126);
+		exit(EXIT_EXEC_FAILED);
 	}
 	else
 	{
-		ft_printf("minishell: %s: execution failed\n", args[0]);
+		print_command_error(args[0], "execution failed");
 		free(command_path);
-		exit(127);
+		exit(EXIT_CMD_NOT_FOUND);
 	}
 }
 
@@ -50,6 +49,7 @@ int	wait_for_child(pid_t pid)
 void	execute_child_process(char **args, char *command_path,
 		t_redirection *input_redirs, t_redirection *output_redirs)
 {
+	setup_command_signals();
 	if (setup_multiple_in_redirections(input_redirs) == -1)
 	{
 		free(command_path);

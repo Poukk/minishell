@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "signals.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
@@ -27,9 +26,7 @@ static void	execute_ast(t_ast_node *ast, t_shell_context *ctx)
 		ft_printf("AST Structure:\n");
 		ast_print(ast, 0);
 		ft_printf("\nExecuting command...\n");
-		set_command_mode(1);
 		exit_code = executor_execute(ast, ctx);
-		set_command_mode(0);
 		env_set_exit_code(ctx->env, exit_code);
 		ft_printf("Command completed with exit code: %d\n", exit_code);
 	}
@@ -83,13 +80,12 @@ static void	main_loop(t_shell_context *ctx)
 
 	while (1)
 	{
-		set_command_mode(0);
 		line = readline(PROMPT);
-		if (*get_signal_received())
+		if (get_signal_received())
 		{
-			signal_exit_code = 128 + *get_signal_received();
+			signal_exit_code = 128 + get_signal_received();
 			env_set_exit_code(ctx->env, signal_exit_code);
-			*get_signal_received() = 0;
+			reset_signal_received();
 			if (line)
 				free(line);
 			continue ;
@@ -112,7 +108,7 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	setup_signals();
+	setup_shell_signals();
 	gc_init(&gc);
 	env = init_shell_env(&gc, envp);
 	ctx.env = env;

@@ -2,6 +2,13 @@
 
 Use this checklist to track progress and identify next steps.
 
+## Current Status: Phase 6 - Signals Complete, Error Handling In Progress
+
+**Latest Achievement:** ✅ Signal handling implementation complete with single global variable compliance
+**Current Focus:** 🚧 Standardized error handling infrastructure  
+**Test Status:** 163/163 tests passing (added 7 signal tests)
+**Next Major Milestone:** Complete error handling infrastructure, then move to Phase 7 (Final Polish)
+
 ### Phase 1: The Core Loop, Lexer, and Scoped Allocator ✅
 *   **Objective:** Read and tokenize user input while ensuring robust memory management from the start.
 
@@ -86,16 +93,18 @@ Use this checklist to track progress and identify next steps.
 -   [x] **Implement `echo`:** Print arguments with `-n` flag support (requires variable expansion).
 -   [x] **Testing:** Test each built-in individually and in combination.
 
-### Phase 6: Signals and Error Handling Infrastructure
+### Phase 6: Signals and Error Handling Infrastructure 🚧
 *   **Objective:** Make the shell responsive to signals and build robust error handling for production-grade reliability.
 
-#### Signal Handling
--   [ ] **Signal `SIGINT` (`Ctrl-C`):** Intercept in main shell and running commands differently.
--   [ ] **Signal `SIGQUIT` (`Ctrl-\`):** Handle appropriately in shell vs commands.
--   [ ] **Signal Integration:** Ensure signals work with pipes and redirections.
--   [ ] **Prompt Management:** Show new prompt after signal interruption.
+#### Signal Handling ✅
+-   [x] **Signal `SIGINT` (`Ctrl-C`):** Intercept in main shell and running commands differently.
+-   [x] **Signal `SIGQUIT` (`Ctrl-\`):** Handle appropriately in shell vs commands.
+-   [x] **Signal Integration:** Ensure signals work with pipes and redirections.
+-   [x] **Prompt Management:** Show new prompt after signal interruption.
+-   [x] **Single Global Variable:** Use only one global variable (`g_signal_received`) that stores only signal number.
+-   [x] **Signal Handler Compliance:** No access to main data structures from signal handler.
 
-#### Error Handling Infrastructure
+#### Error Handling Infrastructure 🚧
 -   [ ] **Standardized Error Codes:** Define shell-specific error codes and constants.
 -   [ ] **Error Message Formatting:** Create consistent, bash-compatible error message functions.
 -   [ ] **Signal Error Integration:** Track and handle signal-related errors properly.
@@ -104,8 +113,8 @@ Use this checklist to track progress and identify next steps.
 -   [ ] **Bash Compatibility:** Match bash error messages and exit codes exactly.
 -   [ ] **Error Recovery:** Implement graceful error recovery where possible.
 
-#### Testing
--   [ ] **Signal Testing:** Test signals with and without running commands.
+#### Testing ✅
+-   [x] **Signal Testing:** Test signals with and without running commands.
 -   [ ] **Error Scenario Testing:** Create comprehensive error scenario tests for all modules.
 -   [ ] **Signal-Error Integration Testing:** Test error handling during signal interruption.
 

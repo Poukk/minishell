@@ -6,27 +6,22 @@
 /*   By: rpaulo-c <rpaulo-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 20:00:59 by rpaulo-c          #+#    #+#             */
-/*   Updated: 2025/09/19 05:45:56 by rpaulo-c         ###   ########.fr       */
+/*   Updated: 2025/09/19 14:29:53 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "signals.h"
+#include "minishell.h"
 
-int	*get_signal_received(void)
+int	g_signal_received = 0;
+
+int	get_signal_received(void)
 {
-	static int	signal_received;
-
-	signal_received = 0;
-	return (&signal_received);
+	return (g_signal_received);
 }
 
-t_shell_state	*get_shell_state(void)
+void	reset_signal_received(void)
 {
-	static t_shell_state	shell;
-
-	shell.exit_status = 0;
-	shell.in_command = 0;
-	return (&shell);
+	g_signal_received = 0;
 }
 
 int	process_child_status(int status)

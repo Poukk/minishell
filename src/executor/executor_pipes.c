@@ -18,6 +18,7 @@
 static void	execute_left_command(t_ast_node *node, int pipefd[2],
 		t_shell_context *ctx)
 {
+	setup_command_signals();
 	close(pipefd[0]);
 	if (dup2(pipefd[1], STDOUT_FILENO) == -1)
 		exit(1);
@@ -28,6 +29,7 @@ static void	execute_left_command(t_ast_node *node, int pipefd[2],
 static void	execute_right_command(t_ast_node *node, int pipefd[2],
 		t_shell_context *ctx)
 {
+	setup_command_signals();
 	close(pipefd[1]);
 	if (dup2(pipefd[0], STDIN_FILENO) == -1)
 		exit(1);
