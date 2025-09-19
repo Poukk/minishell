@@ -45,24 +45,11 @@ static int	count_args(char **args)
 	return (count);
 }
 
-int	builtin_cd(char **args, t_shell_context *ctx)
+static int	execute_directory_change(char **args, t_shell_context *ctx,
+		char *current_pwd)
 {
 	char	*target_dir;
-	char	*current_pwd;
 
-	if (!ctx || !ctx->env)
-		return (1);
-	if (count_args(args) > 2)
-	{
-		ft_printf("cd: too many arguments\n");
-		return (1);
-	}
-	if (args[1] && ft_strncmp(args[1], "-", 2) == 0)
-	{
-		if (handle_cd_dash(ctx) != 0)
-			return (1);
-	}
-	current_pwd = env_get_value(ctx->env, "PWD");
 	target_dir = get_target_directory(args, ctx);
 	if (!target_dir)
 	{
@@ -81,4 +68,24 @@ int	builtin_cd(char **args, t_shell_context *ctx)
 		env_set_var(ctx->gc, ctx->env, "OLDPWD", current_pwd);
 	env_update_pwd(ctx->gc, ctx->env);
 	return (0);
+}
+
+int	builtin_cd(char **args, t_shell_context *ctx)
+{
+	char	*current_pwd;
+
+	if (!ctx || !ctx->env)
+		return (1);
+	if (count_args(args) > 2)
+	{
+		ft_printf("cd: too many arguments\n");
+		return (1);
+	}
+	if (args[1] && ft_strncmp(args[1], "-", 2) == 0)
+	{
+		if (handle_cd_dash(ctx) != 0)
+			return (1);
+	}
+	current_pwd = env_get_value(ctx->env, "PWD");
+	return (execute_directory_change(args, ctx, current_pwd));
 }
