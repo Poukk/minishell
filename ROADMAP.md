@@ -74,7 +74,7 @@ Use this checklist to track progress and identify next steps.
 -   [x] **Environment Integration:** Connect built-ins to the environment system.
 -   [x] **Testing:** Test built-in detection and process context switching.
 
-### Phase 5C: Built-ins Implementation
+### Phase 5C: Built-ins Implementation ✅
 *   **Objective:** Implement individual built-in commands in dependency order.
 
 -   [x] **Implement `exit`:** Terminate the shell with optional exit code.
@@ -86,14 +86,28 @@ Use this checklist to track progress and identify next steps.
 -   [x] **Implement `echo`:** Print arguments with `-n` flag support (requires variable expansion).
 -   [x] **Testing:** Test each built-in individually and in combination.
 
-### Phase 6: Signals and Interactive Features
-*   **Objective:** Make the shell responsive to signals and properly interactive.
+### Phase 6: Signals and Error Handling Infrastructure
+*   **Objective:** Make the shell responsive to signals and build robust error handling for production-grade reliability.
 
+#### Signal Handling
 -   [ ] **Signal `SIGINT` (`Ctrl-C`):** Intercept in main shell and running commands differently.
 -   [ ] **Signal `SIGQUIT` (`Ctrl-\`):** Handle appropriately in shell vs commands.
 -   [ ] **Signal Integration:** Ensure signals work with pipes and redirections.
 -   [ ] **Prompt Management:** Show new prompt after signal interruption.
--   [ ] **Testing:** Test signals with and without running commands.
+
+#### Error Handling Infrastructure
+-   [ ] **Standardized Error Codes:** Define shell-specific error codes and constants.
+-   [ ] **Error Message Formatting:** Create consistent, bash-compatible error message functions.
+-   [ ] **Signal Error Integration:** Track and handle signal-related errors properly.
+-   [ ] **Resource Cleanup on Errors:** Ensure proper memory and file descriptor cleanup on error paths.
+-   [ ] **Error Propagation System:** Implement proper error bubbling through function call chains.
+-   [ ] **Bash Compatibility:** Match bash error messages and exit codes exactly.
+-   [ ] **Error Recovery:** Implement graceful error recovery where possible.
+
+#### Testing
+-   [ ] **Signal Testing:** Test signals with and without running commands.
+-   [ ] **Error Scenario Testing:** Create comprehensive error scenario tests for all modules.
+-   [ ] **Signal-Error Integration Testing:** Test error handling during signal interruption.
 
 ### Phase 7: Final Polish and Edge Case Testing
 *   **Objective:** Ensure robustness and compliance with all requirements.
