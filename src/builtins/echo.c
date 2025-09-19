@@ -21,10 +21,10 @@ int	builtin_echo(char **args)
 		return (1);
 	i = 1;
 	n_flag = 0;
-	if (args[1] && ft_strncmp(args[1], "-n", 3) == 0)
+	while (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
 	{
 		n_flag = 1;
-		i = 2;
+		i++;
 	}
 	while (args[i])
 	{

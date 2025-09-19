@@ -14,19 +14,19 @@
 
 static t_builtin_type	find_builtin_type(const char *cmd_name)
 {
-	if (ft_strncmp(cmd_name, "echo", 5) == 0)
+	if (ft_strncmp(cmd_name, "echo", 4) == 0 && !cmd_name[4])
 		return (BUILTIN_ECHO);
-	if (ft_strncmp(cmd_name, "cd", 3) == 0)
+	if (ft_strncmp(cmd_name, "cd", 2) == 0 && !cmd_name[2])
 		return (BUILTIN_CD);
-	if (ft_strncmp(cmd_name, "pwd", 4) == 0)
+	if (ft_strncmp(cmd_name, "pwd", 3) == 0 && !cmd_name[3])
 		return (BUILTIN_PWD);
-	if (ft_strncmp(cmd_name, "env", 4) == 0)
+	if (ft_strncmp(cmd_name, "env", 3) == 0 && !cmd_name[3])
 		return (BUILTIN_ENV);
-	if (ft_strncmp(cmd_name, "export", 7) == 0)
+	if (ft_strncmp(cmd_name, "export", 6) == 0 && !cmd_name[6])
 		return (BUILTIN_EXPORT);
-	if (ft_strncmp(cmd_name, "unset", 6) == 0)
+	if (ft_strncmp(cmd_name, "unset", 5) == 0 && !cmd_name[5])
 		return (BUILTIN_UNSET);
-	if (ft_strncmp(cmd_name, "exit", 5) == 0)
+	if (ft_strncmp(cmd_name, "exit", 4) == 0 && !cmd_name[4])
 		return (BUILTIN_EXIT);
 	return (BUILTIN_NONE);
 }
