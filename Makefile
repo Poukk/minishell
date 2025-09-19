@@ -44,6 +44,8 @@ src/env/env_init.c \
 src/env/env_utils.c \
 src/env/env_print.c \
 src/error/error.c \
+src/signals/signal_handler.c \
+src/signals/signal_state.c \
 
 #---------------- Variables ----------------#
 CC      := cc

@@ -43,6 +43,8 @@ SOURCES =              \
 	../src/env/env_utils.c \
 	../src/env/env_print.c \
 	../src/error/error.c \
+	../src/signals/signal_handler.c \
+	../src/signals/signal_state.c \
 	test_gc.c      \
 	test_lexer.c   \
 	test_ast.c     \

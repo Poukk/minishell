@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "signals.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
@@ -26,7 +27,9 @@ static void	execute_ast(t_ast_node *ast, t_shell_context *ctx)
 		ft_printf("AST Structure:\n");
 		ast_print(ast, 0);
 		ft_printf("\nExecuting command...\n");
+		set_command_mode(1);
 		exit_code = executor_execute(ast, ctx);
+		set_command_mode(0);
 		env_set_exit_code(ctx->env, exit_code);
 		ft_printf("Command completed with exit code: %d\n", exit_code);
 	}
@@ -76,10 +79,21 @@ static t_shell_env	*init_shell_env(t_gc *gc, char **envp)
 static void	main_loop(t_shell_context *ctx)
 {
 	char	*line;
+	int		signal_exit_code;
 
 	while (1)
 	{
+		set_command_mode(0);
 		line = readline(PROMPT);
+		if (*get_signal_received())
+		{
+			signal_exit_code = 128 + *get_signal_received();
+			env_set_exit_code(ctx->env, signal_exit_code);
+			*get_signal_received() = 0;
+			if (line)
+				free(line);
+			continue ;
+		}
 		if (!line)
 		{
 			ft_printf("exit\n");
@@ -98,11 +112,12 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	setup_signals();
 	gc_init(&gc);
 	env = init_shell_env(&gc, envp);
 	ctx.env = env;
 	ctx.gc = &gc;
 	main_loop(&ctx);
 	gc_free_all(&gc);
-	return (0);
+	return (env->last_exit_code);
 }

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "signals.h"
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdlib.h>
@@ -43,9 +44,7 @@ int	wait_for_child(pid_t pid)
 
 	if (waitpid(pid, &status, 0) == -1)
 		return (1);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (1);
+	return (process_child_status(status));
 }
 
 void	execute_child_process(char **args, char *command_path,
