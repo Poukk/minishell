@@ -14,6 +14,23 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+static char	*get_variable_value(t_gc *gc, char *var_name, t_shell_env *env)
+{
+	char	*var_value;
+
+	if (ft_strncmp(var_name, "?", 1) == 0)
+	{
+		var_value = expand_variable(gc, var_name, env);
+	}
+	else
+	{
+		var_value = env_get_value(env, var_name);
+		if (!var_value)
+			var_value = "";
+	}
+	return (var_value);
+}
+
 char	*process_variable_char(t_gc *gc, char **current, t_shell_env *env,
 		char *result)
 {
@@ -23,9 +40,7 @@ char	*process_variable_char(t_gc *gc, char **current, t_shell_env *env,
 	var_name = extract_var_name(gc, *current + 1);
 	if (var_name)
 	{
-		var_value = env_get_value(env, var_name);
-		if (!var_value)
-			var_value = "";
+		var_value = get_variable_value(gc, var_name, env);
 		result = append_to_result(gc, result, var_value);
 		if (!result)
 			return (NULL);
@@ -77,8 +92,15 @@ char	*extract_var_name(t_gc *gc, char *start)
 	char	*var_name;
 
 	end = start;
-	while (*end && (ft_isalnum(*end) || *end == '_'))
+	if (*end == '?')
+	{
 		end++;
+	}
+	else
+	{
+		while (*end && (ft_isalnum(*end) || *end == '_'))
+			end++;
+	}
 	len = end - start;
 	if (len == 0)
 		return (NULL);
@@ -87,32 +109,4 @@ char	*extract_var_name(t_gc *gc, char *start)
 		return (NULL);
 	ft_strlcpy(var_name, start, len + 1);
 	return (var_name);
-}
-
-int	handle_command_setup(t_ast_node *cmd_node, t_shell_env *env,
-		t_cmd_setup *setup)
-{
-	t_builtin_type	builtin_type;
-
-	setup->expanded_args = expand_command_args(setup->gc, cmd_node->args, env);
-	if (!setup->expanded_args)
-	{
-		gc_free_all(setup->gc);
-		return (1);
-	}
-	builtin_type = is_builtin_command(setup->expanded_args[0]);
-	if (builtin_type != BUILTIN_NONE)
-	{
-		setup->command_path = NULL;
-		return (0);
-	}
-	setup->command_path = resolve_command_path(setup->expanded_args[0]);
-	if (!setup->command_path)
-	{
-		ft_printf("minishell: %s: command not found\n",
-			setup->expanded_args[0]);
-		gc_free_all(setup->gc);
-		return (127);
-	}
-	return (0);
 }

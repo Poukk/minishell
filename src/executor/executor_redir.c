@@ -24,7 +24,7 @@ static int	setup_file_input_redirection(char *filename)
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		close(fd);
-		ft_printf("minishell: redirection failed\n");
+		ft_dprintf(2, "minishell: redirection failed\n");
 		return (-1);
 	}
 	close(fd);
@@ -56,13 +56,13 @@ int	setup_output_redirection(t_redirection *redir)
 	fd = open(redir->filename, get_output_flags(redir->type), 0644);
 	if (fd == -1)
 	{
-		ft_printf("minishell: %s: Permission denied\n", redir->filename);
+		ft_dprintf(2, "minishell: %s: Permission denied\n", redir->filename);
 		return (-1);
 	}
 	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
 		close(fd);
-		ft_printf("minishell: redirection failed\n");
+		ft_dprintf(2, "minishell: redirection failed\n");
 		return (-1);
 	}
 	close(fd);
@@ -80,7 +80,7 @@ int	create_all_output_files(t_redirection *output_redirs)
 		fd = open(current->filename, get_output_flags(current->type), 0644);
 		if (fd == -1)
 		{
-			ft_printf("minishell: %s: Permission denied\n",
+			ft_dprintf(2, "minishell: %s: Permission denied\n",
 				current->filename);
 			return (-1);
 		}

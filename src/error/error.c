@@ -15,20 +15,20 @@
 int	handle_file_open_error(char *filename)
 {
 	if (access(filename, F_OK) == -1)
-		ft_printf("minishell: %s: No such file or directory\n", filename);
+		ft_dprintf(2, "minishell: %s: No such file or directory\n", filename);
 	else
-		ft_printf("minishell: %s: Permission denied\n", filename);
+		ft_dprintf(2, "minishell: %s: Permission denied\n", filename);
 	return (-1);
 }
 
 void	print_error(const char *command, const char *arg, const char *message)
 {
-	ft_printf("minishell: ");
+	ft_dprintf(2, "minishell: ");
 	if (command)
-		ft_printf("%s: ", command);
+		ft_dprintf(2, "%s: ", command);
 	if (arg)
-		ft_printf("%s: ", arg);
-	ft_printf("%s\n", message);
+		ft_dprintf(2, "%s: ", arg);
+	ft_dprintf(2, "%s\n", message);
 }
 
 void	print_command_error(const char *command, const char *message)

@@ -6,13 +6,13 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 01:22:36 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/02 01:22:37 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 16:41:50 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*parser_parse(t_gc *gc, t_token *tokens, t_shell_env *env)
+t_ast_node	*parse(t_gc *gc, t_token *tokens, t_shell_env *env)
 {
 	t_token	*current;
 

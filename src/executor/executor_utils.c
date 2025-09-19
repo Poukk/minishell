@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <errno.h>
 
 void	handle_execve_error(char **args, char *command_path)
 {

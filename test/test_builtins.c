@@ -328,7 +328,7 @@ Test(builtin_tests, test_execute_builtin_cd_too_many_args) {
 	gc_init(&gc);
 	ctx = create_test_context(&gc);
 	result = execute_builtin(BUILTIN_CD, args, ctx);
-	cr_assert_eq(result, 1);
+	cr_assert_eq(result, 2);
 	gc_free_all(&gc);
 }
 
@@ -774,9 +774,9 @@ Test(builtin_tests, test_exit_too_many_arguments)
 	gc_init(&gc);
 	ctx = create_test_context(&gc);
 	
-	// Test too many arguments - should return 1 and not exit
+	// Test too many arguments - should return 2 and not exit
 	result = execute_builtin(BUILTIN_EXIT, args, ctx);
-	cr_assert_eq(result, 1);
+	cr_assert_eq(result, 2);
 	
 	gc_free_all(&gc);
 }
@@ -859,7 +859,7 @@ Test(builtin_tests, test_unset_nonexistent_variable)
 	
 	result = builtin_unset(args, ctx);
 	
-	cr_assert_eq(result, 1);
+	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
 }
@@ -905,7 +905,7 @@ Test(builtin_tests, test_unset_mixed_existing_nonexisting)
 	
 	result = builtin_unset(args, ctx);
 	
-	cr_assert_eq(result, 1);
+	cr_assert_eq(result, 0);
 	cr_assert_null(env_get_value(ctx->env, "EXISTS"));
 	cr_assert_null(env_get_value(ctx->env, "ALSO_EXISTS"));
 	

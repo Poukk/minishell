@@ -6,49 +6,54 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 17:26:42 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/08/22 17:26:43 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 16:37:21 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	is_whitespace(char c)
+static t_token	*create_word_token(t_gc *gc, const char **current)
 {
-	return (c == ' ' || c == '\t');
-}
+	t_concat_result	concat_result;
 
-static int	is_metachar(char c)
-{
-	return (c == '|' || c == '<' || c == '>' || c == '$');
-}
-
-static void	skip_whitespace(const char **input)
-{
-	while (**input && is_whitespace(**input))
-		(*input)++;
-}
-
-char	*extract_word(t_gc *gc, const char **input)
-{
-	const char	*start;
-	size_t		len;
-	char		*result;
-
-	start = *input;
-	while (**input && !is_whitespace(**input) && !is_metachar(**input)
-		&& **input != '\'' && **input != '"')
-		(*input)++;
-	len = *input - start;
-	if (len == 0)
+	concat_result = extract_concatenated_content_with_context(gc, current);
+	if (!concat_result.content)
 		return (NULL);
-	result = (char *)gc_malloc(gc, len + 1);
-	if (!result)
-		return (NULL);
-	ft_strlcpy(result, start, len + 1);
-	return (result);
+	return (token_create_with_quote(gc, TOKEN_WORD,
+			concat_result.content, concat_result.quote_context));
 }
 
-t_token	*lexer_tokenize(t_gc *gc, const char *input)
+static t_token	*process_input_token(t_gc *gc, const char **current)
+{
+	if (is_separator_metachar(**current))
+		return (handle_metachar(gc, current));
+	else
+		return (create_word_token(gc, current));
+}
+
+static void	token_add_back(t_token **head, t_token *new_token)
+{
+	t_token	*current;
+
+	if (!head || !new_token)
+		return ;
+	if (!*head)
+	{
+		*head = new_token;
+		return ;
+	}
+	current = *head;
+	while (current->next)
+		current = current->next;
+	current->next = new_token;
+}
+
+t_token	*token_create(t_gc *gc, t_token_type type, const char *value)
+{
+	return (token_create_with_quote(gc, type, value, 0));
+}
+
+t_token	*tokenize(t_gc *gc, const char *input)
 {
 	t_token		*head;
 	t_token		*token;
@@ -61,10 +66,7 @@ t_token	*lexer_tokenize(t_gc *gc, const char *input)
 		skip_whitespace(&current);
 		if (!*current)
 			break ;
-		if (is_metachar(*current))
-			token = handle_metachar(gc, &current);
-		else
-			token = handle_word_or_quote(gc, &current);
+		token = process_input_token(gc, &current);
 		if (!token)
 			return (NULL);
 		token_add_back(&head, token);

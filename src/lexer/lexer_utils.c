@@ -6,16 +6,11 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 17:26:51 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/08/22 17:26:52 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 16:41:17 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-t_token	*token_create(t_gc *gc, t_token_type type, const char *value)
-{
-	return (token_create_with_quote(gc, type, value, 0));
-}
 
 t_token	*token_create_with_quote(t_gc *gc, t_token_type type,
 					const char *value, char quote_context)
@@ -40,59 +35,64 @@ t_token	*token_create_with_quote(t_gc *gc, t_token_type type,
 	return (token);
 }
 
-void	token_add_back(t_token **head, t_token *new_token)
+char	*handle_special_var(t_gc *gc, const char **input)
 {
-	t_token	*current;
-
-	if (!head || !new_token)
-		return ;
-	if (!*head)
-	{
-		*head = new_token;
-		return ;
-	}
-	current = *head;
-	while (current->next)
-		current = current->next;
-	current->next = new_token;
-}
-
-char	*extract_quoted_string(t_gc *gc, const char **input, char quote)
-{
-	const char	*start;
-	size_t		len;
-	char		*result;
+	char	*result;
 
 	(*input)++;
-	start = *input;
-	while (**input && **input != quote)
-		(*input)++;
-	if (**input == quote)
-	{
-		len = *input - start;
-		result = (char *)gc_malloc(gc, len + 1);
-		if (!result)
-			return (NULL);
-		ft_strlcpy(result, start, len + 1);
-		(*input)++;
-		return (result);
-	}
-	return (NULL);
+	result = (char *)gc_malloc(gc, 3);
+	if (!result)
+		return (NULL);
+	ft_strlcpy(result, "$?", 3);
+	return (result);
 }
 
-void	token_print_list(t_token *tokens)
+char	*handle_empty_var(t_gc *gc)
 {
-	const char	*type_names[] = {
-		"WORD", "PIPE", "REDIR_IN", "REDIR_OUT",
-		"REDIR_APPEND", "HEREDOC", "VARIABLE", "EOF"
-	};
+	char	*result;
 
-	while (tokens)
+	result = (char *)gc_malloc(gc, 2);
+	if (!result)
+		return (NULL);
+	ft_strlcpy(result, "$", 2);
+	return (result);
+}
+
+char	*handle_normal_var(t_gc *gc, const char *start, size_t len)
+{
+	char	*result;
+
+	result = (char *)gc_malloc(gc, len + 2);
+	if (!result)
+		return (NULL);
+	result[0] = '$';
+	ft_strlcpy(result + 1, start, len + 1);
+	return (result);
+}
+
+t_token	*handle_word_or_quote(t_gc *gc, const char **input)
+{
+	char	*value;
+
+	if (**input == '\'')
 	{
-		ft_printf("Token: %s", type_names[tokens->type]);
-		if (tokens->value)
-			ft_printf(" | Value: '%s'", tokens->value);
-		ft_printf("\n");
-		tokens = tokens->next;
+		value = extract_quoted_string(gc, input, '\'');
+		if (!value)
+			return (NULL);
+		return (token_create_with_quote(gc, TOKEN_WORD, value, '\''));
+	}
+	else if (**input == '"')
+	{
+		value = extract_quoted_string(gc, input, '"');
+		if (!value)
+			return (NULL);
+		return (token_create_with_quote(gc, TOKEN_WORD, value, '"'));
+	}
+	else
+	{
+		value = extract_word(gc, input);
+		if (!value)
+			return (NULL);
+		return (token_create(gc, TOKEN_WORD, value));
 	}
 }

@@ -22,7 +22,7 @@ static int	parse_exit_code(char *arg)
 	result = ft_strtol(arg, &endptr, 10);
 	if (*endptr != '\0')
 	{
-		ft_printf("exit: %s: numeric argument required\n", arg);
+		ft_dprintf(2, "exit: %s: numeric argument required\n", arg);
 		exit(2);
 	}
 	return (result);
@@ -46,8 +46,8 @@ int	builtin_exit(char **args, t_shell_context *ctx)
 	ft_printf("exit\n");
 	if (count_args(args) > 2)
 	{
-		ft_printf("exit: too many arguments\n");
-		return (1);
+		ft_dprintf(2, "exit: too many arguments\n");
+		return (2);
 	}
 	exit_code = parse_exit_code(args[1]);
 	exit(exit_code);

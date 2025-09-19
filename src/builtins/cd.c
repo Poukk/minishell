@@ -28,7 +28,7 @@ static int	handle_cd_dash(t_shell_context *ctx)
 	oldpwd = env_get_value(ctx->env, "OLDPWD");
 	if (!oldpwd)
 	{
-		ft_printf("cd: OLDPWD not set\n");
+		ft_dprintf(2, "cd: OLDPWD not set\n");
 		return (1);
 	}
 	ft_printf("%s\n", oldpwd);
@@ -54,14 +54,14 @@ static int	execute_directory_change(char **args, t_shell_context *ctx,
 	if (!target_dir)
 	{
 		if (args[1] && ft_strncmp(args[1], "-", 2) == 0)
-			ft_printf("cd: OLDPWD not set\n");
+			ft_dprintf(2, "cd: OLDPWD not set\n");
 		else
-			ft_printf("cd: HOME not set\n");
+			ft_dprintf(2, "cd: HOME not set\n");
 		return (1);
 	}
 	if (chdir(target_dir) != 0)
 	{
-		ft_printf("cd: %s: No such file or directory\n", target_dir);
+		ft_dprintf(2, "cd: %s: No such file or directory\n", target_dir);
 		return (1);
 	}
 	if (current_pwd)
@@ -78,8 +78,8 @@ int	builtin_cd(char **args, t_shell_context *ctx)
 		return (1);
 	if (count_args(args) > 2)
 	{
-		ft_printf("cd: too many arguments\n");
-		return (1);
+		ft_dprintf(2, "cd: too many arguments\n");
+		return (2);
 	}
 	if (args[1] && ft_strncmp(args[1], "-", 2) == 0)
 	{

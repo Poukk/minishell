@@ -1,29 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   debug.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/20 14:28:29 by elvictor          #+#    #+#             */
-/*   Updated: 2025/09/19 01:42:12 by alexanfe         ###   ########.fr       */
+/*   Created: 2025/09/19 18:00:00 by alexanfe          #+#    #+#             */
+/*   Updated: 2025/09/19 18:00:01 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include <unistd.h>
+#ifndef DEBUG_H
+# define DEBUG_H
 
-int	builtin_pwd(void)
-{
-	char	*cwd;
+# include "../include/minishell.h"
 
-	cwd = getcwd(NULL, 0);
-	if (!cwd)
-	{
-		ft_dprintf(2, "pwd: cannot get current directory\n");
-		return (1);
-	}
-	ft_printf("%s\n", cwd);
-	free(cwd);
-	return (0);
-}
+// Debug printing functions (non-production)
+void			token_print_list(t_token *tokens);
+void			ast_print(t_ast_node *root, int depth);
+
+#endif

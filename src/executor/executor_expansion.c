@@ -39,7 +39,8 @@ char	*expand_variable_in_string(t_gc *gc, char *str, t_shell_env *env)
 	while (*current)
 	{
 		if (*current == '$' && *(current + 1)
-			&& (ft_isalnum(*(current + 1)) || *(current + 1) == '_'))
+			&& (ft_isalnum(*(current + 1)) || *(current + 1) == '_'
+				|| *(current + 1) == '?'))
 			result = process_variable_char(gc, &current, env, result);
 		else
 			result = process_regular_char(gc, &current, result);

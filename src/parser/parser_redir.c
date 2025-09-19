@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_redir.c                                    :+:      :+:    :+:   */
+/*   parser_redir.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 01:22:42 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/15 01:22:43 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 16:47:06 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,12 @@ void	parse_redirections(t_gc *gc, t_token **tokens,
 
 static int	is_word_or_redirection_token(t_token_type type)
 {
-	return (type == TOKEN_WORD || type == TOKEN_VARIABLE
-		|| type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
-		|| type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
+	return (type == TOKEN_WORD
+		|| type == TOKEN_VARIABLE
+		|| type == TOKEN_REDIR_IN
+		|| type == TOKEN_REDIR_OUT
+		|| type == TOKEN_REDIR_APPEND
+		|| type == TOKEN_HEREDOC);
 }
 
 static char	**init_args_array(t_gc *gc, t_token *tokens)
@@ -60,10 +63,10 @@ static void	init_parse_context(t_parse_context *ctx, char **args,
 char	**extract_args_with_redirections(t_gc *gc, t_token **tokens,
 		t_redir_params *params)
 {
+	t_parse_context	ctx;
 	char			**args;
 	int				i;
 	int				count;
-	t_parse_context	ctx;
 
 	count = count_command_tokens(*tokens);
 	args = init_args_array(gc, *tokens);

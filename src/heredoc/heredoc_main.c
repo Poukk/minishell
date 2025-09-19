@@ -56,7 +56,7 @@ char	*collect_heredoc_content(t_gc *gc, char *delimiter)
 	line_count = 0;
 	content = process_heredoc_loop(gc, delimiter, content, &line_count);
 	if (line_count > 0)
-		ft_printf("minishell: heredoc at line %d delimited by EOF \n",
+		ft_dprintf(2, "minishell: heredoc at line %d delimited by EOF \n",
 			line_count);
 	return (content);
 }
@@ -70,7 +70,8 @@ void	process_heredoc_redirection(t_gc *gc, t_token **tokens,
 	*tokens = (*tokens)->next;
 	if (!*tokens || (*tokens)->type != TOKEN_WORD)
 	{
-		ft_printf("minishell: syntax error near unexpected token `newline'\n");
+		ft_dprintf(2,
+			"minishell: syntax error near unexpected token `newline'\n");
 		return ;
 	}
 	content = collect_heredoc_content(gc, (*tokens)->value);

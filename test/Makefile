@@ -8,7 +8,8 @@ SOURCES =              \
 	../src/lexer/lexer_quotes.c \
 	../src/ast/ast.c \
 	../src/ast/ast_redir.c \
-	../src/ast/ast_print.c \
+	../src/debug/ast_print.c \
+	../src/debug/token_print.c \
 	../src/parser/parser.c \
 	../src/parser/parser_utils.c \
 	../src/parser/parser_redir.c \
@@ -67,7 +68,7 @@ LINKFLAGS = -L$(CRITERION_LIB_DIR) -lcriterion ../lib/Libft/libft.a -lreadline
 all: $(TARGET)
 
 $(TARGET): $(SOURCES)
-	$(CC) $(CFLAGS) -I$(CRITERION_INCLUDE_DIR) -I../include -I../lib/Libft/include/ $(SOURCES) $(LINKFLAGS) -o $(TARGET)
+	$(CC) $(CFLAGS) -I$(CRITERION_INCLUDE_DIR) -I../include -I../lib/Libft/include/ -I../src/debug $(SOURCES) $(LINKFLAGS) -o $(TARGET)
 
 test: $(TARGET)
 	LD_LIBRARY_PATH=$(CRITERION_LIB_DIR) ./$(TARGET) --verbose

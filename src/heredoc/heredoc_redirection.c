@@ -25,7 +25,7 @@ static int	write_content_to_pipe(int write_fd, char *content,
 	bytes_written = write(write_fd, content, content_len);
 	if (bytes_written == -1)
 	{
-		ft_printf("minishell: heredoc write failed\n");
+		ft_dprintf(2, "minishell: heredoc write failed\n");
 		return (-1);
 	}
 	return (0);
@@ -35,7 +35,7 @@ static int	setup_pipe_stdin(int read_fd)
 {
 	if (dup2(read_fd, STDIN_FILENO) == -1)
 	{
-		ft_printf("minishell: heredoc redirection failed\n");
+		ft_dprintf(2, "minishell: heredoc redirection failed\n");
 		return (-1);
 	}
 	return (0);
@@ -54,7 +54,7 @@ static int	create_and_write_pipe(t_redirection *redir, int *pipefd)
 
 	if (pipe(pipefd) == -1)
 	{
-		ft_printf("minishell: pipe failed\n");
+		ft_dprintf(2, "minishell: pipe failed\n");
 		return (-1);
 	}
 	content_len = get_heredoc_content_len(redir);

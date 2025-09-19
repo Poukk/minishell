@@ -24,7 +24,7 @@ int	execute_command(char **args)
 		return (1);
 	command_path = resolve_command_path(args[0]);
 	if (!command_path)
-		return (return_error_code(EXIT_CMD_NOT_FOUND, args[0], NULL, 
+		return (return_error_code(EXIT_CMD_NOT_FOUND, args[0], NULL,
 				"command not found"));
 	pid = fork();
 	if (pid == -1)
@@ -52,7 +52,7 @@ static int	check_directory_and_fork(char *command_path, char **expanded_args,
 	{
 		free(command_path);
 		gc_free_all(gc);
-		return (return_error_code(EXIT_EXEC_FAILED, expanded_args[0], NULL, 
+		return (return_error_code(EXIT_EXEC_FAILED, expanded_args[0], NULL,
 				"Is a directory"));
 	}
 	pid = fork();

@@ -26,7 +26,7 @@ static int	process_export_with_value(char *arg, char *equals_pos,
 	ft_strlcpy(key, arg, key_len + 1);
 	if (!env_is_valid_name(key))
 	{
-		ft_printf("export: '%s': not a valid identifier\n", arg);
+		ft_dprintf(2, "export: '%s': not a valid identifier\n", arg);
 		return (1);
 	}
 	value = equals_pos + 1;
@@ -39,7 +39,7 @@ static int	process_export_no_value(char *arg, t_shell_context *ctx)
 {
 	if (!env_is_valid_name(arg))
 	{
-		ft_printf("export: '%s': not a valid identifier\n", arg);
+		ft_dprintf(2, "export: '%s': not a valid identifier\n", arg);
 		return (1);
 	}
 	if (env_set_var(ctx->gc, ctx->env, arg, "") == -1)
