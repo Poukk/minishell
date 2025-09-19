@@ -6,7 +6,7 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 00:00:00 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/08/15 00:00:00 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:04:17 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,19 @@ char	*gc_readline(t_gc *gc, const char *prompt)
 	ft_strlcpy(gc_line, line, ft_strlen(line) + 1);
 	free(line);
 	return (gc_line);
+}
+
+char	*gc_strdup(t_gc *gc, const char *s)
+{
+	char	*dup;
+	size_t	len;
+
+	if (!s)
+		return (NULL);
+	len = ft_strlen(s);
+	dup = (char *)gc_malloc(gc, len + 1);
+	if (!dup)
+		return (NULL);
+	ft_strlcpy(dup, s, len + 1);
+	return (dup);
 }

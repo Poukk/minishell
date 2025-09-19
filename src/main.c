@@ -6,7 +6,7 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 23:29:41 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/19 16:48:43 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:02:12 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	execute_ast(t_ast_node *ast, t_shell_context *ctx)
 
 	if (ast)
 	{
-		exit_code = executor_execute(ast, ctx);
+		exit_code = execute(ast, ctx);
 		env_set_exit_code(ctx->env, exit_code);
 	}
 }

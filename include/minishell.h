@@ -6,7 +6,7 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 23:29:54 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/19 16:54:05 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:16:21 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # define PROMPT "minishell$ "
+
 # include "libft.h"
 # include <stdlib.h>
 # include <stdio.h>
@@ -24,282 +25,14 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-typedef struct s_gc
-{
-	t_list	*allocated_ptrs;
-}	t_gc;
-
-typedef enum e_token_type
-{
-	TOKEN_WORD,
-	TOKEN_PIPE,
-	TOKEN_REDIR_IN,
-	TOKEN_REDIR_OUT,
-	TOKEN_REDIR_APPEND,
-	TOKEN_HEREDOC,
-	TOKEN_VARIABLE,
-	TOKEN_EOF
-}	t_token_type;
-
-typedef struct s_token
-{
-	t_token_type	type;
-	char			*value;
-	char			quote_context;
-	struct s_token	*next;
-}	t_token;
-
-typedef enum e_node_type
-{
-	NODE_CMD,
-	NODE_PIPE
-}	t_node_type;
-
-typedef struct s_redirection
-{
-	int						type;
-	char					*filename;
-	char					*heredoc_content;
-	struct s_redirection	*next;
-}	t_redirection;
-
-typedef struct s_parse_context
-{
-	char			**args;
-	int				*i;
-	int				max_args;
-	t_redirection	**input_redirs;
-	t_redirection	**output_redirs;
-}	t_parse_context;
-
-typedef struct s_ast_node
-{
-	t_node_type			type;
-	char				**args;
-	struct s_ast_node	*left;
-	struct s_ast_node	*right;
-	t_redirection		*input_redirs;
-	t_redirection		*output_redirs;
-}	t_ast_node;
-
-typedef struct s_expansion_state
-{
-	char	*content;
-	char	*result;
-	size_t	result_len;
-	size_t	i;
-	t_gc	*gc;
-}	t_expansion_state;
-
-typedef struct s_env_var
-{
-	char				*key;
-	char				*value;
-	struct s_env_var	*next;
-}	t_env_var;
-
-typedef struct s_shell_env
-{
-	t_env_var	*vars;
-	int			last_exit_code;
-	char		*cwd;
-}	t_shell_env;
-
-typedef struct s_shell_context
-{
-	t_shell_env	*env;
-	t_gc		*gc;
-}	t_shell_context;
-
-typedef enum e_builtin_type
-{
-	BUILTIN_NONE,
-	BUILTIN_ECHO,
-	BUILTIN_CD,
-	BUILTIN_PWD,
-	BUILTIN_ENV,
-	BUILTIN_EXPORT,
-	BUILTIN_UNSET,
-	BUILTIN_EXIT
-}	t_builtin_type;
-
-# define EXIT_SUCCESS		0
-# define EXIT_GENERAL_ERROR	1
-# define EXIT_MISUSE		2
-# define EXIT_EXEC_FAILED	126
-# define EXIT_CMD_NOT_FOUND	127
-
-typedef struct s_redir_params
-{
-	t_redirection	**input_redirs;
-	t_redirection	**output_redirs;
-	t_shell_env		*env;
-}	t_redir_params;
-
-typedef struct s_token_process_data
-{
-	char		**args;
-	int			index;
-	t_shell_env	*env;
-}	t_token_process_data;
-
-typedef struct s_cmd_setup
-{
-	char	**expanded_args;
-	char	*command_path;
-	t_gc	*gc;
-}	t_cmd_setup;
-
-typedef struct s_concat_result
-{
-	char	*content;
-	char	quote_context;
-}	t_concat_result;
-
-t_redirection	*redirection_create(t_gc *gc, int type, char *filename);
-t_redirection	*heredoc_redirection_create(t_gc *gc, char *delimiter,
-					char *content);
-void			redirection_add_back(t_redirection **head,
-					t_redirection *new_redir);
-void			gc_init(t_gc *gc);
-void			*gc_malloc(t_gc *gc, size_t size);
-void			gc_free_all(t_gc *gc);
-char			*gc_readline(t_gc *gc, const char *prompt);
-t_token			*tokenize(t_gc *gc, const char *input);
-int				is_whitespace(char c);
-int				is_metachar(char c);
-int				is_separator_metachar(char c);
-int				should_concatenate(const char *current);
-void			skip_whitespace(const char **input);
-char			*extract_word(t_gc *gc, const char **input);
-char			*extract_concatenated_content(t_gc *gc, const char **input);
-t_concat_result	extract_concatenated_content_with_context(t_gc *gc,
-					const char **input);
-t_token			*token_create(t_gc *gc, t_token_type type, const char *value);
-t_token			*token_create_with_quote(t_gc *gc, t_token_type type,
-					const char *value, char quote_context);
-char			*extract_quoted_string(t_gc *gc,
-					const char **input, char quote);
-char			*concatenate_strings(t_gc *gc, const char *str1,
-					const char *str2);
-char			*ft_strdup_gc(t_gc *gc, const char *s);
-char			*handle_special_var(t_gc *gc, const char **input);
-char			*handle_empty_var(t_gc *gc);
-char			*handle_normal_var(t_gc *gc, const char *start, size_t len);
-t_token			*handle_metachar(t_gc *gc, const char **input);
-t_token			*handle_word_or_quote(t_gc *gc, const char **input);
-t_ast_node		*ast_node_create(t_gc *gc, t_node_type type);
-void			ast_node_set_args(t_gc *gc, t_ast_node *node, char **args);
-t_ast_node		*parse(t_gc *gc, t_token *tokens, t_shell_env *env);
-t_ast_node		*parse_pipe(t_gc *gc, t_token **tokens, t_shell_env *env);
-t_ast_node		*parse_command(t_gc *gc, t_token **tokens, t_shell_env *env);
-char			**extract_command_args(t_gc *gc, t_token **tokens,
-					t_shell_env *env);
-char			**extract_args_with_redirections(t_gc *gc,
-					t_token **tokens, t_redir_params *params);
-void			parse_redirections(t_gc *gc, t_token **tokens,
-					t_redirection **input_redirs,
-					t_redirection **output_redirs);
-void			process_input_redirection(t_gc *gc, t_token **tokens,
-					t_redirection **input_redirs);
-void			process_heredoc_redirection(t_gc *gc, t_token **tokens,
-					t_redirection **input_redirs);
-void			process_output_redirection(t_gc *gc, t_token **tokens,
-					t_redirection **output_redirs, t_token_type type);
-void			process_word_token(t_gc *gc, t_token **tokens,
-					t_parse_context *ctx, t_shell_env *env);
-void			process_token(t_gc *gc, t_token **tokens, t_parse_context *ctx,
-					t_shell_env *env);
-int				is_redirection_token(t_token_type type);
-int				count_command_tokens(t_token *tokens);
-void			skip_redirections(t_token **current);
-char			*expand_variable(t_gc *gc, const char *var_name,
-					t_shell_env *env);
-int				executor_execute(t_ast_node *ast, t_shell_context *ctx);
-int				execute_command(char **args);
-int				execute_command_with_redirections(t_ast_node *cmd_node,
-					t_shell_context *ctx);
-void			handle_execve_error(char **args, char *command_path);
-int				wait_for_child(pid_t pid);
-void			execute_child_process(char **args, char *command_path,
-					t_redirection *input_redirs, t_redirection *output_redirs);
-char			*expand_variable_in_string(t_gc *gc, char *str,
-					t_shell_env *env);
-char			*process_single_arg(t_gc *gc, char *arg, t_shell_env *env);
-char			**expand_command_args(t_gc *gc, char **args, t_shell_env *env);
-char			*append_to_result(t_gc *gc, char *result, char *append_str);
-char			*extract_var_name(t_gc *gc, char *start);
-char			*process_variable_char(t_gc *gc, char **current,
-					t_shell_env *env, char *result);
-char			*process_regular_char(t_gc *gc, char **current, char *result);
-int				handle_command_setup(t_ast_node *cmd_node, t_shell_env *env,
-					t_cmd_setup *setup);
-char			*resolve_command_path(const char *command);
-char			*get_validated_command_path(t_ast_node *cmd_node);
-int				setup_input_redirection(t_redirection *redir);
-int				setup_output_redirection(t_redirection *redir);
-int				create_all_output_files(t_redirection *output_redirs);
-int				execute_builtin_with_redirections(t_ast_node *cmd_node,
-					t_shell_context *ctx);
-int				is_delimiter_match(char *line, char *delimiter);
-char			*append_line_to_content(t_gc *gc, char *content, char *line,
-					size_t content_len);
-void			process_heredoc_line(char *line);
-char			*process_heredoc_loop(t_gc *gc, char *delimiter, char *content,
-					int *line_count);
-char			*collect_heredoc_content(t_gc *gc, char *delimiter);
-char			*process_variable_expansion(t_gc *gc, char *content, size_t *i);
-int				should_expand_variable(char *content, size_t i);
-char			*expand_heredoc_variables(t_gc *gc, char *content,
-					char *delimiter);
-char			*init_expansion_result(t_gc *gc);
-char			*append_variable_to_result(t_gc *gc, char *result,
-					char *var_value, size_t result_len);
-char			*append_char_to_result(t_gc *gc, char *result,
-					char c, size_t result_len);
-void			handle_double_dollar(t_expansion_state *state);
-void			handle_regular_char(t_expansion_state *state);
-void			handle_variable_expansion(t_expansion_state *state);
-char			*process_expansion_loop(t_gc *gc, char *content, char *result);
-int				setup_heredoc_redirection(t_redirection *redir);
-void			free_split_array(char **array);
-int				setup_multiple_in_redirections(t_redirection *input_redirs);
-int				setup_multiple_out_redirections(t_redirection *output_redirs);
-int				execute_pipe(t_ast_node *ast, t_shell_context *ctx);
-int				handle_file_open_error(char *filename);
-void			print_error(const char *command, const char *arg,
-					const char *message);
-void			print_command_error(const char *command, const char *message);
-int				return_error_code(int error_code, const char *command,
-					const char *arg, const char *message);
-t_builtin_type	is_builtin_command(const char *cmd_name);
-int				execute_builtin(t_builtin_type type, char **args,
-					t_shell_context *ctx);
-int				builtin_echo(char **args);
-int				builtin_cd(char **args, t_shell_context *ctx);
-int				builtin_pwd(void);
-int				builtin_env(t_shell_context *ctx);
-int				builtin_export(char **args, t_shell_context *ctx);
-int				builtin_unset(char **args, t_shell_context *ctx);
-int				builtin_exit(char **args, t_shell_context *ctx);
-t_shell_env		*env_create(t_gc *gc);
-t_env_var		*env_find_var(t_shell_env *env, const char *key);
-int				env_set_var(t_gc *gc, t_shell_env *env, const char *key,
-					const char *value);
-int				env_unset_var(t_shell_env *env, const char *key);
-char			*env_get_value(t_shell_env *env, const char *key);
-t_shell_env		*env_init_from_system(t_gc *gc, char **envp);
-void			env_update_pwd(t_gc *gc, t_shell_env *env);
-void			env_set_exit_code(t_shell_env *env, int exit_code);
-char			**env_to_array(t_gc *gc, t_shell_env *env);
-void			env_print_all(t_shell_env *env);
-int				env_is_valid_name(const char *name);
-void			setup_shell_signals(void);
-void			setup_command_signals(void);
-void			handle_sigint(int sig);
-extern int		g_signal_received;
-int				get_signal_received(void);
-void			reset_signal_received(void);
-int				process_child_status(int status);
+# include "gc.h"
+# include "lexer.h"
+# include "ast.h"
+# include "env.h"
+# include "parser.h"
+# include "executor.h"
+# include "builtins.h"
+# include "signals.h"
+# include "error.h"
 
 #endif

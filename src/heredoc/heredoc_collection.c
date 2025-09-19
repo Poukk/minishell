@@ -1,19 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc_collection.c                            :+:      :+:    :+:   */
+/*   heredoc_collection.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 00:00:00 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/17 00:00:00 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:06:01 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 int	is_delimiter_match(char *line, char *delimiter)
 {

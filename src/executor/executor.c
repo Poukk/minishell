@@ -6,14 +6,11 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 01:36:37 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/15 13:16:03 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:01:57 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
-#include <sys/wait.h>
-#include <stdlib.h>
 
 int	execute_command(char **args)
 {
@@ -105,7 +102,7 @@ int	execute_command_with_redirections(t_ast_node *cmd_node,
 	return (execute_external_command(&setup, cmd_node, &gc));
 }
 
-int	executor_execute(t_ast_node *ast, t_shell_context *ctx)
+int	execute(t_ast_node *ast, t_shell_context *ctx)
 {
 	if (!ast)
 		return (0);

@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc_expansion_vars.c                       :+:      :+:    :+:   */
+/*   heredoc_expansion_vars.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 00:00:00 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/17 00:00:00 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:05:33 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdlib.h>
 
 static int	is_delimiter_quoted(char *delimiter)
 {

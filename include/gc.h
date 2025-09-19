@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_print.c                                        :+:      :+:    :+:   */
+/*   gc.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/18 19:47:37 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/19 17:01:07 by alexanfe         ###   ########.fr       */
+/*   Created: 2025/09/19 17:13:09 by alexanfe          #+#    #+#             */
+/*   Updated: 2025/09/19 17:13:11 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#ifndef GC_H
+# define GC_H
 
-void	env_print_all(t_shell_env *env)
+# include "libft.h"
+# include <stdlib.h>
+
+typedef struct s_gc
 {
-	t_env_var	*current;
+	t_list	*allocated_ptrs;
+}	t_gc;
 
-	if (!env)
-		return ;
-	current = env->vars;
-	while (current)
-	{
-		ft_printf("%s=%s\n", current->key, current->value);
-		current = current->next;
-	}
-}
+void	gc_init(t_gc *gc);
+void	*gc_malloc(t_gc *gc, size_t size);
+void	gc_free_all(t_gc *gc);
+char	*gc_readline(t_gc *gc, const char *prompt);
+char	*gc_strdup(t_gc *gc, const char *s);
+
+#endif

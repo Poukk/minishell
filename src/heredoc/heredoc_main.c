@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc_main.c                                  :+:      :+:    :+:   */
+/*   heredoc_main.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 00:00:00 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/17 00:00:00 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:05:36 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdio.h>
 
 static char	*init_heredoc_content(t_gc *gc)
 {

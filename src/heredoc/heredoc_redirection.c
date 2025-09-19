@@ -1,19 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc_redirection.c                           :+:      :+:    :+:   */
+/*   heredoc_redirection.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 00:00:00 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/17 00:00:00 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:05:48 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
 
 static int	write_content_to_pipe(int write_fd, char *content,
 		size_t content_len)
