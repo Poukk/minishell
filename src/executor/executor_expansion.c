@@ -15,7 +15,7 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
-int	count_args(char **args)
+static int	count_args(char **args)
 {
 	int	count;
 
@@ -25,19 +25,55 @@ int	count_args(char **args)
 	return (count);
 }
 
+char	*expand_variable_in_string(t_gc *gc, char *str, t_shell_env *env)
+{
+	char	*result;
+	char	*current;
+
+	if (!str)
+		return (NULL);
+	result = gc_malloc(gc, 1);
+	if (!result)
+		return (NULL);
+	result[0] = '\0';
+	current = str;
+	while (*current)
+	{
+		if (*current == '$' && *(current + 1)
+			&& (ft_isalnum(*(current + 1)) || *(current + 1) == '_'))
+			result = process_variable_char(gc, &current, env, result);
+		else
+			result = process_regular_char(gc, &current, result);
+		if (!result)
+			return (NULL);
+	}
+	return (result);
+}
+
 char	*process_single_arg(t_gc *gc, char *arg, t_shell_env *env)
 {
 	char	*result;
+	char	*actual_content;
 
-	if (arg[0] == '$')
-		result = expand_variable(gc, arg + 1, env);
+	if (!arg)
+		return (NULL);
+	if (ft_strncmp(arg, "SINGLE_QUOTE:", 13) == 0)
+	{
+		actual_content = arg + 13;
+		result = gc_malloc(gc, ft_strlen(actual_content) + 1);
+		if (result)
+			ft_strlcpy(result, actual_content, ft_strlen(actual_content) + 1);
+		return (result);
+	}
+	else if (ft_strncmp(arg, "DOUBLE_QUOTE:", 13) == 0)
+	{
+		actual_content = arg + 13;
+		return (expand_variable_in_string(gc, actual_content, env));
+	}
 	else
 	{
-		result = gc_malloc(gc, ft_strlen(arg) + 1);
-		if (result)
-			ft_strlcpy(result, arg, ft_strlen(arg) + 1);
+		return (expand_variable_in_string(gc, arg, env));
 	}
-	return (result);
 }
 
 char	**expand_command_args(t_gc *gc, char **args, t_shell_env *env)
@@ -62,24 +98,4 @@ char	**expand_command_args(t_gc *gc, char **args, t_shell_env *env)
 	}
 	expanded_args[i] = NULL;
 	return (expanded_args);
-}
-
-int	handle_command_setup(t_ast_node *cmd_node, t_shell_env *env,
-		t_cmd_setup *setup)
-{
-	setup->expanded_args = expand_command_args(setup->gc, cmd_node->args, env);
-	if (!setup->expanded_args)
-	{
-		gc_free_all(setup->gc);
-		return (1);
-	}
-	setup->command_path = resolve_command_path(setup->expanded_args[0]);
-	if (!setup->command_path)
-	{
-		ft_printf("minishell: %s: command not found\n",
-			setup->expanded_args[0]);
-		gc_free_all(setup->gc);
-		return (127);
-	}
-	return (0);
 }

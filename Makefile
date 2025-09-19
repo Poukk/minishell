@@ -19,6 +19,7 @@ src/parser/parser_expansion.c \
 src/executor/executor.c \
 src/executor/executor_utils.c \
 src/executor/executor_expansion.c \
+src/executor/executor_expansion_utils.c \
 src/executor/executor_path.c \
 src/executor/executor_redir.c \
 src/executor/executor_multi_redir.c \

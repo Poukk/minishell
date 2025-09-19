@@ -14,12 +14,19 @@
 
 t_token	*token_create(t_gc *gc, t_token_type type, const char *value)
 {
+	return (token_create_with_quote(gc, type, value, 0));
+}
+
+t_token	*token_create_with_quote(t_gc *gc, t_token_type type,
+					const char *value, char quote_context)
+{
 	t_token	*token;
 
 	token = (t_token *)gc_malloc(gc, sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->type = type;
+	token->quote_context = quote_context;
 	if (value)
 	{
 		token->value = (char *)gc_malloc(gc, ft_strlen(value) + 1);

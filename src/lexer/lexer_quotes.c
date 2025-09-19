@@ -21,14 +21,14 @@ t_token	*handle_word_or_quote(t_gc *gc, const char **input)
 		value = extract_quoted_string(gc, input, '\'');
 		if (!value)
 			return (NULL);
-		return (token_create(gc, TOKEN_WORD, value));
+		return (token_create_with_quote(gc, TOKEN_WORD, value, '\''));
 	}
 	else if (**input == '"')
 	{
 		value = extract_quoted_string(gc, input, '"');
 		if (!value)
 			return (NULL);
-		return (token_create(gc, TOKEN_WORD, value));
+		return (token_create_with_quote(gc, TOKEN_WORD, value, '"'));
 	}
 	else
 	{

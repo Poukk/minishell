@@ -42,6 +42,7 @@ typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
+	char			quote_context;
 	struct s_token	*next;
 }	t_token;
 
@@ -139,6 +140,8 @@ char			*extract_word(t_gc *gc, const char **input);
 
 // lexer_utils.c
 t_token			*token_create(t_gc *gc, t_token_type type, const char *value);
+t_token			*token_create_with_quote(t_gc *gc, t_token_type type,
+					const char *value, char quote_context);
 void			token_add_back(t_token **head, t_token *new_token);
 char			*extract_quoted_string(t_gc *gc,
 					const char **input, char quote);
@@ -208,9 +211,17 @@ void			handle_execve_error(char **args, char *command_path);
 int				wait_for_child(pid_t pid);
 
 // executor_expansion.c
-int				count_args(char **args);
+char			*expand_variable_in_string(t_gc *gc, char *str,
+					t_shell_env *env);
 char			*process_single_arg(t_gc *gc, char *arg, t_shell_env *env);
 char			**expand_command_args(t_gc *gc, char **args, t_shell_env *env);
+
+// executor_expansion_utils.c
+char			*append_to_result(t_gc *gc, char *result, char *append_str);
+char			*extract_var_name(t_gc *gc, char *start);
+char			*process_variable_char(t_gc *gc, char **current,
+					t_shell_env *env, char *result);
+char			*process_regular_char(t_gc *gc, char **current, char *result);
 int				handle_command_setup(t_ast_node *cmd_node, t_shell_env *env,
 					t_cmd_setup *setup);
 
