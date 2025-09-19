@@ -59,11 +59,11 @@ Use this checklist to track progress and identify next steps.
 ### Phase 5A: Environment Infrastructure
 *   **Objective:** Build the foundation for variable expansion and environment management.
 
--   [ ] **Environment Storage System:** Create a data structure to store shell environment variables.
--   [ ] **Variable Expansion Engine:** Implement `$VAR` expansion in the lexer/parser phase.
--   [ ] **Exit Code Tracking:** Add global storage for the last command's exit code (`$?`).
--   [ ] **Quote-Aware Expansion:** Handle variable expansion differently in single vs double quotes.
--   [ ] **Testing:** Test `echo $HOME`, `echo $?`, `echo "$USER"`, `echo '$USER'`.
+-   [x] **Environment Storage System:** Create a data structure to store shell environment variables.
+-   [x] **Variable Expansion Engine:** Implement `$VAR` expansion in the lexer/parser phase.
+-   [x] **Exit Code Tracking:** Add global storage for the last command's exit code (`$?`).
+-   [x] **Quote-Aware Expansion:** Handle variable expansion differently in single vs double quotes.
+-   [x] **Testing:** Test `echo $HOME`, `echo $?`, `echo "$USER"`, `echo '$USER'`.
 
 ### Phase 5B: Built-ins Infrastructure
 *   **Objective:** Create the framework for built-in command execution.
