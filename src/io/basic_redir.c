@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_redir.c                                   :+:      :+:    :+:   */
+/*   basic_redir.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 01:36:44 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/17 02:05:04 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:48:22 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
 #include <fcntl.h>
 
 static int	setup_file_input_redirection(char *filename)

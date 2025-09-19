@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_expansion_utils.c                        :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/18 12:30:00 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/18 12:30:00 by alexanfe         ###   ########.fr       */
+/*   Created: 2025/09/19 17:47:58 by alexanfe          #+#    #+#             */
+/*   Updated: 2025/09/19 17:47:59 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
-#include <sys/wait.h>
 
 static char	*get_variable_value(t_gc *gc, char *var_name, t_shell_env *env)
 {

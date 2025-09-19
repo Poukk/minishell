@@ -6,14 +6,11 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 13:15:55 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/19 17:02:09 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:47:11 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
-#include <sys/wait.h>
-#include <stdlib.h>
 
 static void	execute_left_command(t_ast_node *node, int pipefd[2],
 		t_shell_context *ctx)

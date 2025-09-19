@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_multi_redir.c                           :+:      :+:    :+:   */
+/*   multi_redir.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 01:36:44 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/15 01:36:45 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:48:40 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdlib.h>
 
 void	free_split_array(char **array)
 {

@@ -6,12 +6,11 @@
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:48:04 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/19 17:01:05 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:49:56 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
 
 static int	parse_env_string(const char *env_str, char **key, char **value)
 {

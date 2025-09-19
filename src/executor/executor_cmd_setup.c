@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_cmd_setup.c                              :+:      :+:    :+:   */
+/*   executor_cmd_setup.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/19 12:30:00 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/19 12:30:00 by alexanfe         ###   ########.fr       */
+/*   Created: 2025/09/19 17:46:59 by alexanfe          #+#    #+#             */
+/*   Updated: 2025/09/19 17:47:00 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
-#include <sys/wait.h>
 
 static int	setup_command_args(t_ast_node *cmd_node, t_shell_env *env,
 		t_cmd_setup *setup)

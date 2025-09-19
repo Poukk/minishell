@@ -2,13 +2,13 @@
 NAME    := minishell
 NAME_DEBUG := minishell_debug
 SRCS    := \
-src/main.c \
-src/gc/gc.c \
-src/lexer/lexer.c \
-src/lexer/lexer_content.c \
-src/lexer/lexer_utils.c \
-src/lexer/lexer_handler.c \
-src/lexer/lexer_syntax.c \
+src/core/main.c \
+src/core/memory.c \
+src/tokenizer/tokenizer.c \
+src/tokenizer/content.c \
+src/tokenizer/utils.c \
+src/tokenizer/handler.c \
+src/tokenizer/syntax.c \
 src/ast/ast.c \
 src/ast/ast_redir.c \
 src/parser/parser.c \
@@ -16,8 +16,23 @@ src/parser/parser_utils.c \
 src/parser/parser_redir.c \
 src/parser/parser_redir_helpers.c \
 src/parser/parser_redir_process.c \
-src/parser/parser_expansion.c \
+src/expansion/variables.c \
+src/expansion/expansion.c \
+src/expansion/utils.c \
+src/expansion/heredoc_vars.c \
+src/expansion/heredoc_utils.c \
+src/expansion/heredoc_loop.c \
 src/executor/executor.c \
+src/executor/executor_utils.c \
+src/executor/executor_cmd_setup.c \
+src/executor/executor_path.c \
+src/executor/executor_builtins.c \
+src/executor/executor_pipes.c \
+src/io/heredoc_collection.c \
+src/io/heredoc.c \
+src/io/redirection.c \
+src/io/basic_redir.c \
+src/io/multi_redir.c \
 src/builtins/builtins.c \
 src/builtins/echo.c \
 src/builtins/cd.c \
@@ -26,25 +41,10 @@ src/builtins/env.c \
 src/builtins/export.c \
 src/builtins/unset.c \
 src/builtins/exit.c \
-src/executor/executor_utils.c \
-src/executor/executor_expansion.c \
-src/executor/executor_expansion_utils.c \
-src/executor/executor_cmd_setup.c \
-src/executor/executor_path.c \
-src/executor/executor_redir.c \
-src/executor/executor_builtins.c \
-src/executor/executor_multi_redir.c \
-src/executor/executor_pipes.c \
-src/heredoc/heredoc_collection.c \
-src/heredoc/heredoc_main.c \
-src/heredoc/heredoc_expansion_vars.c \
-src/heredoc/heredoc_expansion_utils.c \
-src/heredoc/heredoc_expansion_loop.c \
-src/heredoc/heredoc_redirection.c \
-src/env/env_storage.c \
-src/env/env_init.c \
-src/env/env_utils.c \
-src/env/env_print.c \
+src/environment/env_storage.c \
+src/environment/env_init.c \
+src/environment/env_utils.c \
+src/environment/env_print.c \
 src/error/error.c \
 src/utils/str.c \
 src/signals/signal_handler.c \
@@ -54,7 +54,7 @@ DEBUG_SRCS := \
 src/debug/main_debug.c \
 src/debug/ast_print.c \
 src/debug/token_print.c \
-$(filter-out src/main.c, $(SRCS))
+$(filter-out src/core/main.c, $(SRCS))
 
 #---------------- Variables ----------------#
 CC      := cc

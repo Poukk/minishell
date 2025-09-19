@@ -1,19 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_utils.c                                  :+:      :+:    :+:   */
+/*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/18 12:00:00 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/18 12:00:00 by alexanfe         ###   ########.fr       */
+/*   Created: 2025/09/19 17:47:17 by alexanfe          #+#    #+#             */
+/*   Updated: 2025/09/19 17:47:22 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
-#include <sys/wait.h>
-#include <stdlib.h>
 #include <errno.h>
 
 void	handle_execve_error(char **args, char *command_path)

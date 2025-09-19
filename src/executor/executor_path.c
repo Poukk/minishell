@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_path.c                                   :+:      :+:    :+:   */
+/*   executor_path.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 01:36:44 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/15 01:36:45 by alexanfe         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:47:06 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
-#include <stdlib.h>
 
 static int	is_absolute_or_relative_path(const char *command)
 {
