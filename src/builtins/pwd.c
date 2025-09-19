@@ -6,24 +6,24 @@
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 14:28:29 by elvictor          #+#    #+#             */
-/*   Updated: 2025/09/09 16:52:02 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/09/19 01:42:12 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <unistd.h>
 
-int	exec_pwd(char **args)
+int	builtin_pwd(void)
 {
 	char	*cwd;
 
-	(void)args;
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{
-		perror("pwd");
-		return (FAILURE);
+		ft_printf("pwd: cannot get current directory\n");
+		return (1);
 	}
-	ft_printf_fd(1, "%s\n", cwd);
+	ft_printf("%s\n", cwd);
 	free(cwd);
-	return (SUCCESS);
+	return (0);
 }

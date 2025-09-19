@@ -16,11 +16,20 @@ SOURCES =              \
 	../src/parser/parser_redir_process.c \
 	../src/parser/parser_expansion.c \
 	../src/executor/executor.c \
+	../src/builtins/builtins.c \
+	../src/builtins/echo.c \
+	../src/builtins/cd.c \
+	../src/builtins/pwd.c \
+	../src/builtins/env.c \
+	../src/builtins/export.c \
+	../src/builtins/unset.c \
+	../src/builtins/exit.c \
 	../src/executor/executor_utils.c \
 	../src/executor/executor_expansion.c \
 	../src/executor/executor_expansion_utils.c \
 	../src/executor/executor_path.c \
 	../src/executor/executor_redir.c \
+	../src/executor/executor_builtins.c \
 	../src/executor/executor_multi_redir.c \
 	../src/executor/executor_pipes.c \
 	../src/heredoc/heredoc_collection.c \
@@ -39,6 +48,7 @@ SOURCES =              \
 	test_ast.c     \
 	test_parser.c  \
 	test_executor.c \
+	test_builtins.c \
 	test_heredoc.c \
 	test_env.c \
 

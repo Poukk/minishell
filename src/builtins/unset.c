@@ -1,68 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 14:28:29 by elvictor          #+#    #+#             */
-/*   Updated: 2025/09/09 16:52:02 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/09/19 01:42:27 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	key_is_valid(const char *key)
-{
-	size_t	i;
-
-	i = 1;
-	if (!key || (!ft_isalpha(key[0]) && key[0] != '_'))
-		return (0);
-	while (key[i])
-	{
-		if (!ft_isalnum(key[i]) && key[i] != '_')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-static void	delete_env_var(const char *key)
-{
-	char	**env;
-	size_t	len;
-	int		i;
-
-	env = get_envp(NULL);
-	if (!env)
-		return ;
-	len = ft_strlen(key);
-	i = 0;
-	while (env[i] && (ft_strncmp(env[i], key, len) != 0 || env[i][len] != '='))
-		i++;
-	if (env[i])
-	{
-		free(env[i]);
-		while (env[i + 1])
-		{
-			env[i] = env[i + 1];
-			i++;
-		}
-		env[i] = NULL;
-	}
-}
-
-int	exec_unset(char **args)
+int	builtin_unset(char **args, t_shell_context *ctx)
 {
 	int	i;
+	int	result;
 
+	if (!ctx || !ctx->env)
+		return (1);
+	if (!args[1])
+		return (0);
+	result = 0;
 	i = 1;
 	while (args[i])
 	{
-		if (key_is_valid(args[i]))
-			delete_env_var(args[i]);
+		if (env_unset_var(ctx->env, args[i]) == -1)
+			result = 1;
 		i++;
 	}
-	return (0);
+	return (result);
 }

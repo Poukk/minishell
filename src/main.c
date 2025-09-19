@@ -17,7 +17,7 @@
 
 #define PROMPT "minishell$ "
 
-static void	execute_ast(t_ast_node *ast, t_shell_env *env)
+static void	execute_ast(t_ast_node *ast, t_shell_context *ctx)
 {
 	int	exit_code;
 
@@ -26,15 +26,15 @@ static void	execute_ast(t_ast_node *ast, t_shell_env *env)
 		ft_printf("AST Structure:\n");
 		ast_print(ast, 0);
 		ft_printf("\nExecuting command...\n");
-		exit_code = executor_execute(ast, env);
-		env_set_exit_code(env, exit_code);
+		exit_code = executor_execute(ast, ctx);
+		env_set_exit_code(ctx->env, exit_code);
 		ft_printf("Command completed with exit code: %d\n", exit_code);
 	}
 	else
 		ft_printf("Syntax error: Invalid command structure\n");
 }
 
-static void	handle_line(char *line, t_shell_env *env)
+static void	handle_line(char *line, t_shell_context *ctx)
 {
 	t_gc		gc;
 	t_token		*tokens;
@@ -51,8 +51,8 @@ static void	handle_line(char *line, t_shell_env *env)
 		ft_printf("Tokenized input:\n");
 		token_print_list(tokens);
 		ft_printf("\n");
-		ast = parser_parse(&gc, tokens, env);
-		execute_ast(ast, env);
+		ast = parser_parse(&gc, tokens, ctx->env);
+		execute_ast(ast, ctx);
 	}
 	else
 		ft_printf("Error: Failed to tokenize input\n");
@@ -73,7 +73,7 @@ static t_shell_env	*init_shell_env(t_gc *gc, char **envp)
 	return (env);
 }
 
-static void	main_loop(t_shell_env *env)
+static void	main_loop(t_shell_context *ctx)
 {
 	char	*line;
 
@@ -85,21 +85,24 @@ static void	main_loop(t_shell_env *env)
 			ft_printf("exit\n");
 			break ;
 		}
-		handle_line(line, env);
+		handle_line(line, ctx);
 		free(line);
 	}
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_gc		gc;
-	t_shell_env	*env;
+	t_gc			gc;
+	t_shell_env		*env;
+	t_shell_context	ctx;
 
 	(void)argc;
 	(void)argv;
 	gc_init(&gc);
 	env = init_shell_env(&gc, envp);
-	main_loop(env);
+	ctx.env = env;
+	ctx.gc = &gc;
+	main_loop(&ctx);
 	gc_free_all(&gc);
 	return (0);
 }

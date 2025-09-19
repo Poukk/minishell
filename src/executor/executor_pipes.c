@@ -16,23 +16,23 @@
 #include <stdlib.h>
 
 static void	execute_left_command(t_ast_node *node, int pipefd[2],
-		t_shell_env *env)
+		t_shell_context *ctx)
 {
 	close(pipefd[0]);
 	if (dup2(pipefd[1], STDOUT_FILENO) == -1)
 		exit(1);
 	close(pipefd[1]);
-	exit(executor_execute(node, env));
+	exit(executor_execute(node, ctx));
 }
 
 static void	execute_right_command(t_ast_node *node, int pipefd[2],
-		t_shell_env *env)
+		t_shell_context *ctx)
 {
 	close(pipefd[1]);
 	if (dup2(pipefd[0], STDIN_FILENO) == -1)
 		exit(1);
 	close(pipefd[0]);
-	exit(executor_execute(node, env));
+	exit(executor_execute(node, ctx));
 }
 
 static int	wait_for_pipe_children(pid_t left_pid, pid_t right_pid,
@@ -50,7 +50,7 @@ static int	wait_for_pipe_children(pid_t left_pid, pid_t right_pid,
 	return (1);
 }
 
-int	execute_pipe(t_ast_node *ast, t_shell_env *env)
+int	execute_pipe(t_ast_node *ast, t_shell_context *ctx)
 {
 	int		pipefd[2];
 	pid_t	left_pid;
@@ -66,7 +66,7 @@ int	execute_pipe(t_ast_node *ast, t_shell_env *env)
 		return (1);
 	}
 	if (left_pid == 0)
-		execute_left_command(ast->left, pipefd, env);
+		execute_left_command(ast->left, pipefd, ctx);
 	right_pid = fork();
 	if (right_pid == -1)
 	{
@@ -75,6 +75,6 @@ int	execute_pipe(t_ast_node *ast, t_shell_env *env)
 		return (1);
 	}
 	if (right_pid == 0)
-		execute_right_command(ast->right, pipefd, env);
+		execute_right_command(ast->right, pipefd, ctx);
 	return (wait_for_pipe_children(left_pid, right_pid, pipefd));
 }

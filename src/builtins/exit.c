@@ -1,35 +1,54 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elvictor <elvictor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 14:28:29 by elvictor          #+#    #+#             */
-/*   Updated: 2025/09/09 16:52:02 by elvictor         ###   ########.fr       */
+/*   Updated: 2025/09/19 01:41:32 by alexanfe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exec_exit(char **args, int last_status)
+static int	parse_exit_code(char *arg)
 {
-    long long	nb;
+	int		result;
+	char	*endptr;
 
-	ft_printf_fd(STDOUT_FILENO, "exit\n");
-	if (!args[1])
-		clean_and_exit(last_status);
-	if (!ft_strtoll_check(args[1], &nb))
+	if (!arg)
+		return (0);
+	result = ft_strtol(arg, &endptr, 10);
+	if (*endptr != '\0')
 	{
-		ft_printf_fd(STDERR_FILENO,
-			"exit: %s: numeric argument required\n", args[1]);
-		clean_and_exit(2);
+		ft_printf("exit: %s: numeric argument required\n", arg);
+		exit(2);
 	}
-	if (args[2])
+	return (result);
+}
+
+static int	count_args(char **args)
+{
+	int	count;
+
+	count = 0;
+	while (args[count])
+		count++;
+	return (count);
+}
+
+int	builtin_exit(char **args, t_shell_context *ctx)
+{
+	int	exit_code;
+
+	(void)ctx;
+	ft_printf("exit\n");
+	if (count_args(args) > 2)
 	{
-		ft_printf_fd(STDERR_FILENO, "exit: too many arguments\n");
-		return (FAILURE);
-    }
-    clean_and_exit((unsigned char)nb);
-	return (SUCCESS);
+		ft_printf("exit: too many arguments\n");
+		return (1);
+	}
+	exit_code = parse_exit_code(args[1]);
+	exit(exit_code);
 }

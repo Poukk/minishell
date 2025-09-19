@@ -47,3 +47,20 @@ int	wait_for_child(pid_t pid)
 		return (WEXITSTATUS(status));
 	return (1);
 }
+
+void	execute_child_process(char **args, char *command_path,
+		t_redirection *input_redirs, t_redirection *output_redirs)
+{
+	if (setup_multiple_in_redirections(input_redirs) == -1)
+	{
+		free(command_path);
+		exit(1);
+	}
+	if (setup_multiple_out_redirections(output_redirs) == -1)
+	{
+		free(command_path);
+		exit(1);
+	}
+	if (execve(command_path, args, NULL) == -1)
+		handle_execve_error(args, command_path);
+}

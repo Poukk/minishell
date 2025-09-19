@@ -15,23 +15,6 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
-static void	execute_child_process(char **args, char *command_path,
-		t_redirection *input_redirs, t_redirection *output_redirs)
-{
-	if (setup_multiple_in_redirections(input_redirs) == -1)
-	{
-		free(command_path);
-		exit(1);
-	}
-	if (setup_multiple_out_redirections(output_redirs) == -1)
-	{
-		free(command_path);
-		exit(1);
-	}
-	if (execve(command_path, args, NULL) == -1)
-		handle_execve_error(args, command_path);
-}
-
 int	execute_command(char **args)
 {
 	pid_t	pid;
@@ -84,41 +67,53 @@ static int	check_directory_and_fork(char *command_path, char **expanded_args,
 	return (pid);
 }
 
-int	execute_command_with_redirections(t_ast_node *cmd_node, t_shell_env *env)
+static int	execute_external_command(t_cmd_setup *setup, t_ast_node *cmd_node,
+		t_gc *gc)
 {
-	pid_t		pid;
-	t_cmd_setup	setup;
-	t_gc		gc;
-	int			result;
+	pid_t	pid;
 
-	gc_init(&gc);
-	setup.gc = &gc;
-	result = handle_command_setup(cmd_node, env, &setup);
-	if (result != 0)
-		return (result);
-	pid = check_directory_and_fork(setup.command_path, setup.expanded_args,
-			&gc);
+	pid = check_directory_and_fork(setup->command_path, setup->expanded_args,
+			gc);
 	if (pid == 1 || pid == 126)
 		return (pid);
 	if (pid == 0)
-		execute_child_process(setup.expanded_args, setup.command_path,
+		execute_child_process(setup->expanded_args, setup->command_path,
 			cmd_node->input_redirs, cmd_node->output_redirs);
 	else
 	{
-		free(setup.command_path);
-		gc_free_all(&gc);
+		free(setup->command_path);
+		gc_free_all(gc);
 		return (wait_for_child(pid));
 	}
 	return (0);
 }
 
-int	executor_execute(t_ast_node *ast, t_shell_env *env)
+int	execute_command_with_redirections(t_ast_node *cmd_node,
+		t_shell_context *ctx)
+{
+	t_cmd_setup	setup;
+	t_gc		gc;
+	int			result;
+
+	if (!cmd_node || !cmd_node->args || !cmd_node->args[0])
+		return (1);
+	if (is_builtin_command(cmd_node->args[0]) != BUILTIN_NONE)
+		return (execute_builtin_with_redirections(cmd_node, ctx));
+	gc_init(&gc);
+	setup.gc = &gc;
+	result = handle_command_setup(cmd_node, ctx->env, &setup);
+	if (result != 0)
+		return (result);
+	return (execute_external_command(&setup, cmd_node, &gc));
+}
+
+int	executor_execute(t_ast_node *ast, t_shell_context *ctx)
 {
 	if (!ast)
 		return (0);
 	if (ast->type == NODE_CMD)
-		return (execute_command_with_redirections(ast, env));
+		return (execute_command_with_redirections(ast, ctx));
 	else if (ast->type == NODE_PIPE)
-		return (execute_pipe(ast, env));
+		return (execute_pipe(ast, ctx));
 	return (1);
 }

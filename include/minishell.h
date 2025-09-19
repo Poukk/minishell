@@ -108,6 +108,18 @@ typedef struct s_shell_context
 	t_gc		*gc;
 }	t_shell_context;
 
+typedef enum e_builtin_type
+{
+	BUILTIN_NONE,
+	BUILTIN_ECHO,
+	BUILTIN_CD,
+	BUILTIN_PWD,
+	BUILTIN_ENV,
+	BUILTIN_EXPORT,
+	BUILTIN_UNSET,
+	BUILTIN_EXIT
+}	t_builtin_type;
+
 typedef struct s_redir_params
 {
 	t_redirection	**input_redirs;
@@ -121,6 +133,13 @@ typedef struct s_token_process_data
 	int			index;
 	t_shell_env	*env;
 }	t_token_process_data;
+
+typedef struct s_cmd_setup
+{
+	char	**expanded_args;
+	char	*command_path;
+	t_gc	*gc;
+}	t_cmd_setup;
 
 //ast_redir.c
 t_redirection	*redirection_create(t_gc *gc, int type, char *filename);
@@ -193,22 +212,17 @@ void			skip_redirections(t_token **current);
 char			*expand_variable(t_gc *gc, const char *var_name,
 					t_shell_env *env);
 
-typedef struct s_cmd_setup
-{
-	char	**expanded_args;
-	char	*command_path;
-	t_gc	*gc;
-}	t_cmd_setup;
-
 // executor.c
-int				executor_execute(t_ast_node *ast, t_shell_env *env);
+int				executor_execute(t_ast_node *ast, t_shell_context *ctx);
 int				execute_command(char **args);
 int				execute_command_with_redirections(t_ast_node *cmd_node,
-					t_shell_env *env);
+					t_shell_context *ctx);
 
 // executor_utils.c
 void			handle_execve_error(char **args, char *command_path);
 int				wait_for_child(pid_t pid);
+void			execute_child_process(char **args, char *command_path,
+					t_redirection *input_redirs, t_redirection *output_redirs);
 
 // executor_expansion.c
 char			*expand_variable_in_string(t_gc *gc, char *str,
@@ -233,6 +247,8 @@ char			*get_validated_command_path(t_ast_node *cmd_node);
 int				setup_input_redirection(t_redirection *redir);
 int				setup_output_redirection(t_redirection *redir);
 int				create_all_output_files(t_redirection *output_redirs);
+int				execute_builtin_with_redirections(t_ast_node *cmd_node,
+					t_shell_context *ctx);
 
 // heredoc_collection.c
 int				is_delimiter_match(char *line, char *delimiter);
@@ -273,10 +289,22 @@ int				setup_multiple_in_redirections(t_redirection *input_redirs);
 int				setup_multiple_out_redirections(t_redirection *output_redirs);
 
 // executor_pipes.c
-int				execute_pipe(t_ast_node *ast, t_shell_env *env);
+int				execute_pipe(t_ast_node *ast, t_shell_context *ctx);
 
 // error.c
 int				handle_file_open_error(char *filename);
+
+// executor_builtins.c
+t_builtin_type	is_builtin_command(const char *cmd_name);
+int				execute_builtin(t_builtin_type type, char **args,
+					t_shell_context *ctx);
+int				builtin_echo(char **args);
+int				builtin_cd(char **args, t_shell_context *ctx);
+int				builtin_pwd(void);
+int				builtin_env(t_shell_context *ctx);
+int				builtin_export(char **args, t_shell_context *ctx);
+int				builtin_unset(char **args, t_shell_context *ctx);
+int				builtin_exit(char **args, t_shell_context *ctx);
 
 // env_storage.c
 t_shell_env		*env_create(t_gc *gc);

@@ -4,8 +4,15 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-static t_shell_env *create_test_env(t_gc *gc) {
-	return env_create(gc);
+static t_shell_context *create_test_context(t_gc *gc) {
+	t_shell_context *ctx;
+	
+	ctx = gc_malloc(gc, sizeof(t_shell_context));
+	if (!ctx)
+		return (NULL);
+	ctx->env = env_create(gc);
+	ctx->gc = gc;
+	return (ctx);
 }
 
 Test(executor_tests, test_path_resolution_absolute) {
@@ -49,15 +56,15 @@ Test(executor_tests, test_executor_simple_command) {
 	t_gc gc;
 	t_ast_node *node;
 	char *args[] = {"echo", "test", NULL};
-	t_shell_env *env;
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
-	env = create_test_env(&gc);
+	ctx = create_test_context(&gc);
 	node = ast_node_create(&gc, NODE_CMD);
 	ast_node_set_args(&gc, node, args);
 	
-	result = executor_execute(node, env);
+	result = executor_execute(node, ctx);
 	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
@@ -67,15 +74,15 @@ Test(executor_tests, test_executor_invalid_command) {
 	t_gc gc;
 	t_ast_node *node;
 	char *args[] = {"nonexistent_xyz_cmd", NULL};
-	t_shell_env *env;
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
-	env = create_test_env(&gc);
+	ctx = create_test_context(&gc);
 	node = ast_node_create(&gc, NODE_CMD);
 	ast_node_set_args(&gc, node, args);
 	
-	result = executor_execute(node, env);
+	result = executor_execute(node, ctx);
 	cr_assert_eq(result, 127);
 	
 	gc_free_all(&gc);
@@ -86,9 +93,11 @@ Test(executor_tests, test_simple_pipe) {
 	t_ast_node *pipe_node, *left_cmd, *right_cmd;
 	char *left_args[] = {"echo", "hello", NULL};
 	char *right_args[] = {"cat", NULL};
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	pipe_node = ast_node_create(&gc, NODE_PIPE);
 	left_cmd = ast_node_create(&gc, NODE_CMD);
@@ -100,7 +109,7 @@ Test(executor_tests, test_simple_pipe) {
 	pipe_node->left = left_cmd;
 	pipe_node->right = right_cmd;
 	
-	result = executor_execute(pipe_node, NULL);
+	result = executor_execute(pipe_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
@@ -111,9 +120,11 @@ Test(executor_tests, test_pipe_with_grep) {
 	t_ast_node *pipe_node, *left_cmd, *right_cmd;
 	char *left_args[] = {"echo", "hello\nworld\nhello", NULL};
 	char *right_args[] = {"grep", "hello", NULL};
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	pipe_node = ast_node_create(&gc, NODE_PIPE);
 	left_cmd = ast_node_create(&gc, NODE_CMD);
@@ -125,7 +136,7 @@ Test(executor_tests, test_pipe_with_grep) {
 	pipe_node->left = left_cmd;
 	pipe_node->right = right_cmd;
 	
-	result = executor_execute(pipe_node, NULL);
+	result = executor_execute(pipe_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
@@ -137,9 +148,11 @@ Test(executor_tests, test_multiple_pipes) {
 	char *args1[] = {"echo", "test", NULL};
 	char *args2[] = {"cat", NULL};
 	char *args3[] = {"wc", "-l", NULL};
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	outer_pipe = ast_node_create(&gc, NODE_PIPE);
 	inner_pipe = ast_node_create(&gc, NODE_PIPE);
@@ -156,7 +169,7 @@ Test(executor_tests, test_multiple_pipes) {
 	outer_pipe->left = inner_pipe;
 	outer_pipe->right = cmd3;
 	
-	result = executor_execute(outer_pipe, NULL);
+	result = executor_execute(outer_pipe, ctx);
 	cr_assert_eq(result, 0);
 	
 	gc_free_all(&gc);
@@ -166,15 +179,17 @@ Test(executor_tests, test_output_redirection) {
 	t_gc gc;
 	t_ast_node *cmd_node;
 	char *args[] = {"echo", "hello world", NULL};
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	cmd_node = ast_node_create(&gc, NODE_CMD);
 	ast_node_set_args(&gc, cmd_node, args);
 	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_OUT, 
 											   "test_output.txt");
 	
-	result = executor_execute(cmd_node, NULL);
+	result = executor_execute(cmd_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	int fd = open("test_output.txt", O_RDONLY);
@@ -196,9 +211,11 @@ Test(executor_tests, test_input_redirection) {
 	t_gc gc;
 	t_ast_node *cmd_node;
 	char *args[] = {"cat", NULL};
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	int fd = open("test_input.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd != -1) {
@@ -211,7 +228,7 @@ Test(executor_tests, test_input_redirection) {
 	cmd_node->input_redirs = redirection_create(&gc, TOKEN_REDIR_IN, 
 											  "test_input.txt");
 	
-	result = executor_execute(cmd_node, NULL);
+	result = executor_execute(cmd_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	unlink("test_input.txt");
@@ -223,9 +240,11 @@ Test(executor_tests, test_both_redirections) {
 	t_gc gc;
 	t_ast_node *cmd_node;
 	char *args[] = {"cat", NULL};
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	int fd = open("test_input2.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd != -1) {
@@ -240,7 +259,7 @@ Test(executor_tests, test_both_redirections) {
 	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_OUT, 
 											   "test_output2.txt");
 	
-	result = executor_execute(cmd_node, NULL);
+	result = executor_execute(cmd_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	fd = open("test_output2.txt", O_RDONLY);
@@ -265,9 +284,11 @@ Test(executor_tests, test_pipe_with_redirection) {
 	t_ast_node *pipe_node, *left_cmd, *right_cmd;
 	char *left_args[] = {"echo", "hello world", NULL};
 	char *right_args[] = {"cat", NULL};
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	pipe_node = ast_node_create(&gc, NODE_PIPE);
 	left_cmd = ast_node_create(&gc, NODE_CMD);
@@ -282,7 +303,7 @@ Test(executor_tests, test_pipe_with_redirection) {
 	pipe_node->left = left_cmd;
 	pipe_node->right = right_cmd;
 	
-	result = executor_execute(pipe_node, NULL);
+	result = executor_execute(pipe_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	int fd = open("pipe_test_output.txt", O_RDONLY);
@@ -304,9 +325,11 @@ Test(executor_tests, test_multiple_output_redirections) {
 	t_gc gc;
 	t_ast_node *cmd_node;
 	char *args[] = {"echo", "hello", NULL};
+	t_shell_context *ctx;
 	int result;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	cmd_node = ast_node_create(&gc, NODE_CMD);
 	ast_node_set_args(&gc, cmd_node, args);
 	
@@ -319,7 +342,7 @@ Test(executor_tests, test_multiple_output_redirections) {
 	redir2->next = redir3;
 	cmd_node->output_redirs = redir1;
 	
-	result = executor_execute(cmd_node, NULL);
+	result = executor_execute(cmd_node, ctx);
 	cr_assert_eq(result, 0);
 	
 	// All three files should be created
@@ -368,8 +391,10 @@ Test(executor_tests, test_append_redirection_basic) {
 	t_gc gc;
 	t_ast_node *cmd_node;
 	char *args[] = {"echo", "hello", NULL};
+	t_shell_context *ctx;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	// Create a command with append redirection
 	cmd_node = ast_node_create(&gc, NODE_CMD);
@@ -377,7 +402,7 @@ Test(executor_tests, test_append_redirection_basic) {
 	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append.txt");
 	
 	// Execute the command
-	cr_assert_eq(executor_execute(cmd_node, NULL), 0);
+	cr_assert_eq(executor_execute(cmd_node, ctx), 0);
 	
 	// Check file exists and contains "hello"
 	FILE *file = fopen("test_append.txt", "r");
@@ -396,8 +421,10 @@ Test(executor_tests, test_append_redirection_existing_file) {
 	t_gc gc;
 	t_ast_node *cmd_node;
 	char *args[] = {"echo", "world", NULL};
+	t_shell_context *ctx;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	// Create file with initial content
 	FILE *file = fopen("test_append_existing.txt", "w");
@@ -410,7 +437,7 @@ Test(executor_tests, test_append_redirection_existing_file) {
 	cmd_node->output_redirs = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append_existing.txt");
 	
 	// Execute the command
-	cr_assert_eq(executor_execute(cmd_node, NULL), 0);
+	cr_assert_eq(executor_execute(cmd_node, ctx), 0);
 	
 	// Check file contains both "hello" and "world"
 	file = fopen("test_append_existing.txt", "r");
@@ -432,8 +459,10 @@ Test(executor_tests, test_multiple_append_redirections) {
 	t_gc gc;
 	t_ast_node *cmd_node;
 	char *args[] = {"echo", "test", NULL};
+	t_shell_context *ctx;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	// Create multiple append redirections
 	t_redirection *redir1 = redirection_create(&gc, TOKEN_REDIR_APPEND, "test_append1.txt");
@@ -448,7 +477,7 @@ Test(executor_tests, test_multiple_append_redirections) {
 	cmd_node->output_redirs = redir1;
 	
 	// Execute the command
-	cr_assert_eq(executor_execute(cmd_node, NULL), 0);
+	cr_assert_eq(executor_execute(cmd_node, ctx), 0);
 	
 	// Check that all files were created
 	cr_assert_eq(access("test_append1.txt", F_OK), 0);
@@ -485,8 +514,10 @@ Test(executor_tests, test_mixed_truncate_append_redirections) {
 	t_gc gc;
 	t_ast_node *cmd_node;
 	char *args[] = {"echo", "mixed", NULL};
+	t_shell_context *ctx;
 	
 	gc_init(&gc);
+	ctx = create_test_context(&gc);
 	
 	// Create mixed redirections: > >> >
 	t_redirection *redir1 = redirection_create(&gc, TOKEN_REDIR_OUT, "test_mixed1.txt");
@@ -501,7 +532,7 @@ Test(executor_tests, test_mixed_truncate_append_redirections) {
 	cmd_node->output_redirs = redir1;
 	
 	// Execute the command
-	cr_assert_eq(executor_execute(cmd_node, NULL), 0);
+	cr_assert_eq(executor_execute(cmd_node, ctx), 0);
 	
 	// Check that all files were created
 	cr_assert_eq(access("test_mixed1.txt", F_OK), 0);
