@@ -16,6 +16,7 @@ int	execute_command(char **args, t_shell_env *env)
 {
 	pid_t	pid;
 	char	*command_path;
+	int		result;
 
 	if (!args || !args[0])
 		return (1);
@@ -23,10 +24,12 @@ int	execute_command(char **args, t_shell_env *env)
 	if (!command_path)
 		return (return_error_code(EXIT_CMD_NOT_FOUND, args[0], NULL,
 				"command not found"));
+	setup_command_signals();
 	pid = fork();
 	if (pid == -1)
 	{
 		free(command_path);
+		setup_shell_signals();
 		return (1);
 	}
 	if (pid == 0)
@@ -34,7 +37,9 @@ int	execute_command(char **args, t_shell_env *env)
 	else
 	{
 		free(command_path);
-		return (wait_for_child(pid));
+		result = wait_for_child(pid);
+		setup_shell_signals();
+		return (result);
 	}
 	return (0);
 }
@@ -68,10 +73,14 @@ static int	execute_external_command(t_cmd_setup *setup, t_ast_node *cmd_node,
 	t_child_exec_ctx	exec_ctx;
 	pid_t				pid;
 
+	setup_command_signals();
 	pid = check_directory_and_fork(setup->command_path, setup->exp_args,
 			gc);
 	if (pid == 1 || pid == 126)
+	{
+		setup_shell_signals();
 		return (pid);
+	}
 	if (pid == 0)
 	{
 		exec_ctx.redirections = cmd_node->redirections;
@@ -116,7 +125,9 @@ int	execute_command_with_redirections(t_ast_node *cmd_node,
 		gc_free_all(&gc);
 		return (result);
 	}
-	return (execute_external_command(&setup, cmd_node, &gc, ctx));
+	result = execute_external_command(&setup, cmd_node, &gc, ctx);
+	setup_shell_signals();
+	return (result);
 }
 
 int	execute(t_ast_node *ast, t_shell_context *ctx)

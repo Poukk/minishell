@@ -36,18 +36,3 @@ void	redirection_entry_add_ordered(t_redirection_entry **head,
 	new_entry->next = current;
 	prev->next = new_entry;
 }
-
-t_redirection_entry	*redirection_entry_get_by_position(
-	t_redirection_entry *head, int position)
-{
-	t_redirection_entry	*current;
-
-	current = head;
-	while (current)
-	{
-		if (current->position == position)
-			return (current);
-		current = current->next;
-	}
-	return (NULL);
-}

@@ -64,8 +64,7 @@ $(filter-out src/core/main.c, $(SRCS))
 
 #---------------- Variables ----------------#
 CC      := cc
-CFLAGS  := -Wextra -Wall -Werror -Wunreachable-code -Ofast
-
+CFLAGS  := -Wextra -Wall -Werror -Wunreachable-code -Ofast -Wunused
 LIB_DIR := ./lib
 LIBFT   := $(LIB_DIR)/Libft
 

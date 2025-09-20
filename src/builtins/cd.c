@@ -79,7 +79,7 @@ int	builtin_cd(char **args, t_shell_context *ctx)
 	if (count_args(args) > 2)
 	{
 		ft_dprintf(2, "cd: too many arguments\n");
-		return (2);
+		return (1);
 	}
 	if (args[1] && ft_strncmp(args[1], "-", 2) == 0)
 	{

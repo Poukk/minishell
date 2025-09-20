@@ -17,7 +17,7 @@ static int	setup_child_redirections(t_child_exec_ctx *ctx, char *command_path)
 {
 	if (ctx->redirections)
 	{
-		if (setup_redirections_ordered(ctx->redirections) == -1)
+		if (setup_redir_ordered(ctx->redirections) == -1)
 		{
 			free(command_path);
 			exit(1);
@@ -46,7 +46,8 @@ void	execute_child_process(char **args, char *command_path,
 	char	**env_array;
 
 	gc_init(&gc);
-	setup_command_signals();
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	setup_child_redirections(ctx, command_path);
 	env_array = NULL;
 	if (ctx->env)

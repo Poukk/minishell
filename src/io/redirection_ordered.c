@@ -74,7 +74,7 @@ static int	is_output_redirection(int type)
 	return (type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND);
 }
 
-int	setup_redirections_ordered(t_redirection_entry *redirections)
+int	setup_redir_ordered(t_redirection_entry *redirections)
 {
 	t_redirection_entry	*current;
 

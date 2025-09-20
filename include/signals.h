@@ -15,12 +15,12 @@
 
 # include <signal.h>
 
-extern int	g_signal_received;
+extern volatile sig_atomic_t	g_signal_received;
 
-void	setup_shell_signals(void);
-void	setup_command_signals(void);
-void	handle_sigint(int sig);
-void	reset_signal_received(void);
-int		get_signal_received(void);
-int		process_child_status(int status);
+sig_atomic_t	get_signal_received(void);
+void			setup_shell_signals(void);
+void			setup_command_signals(void);
+void			handle_sigint(int sig);
+void			reset_signal_received(void);
+int				process_child_status(int status);
 #endif

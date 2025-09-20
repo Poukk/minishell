@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-int	g_signal_received = 0;
+volatile sig_atomic_t	g_signal_received = 0;
 
-int	get_signal_received(void)
+sig_atomic_t	get_signal_received(void)
 {
 	return (g_signal_received);
 }

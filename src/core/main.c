@@ -75,19 +75,16 @@ static void	main_loop(t_shell_context *ctx)
 	while (1)
 	{
 		line = readline(PROMPT);
+		if (!line)
+		{
+			ft_printf("exit\n");
+			break ;
+		}
 		if (get_signal_received())
 		{
 			signal_exit_code = 128 + get_signal_received();
 			env_set_exit_code(ctx->env, signal_exit_code);
 			reset_signal_received();
-			if (line)
-				free(line);
-			continue ;
-		}
-		if (!line)
-		{
-			ft_printf("exit\n");
-			break ;
 		}
 		handle_line(line, ctx);
 		free(line);

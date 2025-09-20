@@ -57,5 +57,6 @@ int	wait_for_child(pid_t pid)
 
 	if (waitpid(pid, &status, 0) == -1)
 		return (1);
+	reset_signal_received();
 	return (process_child_status(status));
 }

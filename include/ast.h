@@ -49,13 +49,12 @@ typedef struct s_ast_node
 	t_redirection			*output_redirs;
 }	t_ast_node;
 
-t_redirection_entry	*redirection_entry_create(t_gc *gc, int type, char *filename, int position);
+t_redirection_entry	*redirection_entry_create(t_gc *gc, int type,
+						char *filename, int position);
 t_redirection_entry	*heredoc_entry_create(t_gc *gc, char *delimiter,
 						char *content, int position);
 void				redirection_entry_add_ordered(t_redirection_entry **head,
 						t_redirection_entry *new_entry);
-t_redirection_entry	*redirection_entry_get_by_position(t_redirection_entry *head,
-						int position);
 
 t_redirection		*redirection_create(t_gc *gc, int type, char *filename);
 t_redirection		*heredoc_redirection_create(t_gc *gc, char *delimiter,

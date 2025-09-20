@@ -37,9 +37,9 @@ typedef struct s_expansion_state
 typedef struct s_child_exec_ctx
 {
 	t_redirection_entry	*redirections;
-	t_redirection	*input_redirs;
-	t_redirection	*output_redirs;
-	t_shell_env		*env;
+	t_redirection		*input_redirs;
+	t_redirection		*output_redirs;
+	t_shell_env			*env;
 }	t_child_exec_ctx;
 
 int		execute(t_ast_node *ast, t_shell_context *ctx);
