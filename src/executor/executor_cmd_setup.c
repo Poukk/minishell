@@ -28,11 +28,11 @@ static int	setup_command_args(t_ast_node *cmd_node, t_shell_env *env,
 	return (0);
 }
 
-static int	resolve_command(t_cmd_setup *setup)
+static int	resolve_command(t_cmd_setup *setup, t_shell_env *env)
 {
 	struct stat	path_stat;
 
-	setup->command_path = resolve_command_path(setup->exp_args[0]);
+	setup->command_path = resolve_command_path(setup->exp_args[0], env);
 	if (!setup->command_path)
 	{
 		if ((setup->exp_args[0][0] == '/'
@@ -71,5 +71,5 @@ int	handle_command_setup(t_ast_node *cmd_node, t_shell_env *env,
 		setup->command_path = NULL;
 		return (0);
 	}
-	return (resolve_command(setup));
+	return (resolve_command(setup, env));
 }

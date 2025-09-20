@@ -61,7 +61,7 @@ static char	*search_in_path_dirs(char **path_dirs, const char *command)
 	return (NULL);
 }
 
-char	*resolve_command_path(const char *command)
+char	*resolve_command_path(const char *command, t_shell_env *env)
 {
 	char		*path_env;
 	char		**path_dirs;
@@ -79,7 +79,9 @@ char	*resolve_command_path(const char *command)
 		}
 		return (NULL);
 	}
-	path_env = getenv("PATH");
+	if (!env)
+		return (NULL);
+	path_env = env_get_value(env, "PATH");
 	if (!path_env)
 		return (NULL);
 	path_dirs = ft_split(path_env, ':');
@@ -88,13 +90,13 @@ char	*resolve_command_path(const char *command)
 	return (search_in_path_dirs(path_dirs, command));
 }
 
-char	*get_validated_command_path(t_ast_node *cmd_node)
+char	*get_validated_command_path(t_ast_node *cmd_node, t_shell_env *env)
 {
 	char	*command_path;
 
 	if (!cmd_node || !cmd_node->args || !cmd_node->args[0])
 		return (NULL);
-	command_path = resolve_command_path(cmd_node->args[0]);
+	command_path = resolve_command_path(cmd_node->args[0], env);
 	if (!command_path)
 		print_command_error(cmd_node->args[0], "command not found");
 	return (command_path);

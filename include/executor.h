@@ -43,7 +43,7 @@ typedef struct s_child_exec_ctx
 }	t_child_exec_ctx;
 
 int		execute(t_ast_node *ast, t_shell_context *ctx);
-int		execute_command(char **args);
+int		execute_command(char **args, t_shell_env *env);
 int		execute_command_with_redirections(t_ast_node *cmd_node,
 			t_shell_context *ctx);
 void	handle_execve_error(char **args, char *command_path);
@@ -62,8 +62,8 @@ char	*process_variable_char(t_gc *gc, char **current,
 char	*process_regular_char(t_gc *gc, char **current, char *result);
 int		handle_command_setup(t_ast_node *cmd_node, t_shell_env *env,
 			t_cmd_setup *setup);
-char	*resolve_command_path(const char *command);
-char	*get_validated_command_path(t_ast_node *cmd_node);
+char	*resolve_command_path(const char *command, t_shell_env *env);
+char	*get_validated_command_path(t_ast_node *cmd_node, t_shell_env *env);
 int		setup_input_redirection(t_redirection *redir);
 int		setup_output_redirection(t_redirection *redir);
 int		create_all_output_files(t_redirection *output_redirs);

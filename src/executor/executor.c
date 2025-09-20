@@ -12,14 +12,14 @@
 
 #include "minishell.h"
 
-int	execute_command(char **args)
+int	execute_command(char **args, t_shell_env *env)
 {
 	pid_t	pid;
 	char	*command_path;
 
 	if (!args || !args[0])
 		return (1);
-	command_path = resolve_command_path(args[0]);
+	command_path = resolve_command_path(args[0], env);
 	if (!command_path)
 		return (return_error_code(EXIT_CMD_NOT_FOUND, args[0], NULL,
 				"command not found"));
