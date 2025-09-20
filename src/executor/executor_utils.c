@@ -56,3 +56,26 @@ void	execute_child_process(char **args, char *command_path,
 		handle_execve_error(args, command_path);
 	gc_free_all(&gc);
 }
+
+int	check_directory_and_fork(char *command_path, char **expanded_args,
+		t_gc *gc)
+{
+	struct stat	path_stat;
+	pid_t		pid;
+
+	if (stat(command_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+	{
+		free(command_path);
+		gc_free_all(gc);
+		return (return_error_code(EXIT_EXEC_FAILED, expanded_args[0], NULL,
+				"Is a directory"));
+	}
+	pid = fork();
+	if (pid == -1)
+	{
+		free(command_path);
+		gc_free_all(gc);
+		return (1);
+	}
+	return (pid);
+}

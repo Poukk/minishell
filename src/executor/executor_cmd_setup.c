@@ -73,3 +73,30 @@ int	handle_command_setup(t_ast_node *cmd_node, t_shell_env *env,
 	}
 	return (resolve_command(setup, env));
 }
+
+int	setup_and_validate_command(t_ast_node *cmd_node, t_shell_env *env,
+		t_cmd_setup *setup, t_gc *gc)
+{
+	int	result;
+
+	if (!cmd_node || !cmd_node->args || !cmd_node->args[0])
+		return (1);
+	gc_init(gc);
+	setup->gc = gc;
+	result = handle_command_setup(cmd_node, env, setup);
+	if (result == 2)
+	{
+		gc_free_all(gc);
+		return (0);
+	}
+	return (result);
+}
+
+void	setup_child_exec_context(t_child_exec_ctx *exec_ctx,
+		t_ast_node *cmd_node, t_shell_context *ctx)
+{
+	exec_ctx->redirections = cmd_node->redirections;
+	exec_ctx->input_redirs = cmd_node->input_redirs;
+	exec_ctx->output_redirs = cmd_node->output_redirs;
+	exec_ctx->env = ctx->env;
+}
