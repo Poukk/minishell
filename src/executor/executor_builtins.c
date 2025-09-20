@@ -24,11 +24,23 @@ static int	setup_builtin_redirections(t_ast_node *cmd_node, int saved_fds[2])
 {
 	saved_fds[0] = dup(STDIN_FILENO);
 	saved_fds[1] = dup(STDOUT_FILENO);
-	if (setup_multiple_in_redirections(cmd_node->input_redirs) == -1
-		|| setup_multiple_out_redirections(cmd_node->output_redirs) == -1)
+	
+	if (cmd_node->redirections)
 	{
-		restore_saved_fds(saved_fds);
-		return (-1);
+		if (setup_redirections_ordered(cmd_node->redirections) == -1)
+		{
+			restore_saved_fds(saved_fds);
+			return (-1);
+		}
+	}
+	else
+	{
+		if (setup_multiple_in_redirections(cmd_node->input_redirs) == -1
+			|| setup_multiple_out_redirections(cmd_node->output_redirs) == -1)
+		{
+			restore_saved_fds(saved_fds);
+			return (-1);
+		}
 	}
 	return (0);
 }

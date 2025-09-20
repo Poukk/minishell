@@ -15,6 +15,7 @@
 
 void	init_empty_exec_ctx(t_child_exec_ctx *ctx)
 {
+	ctx->redirections = NULL;
 	ctx->input_redirs = NULL;
 	ctx->output_redirs = NULL;
 	ctx->env = NULL;
@@ -67,15 +68,26 @@ void	execute_child_process(char **args, char *command_path,
 
 	gc_init(&gc);
 	setup_command_signals();
-	if (setup_multiple_in_redirections(ctx->input_redirs) == -1)
+	if (ctx->redirections)
 	{
-		free(command_path);
-		exit(1);
+		if (setup_redirections_ordered(ctx->redirections) == -1)
+		{
+			free(command_path);
+			exit(1);
+		}
 	}
-	if (setup_multiple_out_redirections(ctx->output_redirs) == -1)
+	else
 	{
-		free(command_path);
-		exit(1);
+		if (setup_multiple_in_redirections(ctx->input_redirs) == -1)
+		{
+			free(command_path);
+			exit(1);
+		}
+		if (setup_multiple_out_redirections(ctx->output_redirs) == -1)
+		{
+			free(command_path);
+			exit(1);
+		}
 	}
 	env_array = NULL;
 	if (ctx->env)

@@ -74,6 +74,7 @@ static int	execute_external_command(t_cmd_setup *setup, t_ast_node *cmd_node,
 		return (pid);
 	if (pid == 0)
 	{
+		exec_ctx.redirections = cmd_node->redirections;
 		exec_ctx.input_redirs = cmd_node->input_redirs;
 		exec_ctx.output_redirs = cmd_node->output_redirs;
 		exec_ctx.env = ctx->env;

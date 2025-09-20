@@ -57,6 +57,19 @@ int	count_command_tokens(t_token *tokens)
 
 	count = 0;
 	current = tokens;
+	
+	// Skip initial redirections
+	while (current && (current->type == TOKEN_REDIR_IN
+			|| current->type == TOKEN_REDIR_OUT
+			|| current->type == TOKEN_REDIR_APPEND
+			|| current->type == TOKEN_HEREDOC))
+	{
+		current = current->next;
+		if (current && current->type == TOKEN_WORD)
+			current = current->next;
+	}
+	
+	// Count command tokens
 	while (current && (current->type == TOKEN_WORD
 			|| current->type == TOKEN_VARIABLE))
 	{
@@ -64,7 +77,8 @@ int	count_command_tokens(t_token *tokens)
 		current = current->next;
 		while (current && (current->type == TOKEN_REDIR_IN
 				|| current->type == TOKEN_REDIR_OUT
-				|| current->type == TOKEN_REDIR_APPEND))
+				|| current->type == TOKEN_REDIR_APPEND
+				|| current->type == TOKEN_HEREDOC))
 		{
 			current = current->next;
 			if (current && current->type == TOKEN_WORD)
@@ -78,7 +92,8 @@ void	skip_redirections(t_token **current)
 {
 	while (*current && ((*current)->type == TOKEN_REDIR_IN
 			|| (*current)->type == TOKEN_REDIR_OUT
-			|| (*current)->type == TOKEN_REDIR_APPEND))
+			|| (*current)->type == TOKEN_REDIR_APPEND
+			|| (*current)->type == TOKEN_HEREDOC))
 	{
 		*current = (*current)->next;
 		if (*current && (*current)->type == TOKEN_WORD)

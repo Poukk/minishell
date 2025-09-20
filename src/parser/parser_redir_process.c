@@ -73,6 +73,8 @@ void	process_token(t_gc *gc, t_token **tokens, t_parse_context *ctx,
 	if (((*tokens)->type == TOKEN_WORD || (*tokens)->type == TOKEN_VARIABLE)
 		&& *(ctx->i) < ctx->max_args)
 		process_word_token(gc, tokens, ctx, env);
+	else if (ctx->redirections)
+		parse_redirections(gc, tokens, ctx->redirections, &ctx->redir_position);
 	else
-		parse_redirections(gc, tokens, ctx->input_redirs, ctx->output_redirs);
+		parse_redirections_legacy(gc, tokens, ctx->input_redirs, ctx->output_redirs);
 }

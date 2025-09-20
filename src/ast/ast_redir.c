@@ -71,3 +71,88 @@ void	redirection_add_back(t_redirection **head, t_redirection *new_redir)
 		current = current->next;
 	current->next = new_redir;
 }
+
+t_redirection_entry	*redirection_entry_create(t_gc *gc, int type, char *filename, int position)
+{
+	t_redirection_entry	*entry;
+
+	entry = gc_malloc(gc, sizeof(t_redirection_entry));
+	if (!entry)
+		return (NULL);
+	entry->type = type;
+	entry->filename = gc_malloc(gc, ft_strlen(filename) + 1);
+	if (!entry->filename)
+		return (NULL);
+	ft_strlcpy(entry->filename, filename, ft_strlen(filename) + 1);
+	entry->heredoc_content = NULL;
+	entry->position = position;
+	entry->next = NULL;
+	return (entry);
+}
+
+t_redirection_entry	*heredoc_entry_create(t_gc *gc, char *delimiter,
+	char *content, int position)
+{
+	t_redirection_entry	*entry;
+
+	entry = gc_malloc(gc, sizeof(t_redirection_entry));
+	if (!entry)
+		return (NULL);
+	entry->type = TOKEN_HEREDOC;
+	entry->filename = gc_malloc(gc, ft_strlen(delimiter) + 1);
+	if (!entry->filename)
+		return (NULL);
+	ft_strlcpy(entry->filename, delimiter, ft_strlen(delimiter) + 1);
+	if (content)
+	{
+		entry->heredoc_content = gc_malloc(gc, ft_strlen(content) + 1);
+		if (!entry->heredoc_content)
+			return (NULL);
+		ft_strlcpy(entry->heredoc_content, content, ft_strlen(content) + 1);
+	}
+	else
+		entry->heredoc_content = NULL;
+	entry->position = position;
+	entry->next = NULL;
+	return (entry);
+}
+
+void	redirection_entry_add_ordered(t_redirection_entry **head,
+	t_redirection_entry *new_entry)
+{
+	t_redirection_entry	*current;
+	t_redirection_entry	*prev;
+
+	if (!head || !new_entry)
+		return ;
+	if (!*head || (*head)->position > new_entry->position)
+	{
+		new_entry->next = *head;
+		*head = new_entry;
+		return ;
+	}
+	prev = NULL;
+	current = *head;
+	while (current && current->position <= new_entry->position)
+	{
+		prev = current;
+		current = current->next;
+	}
+	new_entry->next = current;
+	prev->next = new_entry;
+}
+
+t_redirection_entry	*redirection_entry_get_by_position(t_redirection_entry *head,
+	int position)
+{
+	t_redirection_entry	*current;
+
+	current = head;
+	while (current)
+	{
+		if (current->position == position)
+			return (current);
+		current = current->next;
+	}
+	return (NULL);
+}

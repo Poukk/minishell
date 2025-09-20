@@ -23,6 +23,7 @@ t_ast_node	*ast_node_create(t_gc *gc, t_node_type type)
 	node->args = NULL;
 	node->left = NULL;
 	node->right = NULL;
+	node->redirections = NULL;
 	node->input_redirs = NULL;
 	node->output_redirs = NULL;
 	return (node);
