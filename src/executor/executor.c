@@ -68,7 +68,7 @@ static int	execute_external_command(t_cmd_setup *setup, t_ast_node *cmd_node,
 	t_child_exec_ctx	exec_ctx;
 	pid_t				pid;
 
-	pid = check_directory_and_fork(setup->command_path, setup->expanded_args,
+	pid = check_directory_and_fork(setup->command_path, setup->exp_args,
 			gc);
 	if (pid == 1 || pid == 126)
 		return (pid);
@@ -78,7 +78,7 @@ static int	execute_external_command(t_cmd_setup *setup, t_ast_node *cmd_node,
 		exec_ctx.input_redirs = cmd_node->input_redirs;
 		exec_ctx.output_redirs = cmd_node->output_redirs;
 		exec_ctx.env = ctx->env;
-		execute_child_process(setup->expanded_args,
+		execute_child_process(setup->exp_args,
 			setup->command_path, &exec_ctx);
 	}
 	else
@@ -109,9 +109,10 @@ int	execute_command_with_redirections(t_ast_node *cmd_node,
 	}
 	if (result != 0)
 		return (result);
-	if (is_builtin_command(setup.expanded_args[0]) != BUILTIN_NONE)
+	if (is_builtin_command(setup.exp_args[0]) != BUILTIN_NONE)
 	{
-		result = execute_builtin_with_redirections_expanded(&setup, cmd_node, ctx);
+		result = execute_builtin_with_redirections_expanded(&setup,
+				cmd_node, ctx);
 		gc_free_all(&gc);
 		return (result);
 	}

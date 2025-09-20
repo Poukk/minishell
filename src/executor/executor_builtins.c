@@ -65,8 +65,8 @@ int	execute_builtin_with_redirections(t_ast_node *cmd_node,
 		gc_free_all(&gc);
 		return (1);
 	}
-	result = execute_builtin(is_builtin_command(setup.expanded_args[0]),
-			setup.expanded_args, ctx);
+	result = execute_builtin(is_builtin_command(setup.exp_args[0]),
+			setup.exp_args, ctx);
 	restore_saved_fds(saved_fds);
 	gc_free_all(&gc);
 	return (result);
@@ -80,8 +80,8 @@ int	execute_builtin_with_redirections_expanded(t_cmd_setup *setup,
 
 	if (setup_builtin_redirections(cmd_node, saved_fds) == -1)
 		return (1);
-	result = execute_builtin(is_builtin_command(setup->expanded_args[0]),
-			setup->expanded_args, ctx);
+	result = execute_builtin(is_builtin_command(setup->exp_args[0]),
+			setup->exp_args, ctx);
 	restore_saved_fds(saved_fds);
 	return (result);
 }

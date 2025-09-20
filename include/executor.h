@@ -20,7 +20,7 @@
 
 typedef struct s_cmd_setup
 {
-	char	**expanded_args;
+	char	**exp_args;
 	char	*command_path;
 	t_gc	*gc;
 }	t_cmd_setup;
