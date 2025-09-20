@@ -23,5 +23,6 @@ void	print_error(const char *command, const char *arg, const char *message);
 void	print_command_error(const char *command, const char *message);
 int		return_error_code(int error_code, const char *command,
 			const char *arg, const char *message);
+int	handle_file_open_error(char *filename);
 
 #endif

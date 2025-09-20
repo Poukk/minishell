@@ -63,5 +63,7 @@ t_ast_node			*ast_node_create(t_gc *gc, t_node_type type);
 void				ast_node_set_args(t_gc *gc, t_ast_node *node, char **args);
 void				redirection_add_back(t_redirection **head,
 						t_redirection *new_redir);
+char	*collect_heredoc_content(t_gc *gc, char *delimiter);
+char	*expand_heredoc_variables(t_gc *gc, char *content, char *delimiter);
 
 #endif

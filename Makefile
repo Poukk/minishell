@@ -108,4 +108,14 @@ fclean: clean
 
 re: fclean all
 
+val: all
+	@valgrind -q --suppressions=suppression_file \
+				--leak-check=full \
+				--show-leak-kinds=all \
+				--track-origins=yes \
+				--track-fds=yes \
+				--trace-children=yes \
+				--trace-children-skip='*/bin/*,*/sbin/*,/usr/bin/*' \
+				./${NAME}
+
 .PHONY: all debug clean fclean re libft

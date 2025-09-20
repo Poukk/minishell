@@ -79,3 +79,27 @@ int	check_directory_and_fork(char *command_path, char **expanded_args,
 	}
 	return (pid);
 }
+
+int	wait_for_pipe_children(pid_t left_pid, pid_t right_pid,
+			int pipefd[2])
+{
+	int	left_status;
+	int	right_status;
+
+	close(pipefd[0]);
+	close(pipefd[1]);
+	waitpid(left_pid, &left_status, 0);
+	waitpid(right_pid, &right_status, 0);
+	reset_signal_received();
+	if (WIFEXITED(right_status))
+		return (WEXITSTATUS(right_status));
+	return (1);
+}
+
+int	setup_pipe_and_signals(int pipefd[2])
+{
+	if (pipe(pipefd) == -1)
+		return (1);
+	setup_command_signals();
+	return (0);
+}

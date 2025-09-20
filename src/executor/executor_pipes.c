@@ -36,20 +36,40 @@ static void	execute_right_command(t_ast_node *node, int pipefd[2],
 	exit(execute(node, ctx));
 }
 
-static int	wait_for_pipe_children(pid_t left_pid, pid_t right_pid,
-			int pipefd[2])
+static int	fork_left_child(t_ast_node *ast, int pipefd[2],
+	t_shell_context *ctx)
 {
-	int	left_status;
-	int	right_status;
+	pid_t	left_pid;
 
-	close(pipefd[0]);
-	close(pipefd[1]);
-	waitpid(left_pid, &left_status, 0);
-	waitpid(right_pid, &right_status, 0);
-	reset_signal_received();
-	if (WIFEXITED(right_status))
-		return (WEXITSTATUS(right_status));
-	return (1);
+	left_pid = fork();
+	if (left_pid == -1)
+	{
+		close(pipefd[0]);
+		close(pipefd[1]);
+		setup_shell_signals();
+		return (-1);
+	}
+	if (left_pid == 0)
+		execute_left_command(ast->left, pipefd, ctx);
+	return (left_pid);
+}
+
+static int	fork_right_child(t_ast_node *ast, int pipefd[2],
+	t_shell_context *ctx)
+{
+	pid_t	right_pid;
+
+	right_pid = fork();
+	if (right_pid == -1)
+	{
+		close(pipefd[0]);
+		close(pipefd[1]);
+		setup_shell_signals();
+		return (-1);
+	}
+	if (right_pid == 0)
+		execute_right_command(ast->right, pipefd, ctx);
+	return (right_pid);
 }
 
 int	execute_pipe(t_ast_node *ast, t_shell_context *ctx)
@@ -59,29 +79,14 @@ int	execute_pipe(t_ast_node *ast, t_shell_context *ctx)
 	pid_t	right_pid;
 	int		result;
 
-	if (pipe(pipefd) == -1)
+	if (setup_pipe_and_signals(pipefd) == 1)
 		return (1);
-	setup_command_signals();
-	left_pid = fork();
+	left_pid = fork_left_child(ast, pipefd, ctx);
 	if (left_pid == -1)
-	{
-		close(pipefd[0]);
-		close(pipefd[1]);
-		setup_shell_signals();
 		return (1);
-	}
-	if (left_pid == 0)
-		execute_left_command(ast->left, pipefd, ctx);
-	right_pid = fork();
+	right_pid = fork_right_child(ast, pipefd, ctx);
 	if (right_pid == -1)
-	{
-		close(pipefd[0]);
-		close(pipefd[1]);
-		setup_shell_signals();
 		return (1);
-	}
-	if (right_pid == 0)
-		execute_right_command(ast->right, pipefd, ctx);
 	result = wait_for_pipe_children(left_pid, right_pid, pipefd);
 	setup_shell_signals();
 	return (result);
