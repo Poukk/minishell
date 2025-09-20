@@ -69,6 +69,8 @@ int		setup_output_redirection(t_redirection *redir);
 int		create_all_output_files(t_redirection *output_redirs);
 int		execute_builtin_with_redirections(t_ast_node *cmd_node,
 			t_shell_context *ctx);
+int		execute_builtin_with_redirections_expanded(t_cmd_setup *setup,
+			t_ast_node *cmd_node, t_shell_context *ctx);
 int		is_delimiter_match(char *line, char *delimiter);
 char	*append_line_to_content(t_gc *gc, char *content, char *line,
 			size_t content_len);

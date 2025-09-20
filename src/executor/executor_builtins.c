@@ -71,3 +71,17 @@ int	execute_builtin_with_redirections(t_ast_node *cmd_node,
 	gc_free_all(&gc);
 	return (result);
 }
+
+int	execute_builtin_with_redirections_expanded(t_cmd_setup *setup,
+		t_ast_node *cmd_node, t_shell_context *ctx)
+{
+	int	result;
+	int	saved_fds[2];
+
+	if (setup_builtin_redirections(cmd_node, saved_fds) == -1)
+		return (1);
+	result = execute_builtin(is_builtin_command(setup->expanded_args[0]),
+			setup->expanded_args, ctx);
+	restore_saved_fds(saved_fds);
+	return (result);
+}

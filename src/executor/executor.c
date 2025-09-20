@@ -99,13 +99,22 @@ int	execute_command_with_redirections(t_ast_node *cmd_node,
 
 	if (!cmd_node || !cmd_node->args || !cmd_node->args[0])
 		return (1);
-	if (is_builtin_command(cmd_node->args[0]) != BUILTIN_NONE)
-		return (execute_builtin_with_redirections(cmd_node, ctx));
 	gc_init(&gc);
 	setup.gc = &gc;
 	result = handle_command_setup(cmd_node, ctx->env, &setup);
+	if (result == 2)
+	{
+		gc_free_all(&gc);
+		return (0);
+	}
 	if (result != 0)
 		return (result);
+	if (is_builtin_command(setup.expanded_args[0]) != BUILTIN_NONE)
+	{
+		result = execute_builtin_with_redirections_expanded(&setup, cmd_node, ctx);
+		gc_free_all(&gc);
+		return (result);
+	}
 	return (execute_external_command(&setup, cmd_node, &gc, ctx));
 }
 

@@ -63,15 +63,20 @@ static char	*search_in_path_dirs(char **path_dirs, const char *command)
 
 char	*resolve_command_path(const char *command)
 {
-	char	*path_env;
-	char	**path_dirs;
+	char		*path_env;
+	char		**path_dirs;
+	struct stat	path_stat;
 
 	if (!command || !*command)
 		return (NULL);
 	if (is_absolute_or_relative_path(command))
 	{
-		if (access(command, X_OK) == 0)
+		if (access(command, F_OK) == 0)
+		{
+			if (stat(command, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+				return (NULL);
 			return (ft_strdup(command));
+		}
 		return (NULL);
 	}
 	path_env = getenv("PATH");

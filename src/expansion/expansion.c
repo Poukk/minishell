@@ -76,24 +76,45 @@ char	*process_single_arg(t_gc *gc, char *arg, t_shell_env *env)
 
 char	**expand_command_args(t_gc *gc, char **args, t_shell_env *env)
 {
+	char	**temp_args;
 	char	**expanded_args;
 	int		i;
+	int		j;
 	int		count;
+	int		final_count;
 
 	if (!args)
 		return (NULL);
 	count = count_args(args);
-	expanded_args = gc_malloc(gc, sizeof(char *) * (count + 1));
+	temp_args = gc_malloc(gc, sizeof(char *) * (count + 1));
+	if (!temp_args)
+		return (NULL);
+	i = 0;
+	final_count = 0;
+	while (args[i])
+	{
+		temp_args[i] = process_single_arg(gc, args[i], env);
+		if (!temp_args[i])
+			return (NULL);
+		if (temp_args[i][0] != '\0')
+			final_count++;
+		i++;
+	}
+	temp_args[i] = NULL;
+	expanded_args = gc_malloc(gc, sizeof(char *) * (final_count + 1));
 	if (!expanded_args)
 		return (NULL);
 	i = 0;
-	while (args[i])
+	j = 0;
+	while (temp_args[i])
 	{
-		expanded_args[i] = process_single_arg(gc, args[i], env);
-		if (!expanded_args[i])
-			return (NULL);
+		if (temp_args[i][0] != '\0')
+		{
+			expanded_args[j] = temp_args[i];
+			j++;
+		}
 		i++;
 	}
-	expanded_args[i] = NULL;
+	expanded_args[j] = NULL;
 	return (expanded_args);
 }

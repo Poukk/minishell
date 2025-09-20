@@ -21,14 +21,32 @@ static int	setup_command_args(t_ast_node *cmd_node, t_shell_env *env,
 		gc_free_all(setup->gc);
 		return (1);
 	}
+	if (!setup->expanded_args[0])
+	{
+		return (2);
+	}
 	return (0);
 }
 
 static int	resolve_command(t_cmd_setup *setup)
 {
+	struct stat	path_stat;
+
 	setup->command_path = resolve_command_path(setup->expanded_args[0]);
 	if (!setup->command_path)
 	{
+		if ((setup->expanded_args[0][0] == '/' || 
+			(setup->expanded_args[0][0] == '.' && setup->expanded_args[0][1] == '/') ||
+			(setup->expanded_args[0][0] == '.' && setup->expanded_args[0][1] == '.' && setup->expanded_args[0][2] == '/')) &&
+			access(setup->expanded_args[0], F_OK) == 0 
+			&& stat(setup->expanded_args[0], &path_stat) == 0 
+			&& S_ISDIR(path_stat.st_mode))
+		{
+			ft_dprintf(2, "minishell: %s: Is a directory\n",
+				setup->expanded_args[0]);
+			gc_free_all(setup->gc);
+			return (126);
+		}
 		ft_dprintf(2, "minishell: %s: command not found\n",
 			setup->expanded_args[0]);
 		gc_free_all(setup->gc);
