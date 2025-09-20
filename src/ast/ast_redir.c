@@ -72,7 +72,8 @@ void	redirection_add_back(t_redirection **head, t_redirection *new_redir)
 	current->next = new_redir;
 }
 
-t_redirection_entry	*redirection_entry_create(t_gc *gc, int type, char *filename, int position)
+t_redirection_entry	*redirection_entry_create(t_gc *gc, int type,
+	char *filename, int position)
 {
 	t_redirection_entry	*entry;
 
@@ -91,7 +92,7 @@ t_redirection_entry	*redirection_entry_create(t_gc *gc, int type, char *filename
 }
 
 t_redirection_entry	*heredoc_entry_create(t_gc *gc, char *delimiter,
-	char *content, int position)
+		char *content, int position)
 {
 	t_redirection_entry	*entry;
 
@@ -115,44 +116,4 @@ t_redirection_entry	*heredoc_entry_create(t_gc *gc, char *delimiter,
 	entry->position = position;
 	entry->next = NULL;
 	return (entry);
-}
-
-void	redirection_entry_add_ordered(t_redirection_entry **head,
-	t_redirection_entry *new_entry)
-{
-	t_redirection_entry	*current;
-	t_redirection_entry	*prev;
-
-	if (!head || !new_entry)
-		return ;
-	if (!*head || (*head)->position > new_entry->position)
-	{
-		new_entry->next = *head;
-		*head = new_entry;
-		return ;
-	}
-	prev = NULL;
-	current = *head;
-	while (current && current->position <= new_entry->position)
-	{
-		prev = current;
-		current = current->next;
-	}
-	new_entry->next = current;
-	prev->next = new_entry;
-}
-
-t_redirection_entry	*redirection_entry_get_by_position(t_redirection_entry *head,
-	int position)
-{
-	t_redirection_entry	*current;
-
-	current = head;
-	while (current)
-	{
-		if (current->position == position)
-			return (current);
-		current = current->next;
-	}
-	return (NULL);
 }

@@ -18,6 +18,14 @@
 # include "ast.h"
 # include "env.h"
 
+typedef struct s_redir_ptrs
+{
+	t_redirection		*input_redirs;
+	t_redirection		*output_redirs;
+	t_redirection_entry	*redirections;
+	int					redir_position;
+}	t_redir_ptrs;
+
 typedef struct s_parse_context
 {
 	char					**args;
@@ -71,6 +79,10 @@ char		**extract_args_with_redirections(t_gc *gc,
 t_redirection_entry	*process_redirection_entry(t_gc *gc, t_token **tokens, int position);
 t_redirection_entry	*process_heredoc_entry(t_gc *gc, t_token **tokens, int position);
 int			setup_redirections_ordered(t_redirection_entry *redirections);
+int			is_word_or_redirection_token(t_token_type type);
+int			has_command_token(t_token *tokens);
+void		init_redir_ptrs(t_redirection **input, t_redirection **output,
+				t_redirection_entry **redirections, int *redir_position);
 char		*expand_variable(t_gc *gc, const char *var_name,
 				t_shell_env *env);
 int			is_redirection_token(t_token_type type);

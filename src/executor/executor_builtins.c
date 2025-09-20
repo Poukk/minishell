@@ -24,7 +24,6 @@ static int	setup_builtin_redirections(t_ast_node *cmd_node, int saved_fds[2])
 {
 	saved_fds[0] = dup(STDIN_FILENO);
 	saved_fds[1] = dup(STDOUT_FILENO);
-	
 	if (cmd_node->redirections)
 	{
 		if (setup_redirections_ordered(cmd_node->redirections) == -1)

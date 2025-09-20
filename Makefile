@@ -11,10 +11,14 @@ src/tokenizer/handler.c \
 src/tokenizer/syntax.c \
 src/ast/ast.c \
 src/ast/ast_redir.c \
+src/ast/ast_redir_utils.c \
 src/parser/parser.c \
 src/parser/parser_utils.c \
 src/parser/parser_redir.c \
+src/parser/parser_redir_entry.c \
 src/parser/parser_redir_helpers.c \
+src/parser/parser_redir_count.c \
+src/parser/parser_token_utils.c \
 src/parser/parser_redir_process.c \
 src/expansion/variables.c \
 src/expansion/expansion.c \
@@ -24,6 +28,7 @@ src/expansion/heredoc_utils.c \
 src/expansion/heredoc_loop.c \
 src/executor/executor.c \
 src/executor/executor_utils.c \
+src/executor/executor_helpers.c \
 src/executor/executor_cmd_setup.c \
 src/executor/executor_path.c \
 src/executor/executor_builtins.c \
@@ -31,6 +36,7 @@ src/executor/executor_pipes.c \
 src/io/heredoc_collection.c \
 src/io/heredoc.c \
 src/io/redirection.c \
+src/io/redirection_ordered.c \
 src/io/basic_redir.c \
 src/io/multi_redir.c \
 src/builtins/builtins.c \

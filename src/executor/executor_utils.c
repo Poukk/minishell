@@ -13,61 +13,8 @@
 #include "minishell.h"
 #include <errno.h>
 
-void	init_empty_exec_ctx(t_child_exec_ctx *ctx)
+static int	setup_child_redirections(t_child_exec_ctx *ctx, char *command_path)
 {
-	ctx->redirections = NULL;
-	ctx->input_redirs = NULL;
-	ctx->output_redirs = NULL;
-	ctx->env = NULL;
-}
-
-void	execute_simple_command_child(char **args, char *command_path)
-{
-	t_child_exec_ctx	ctx;
-
-	init_empty_exec_ctx(&ctx);
-	execute_child_process(args, command_path, &ctx);
-}
-
-void	handle_execve_error(char **args, char *command_path)
-{
-	if (errno == EACCES)
-	{
-		print_command_error(args[0], "Permission denied");
-		free(command_path);
-		exit(EXIT_EXEC_FAILED);
-	}
-	else if (errno == EISDIR)
-	{
-		print_command_error(args[0], "Is a directory");
-		free(command_path);
-		exit(EXIT_EXEC_FAILED);
-	}
-	else
-	{
-		print_command_error(args[0], "execution failed");
-		free(command_path);
-		exit(EXIT_CMD_NOT_FOUND);
-	}
-}
-
-int	wait_for_child(pid_t pid)
-{
-	int	status;
-
-	if (waitpid(pid, &status, 0) == -1)
-		return (1);
-	return (process_child_status(status));
-}
-
-void	execute_child_process(char **args, char *command_path,
-		t_child_exec_ctx *ctx)
-{
-	t_gc	gc;
-	char	**env_array;
-
-	gc_init(&gc);
-	setup_command_signals();
 	if (ctx->redirections)
 	{
 		if (setup_redirections_ordered(ctx->redirections) == -1)
@@ -89,6 +36,18 @@ void	execute_child_process(char **args, char *command_path,
 			exit(1);
 		}
 	}
+	return (0);
+}
+
+void	execute_child_process(char **args, char *command_path,
+		t_child_exec_ctx *ctx)
+{
+	t_gc	gc;
+	char	**env_array;
+
+	gc_init(&gc);
+	setup_command_signals();
+	setup_child_redirections(ctx, command_path);
 	env_array = NULL;
 	if (ctx->env)
 		env_array = env_to_array(&gc, ctx->env);

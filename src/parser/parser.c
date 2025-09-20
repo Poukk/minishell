@@ -49,33 +49,28 @@ t_ast_node	*parse_pipe(t_gc *gc, t_token **tokens, t_shell_env *env)
 	return (left);
 }
 
-static int	has_command_token(t_token *tokens)
+static void	set_redir_params(t_redir_params *params, t_redir_ptrs *ptrs)
 {
-	t_token	*current;
+	params->redirections = &ptrs->redirections;
+	params->redir_position = &ptrs->redir_position;
+	params->input_redirs = &ptrs->input_redirs;
+	params->output_redirs = &ptrs->output_redirs;
+}
 
-	current = tokens;
-	while (current && (current->type == TOKEN_REDIR_IN
-			|| current->type == TOKEN_REDIR_OUT
-			|| current->type == TOKEN_REDIR_APPEND
-			|| current->type == TOKEN_HEREDOC))
-	{
-		current = current->next;
-		if (current && current->type == TOKEN_WORD)
-			current = current->next;
-	}
-	return (current && (current->type == TOKEN_WORD
-			|| current->type == TOKEN_VARIABLE));
+static void	set_cmd_redirections(t_ast_node *cmd_node,
+	t_redirection *input_redirs, t_redirection *output_redirs,
+	t_redirection_entry *redirections)
+{
+	cmd_node->redirections = redirections;
+	cmd_node->input_redirs = input_redirs;
+	cmd_node->output_redirs = output_redirs;
 }
 
 t_ast_node	*parse_command(t_gc *gc, t_token **tokens, t_shell_env *env)
 {
-	t_ast_node			*cmd_node;
-	char				**args;
-	t_redirection		*input_redirs;
-	t_redirection		*output_redirs;
-	t_redirection_entry	*redirections;
-	t_redir_params		params;
-	int					redir_position;
+	t_ast_node		*cmd_node;
+	t_redir_params	params;
+	t_redir_ptrs	ptrs;
 
 	if (!*tokens || (!has_command_token(*tokens)
 			&& !is_redirection_token((*tokens)->type)))
@@ -83,19 +78,14 @@ t_ast_node	*parse_command(t_gc *gc, t_token **tokens, t_shell_env *env)
 	cmd_node = ast_node_create(gc, NODE_CMD);
 	if (!cmd_node)
 		return (NULL);
-	input_redirs = NULL;
-	output_redirs = NULL;
-	redirections = NULL;
-	redir_position = 0;
-	params.redirections = &redirections;
-	params.redir_position = &redir_position;
-	params.input_redirs = &input_redirs;
-	params.output_redirs = &output_redirs;
+	ptrs.input_redirs = NULL;
+	ptrs.output_redirs = NULL;
+	ptrs.redirections = NULL;
+	ptrs.redir_position = 0;
+	set_redir_params(&params, &ptrs);
 	params.env = env;
-	args = extract_args_with_redirections(gc, tokens, &params);
-	cmd_node->args = args;
-	cmd_node->redirections = redirections;
-	cmd_node->input_redirs = input_redirs;
-	cmd_node->output_redirs = output_redirs;
+	cmd_node->args = extract_args_with_redirections(gc, tokens, &params);
+	set_cmd_redirections(cmd_node, ptrs.input_redirs, ptrs.output_redirs,
+		ptrs.redirections);
 	return (cmd_node);
 }
