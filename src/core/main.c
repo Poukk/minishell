@@ -99,6 +99,7 @@ int	main(int argc, char **argv, char **envp)
 	t_gc			gc;
 	t_shell_env		*env;
 	t_shell_context	ctx;
+	int				last_exit_code;
 
 	(void)argc;
 	(void)argv;
@@ -108,6 +109,7 @@ int	main(int argc, char **argv, char **envp)
 	ctx.env = env;
 	ctx.gc = &gc;
 	main_loop(&ctx);
+	last_exit_code = env->last_exit_code;
 	gc_free_all(&gc);
-	return (env->last_exit_code);
+	return (last_exit_code);
 }
