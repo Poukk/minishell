@@ -6,6 +6,7 @@ src/core/main.c \
 src/core/memory.c \
 src/tokenizer/tokenizer.c \
 src/tokenizer/content.c \
+src/tokenizer/concat.c \
 src/tokenizer/utils.c \
 src/tokenizer/handler.c \
 src/tokenizer/syntax.c \

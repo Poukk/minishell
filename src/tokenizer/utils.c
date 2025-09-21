@@ -76,14 +76,14 @@ t_token	*handle_word_or_quote(t_gc *gc, const char **input)
 
 	if (**input == '\'')
 	{
-		value = extract_quoted_string(gc, input, '\'');
+		value = extract_quoted_string(gc, input, '\'', NULL);
 		if (!value)
 			return (NULL);
 		return (token_create_with_quote(gc, TOKEN_WORD, value, '\''));
 	}
 	else if (**input == '"')
 	{
-		value = extract_quoted_string(gc, input, '"');
+		value = extract_quoted_string(gc, input, '"', NULL);
 		if (!value)
 			return (NULL);
 		return (token_create_with_quote(gc, TOKEN_WORD, value, '"'));

@@ -25,6 +25,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <termios.h>
+# include <fcntl.h>
 
 # include "memory.h"
 # include "tokenizer.h"

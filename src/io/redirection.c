@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <fcntl.h>
 
 static int	write_content_to_pipe(int write_fd, char *content,
 		size_t content_len)

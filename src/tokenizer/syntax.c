@@ -28,7 +28,8 @@ int	should_concatenate(const char *current)
 		&& !is_separator_metachar(*current));
 }
 
-char	*extract_quoted_string(t_gc *gc, const char **input, char quote)
+char	*extract_quoted_string(t_gc *gc, const char **input, char quote,
+		t_tokenizer_status *status)
 {
 	const char	*start;
 	size_t		len;
@@ -43,10 +44,16 @@ char	*extract_quoted_string(t_gc *gc, const char **input, char quote)
 		len = *input - start;
 		result = (char *)gc_malloc(gc, len + 1);
 		if (!result)
+		{
+			if (status)
+				*status = TOKENIZER_ERROR_MEMORY;
 			return (NULL);
+		}
 		ft_strlcpy(result, start, len + 1);
 		(*input)++;
 		return (result);
 	}
+	if (status)
+		*status = TOKENIZER_ERROR_UNCLOSED_QUOTE;
 	return (NULL);
 }

@@ -32,7 +32,7 @@ char	*extract_word(t_gc *gc, const char **input)
 	return (result);
 }
 
-static void	update_quote_context(char current_quote, char *quote_context)
+void	update_quote_context(char current_quote, char *quote_context)
 {
 	if (current_quote == '\'' && *quote_context != '\'')
 		*quote_context = '\'';
@@ -58,19 +58,19 @@ char	*extract_variable_content(t_gc *gc, const char **input)
 }
 
 char	*get_content_by_type(t_gc *gc, const char **input,
-		char *current_quote)
+		char *current_quote, t_tokenizer_status *status)
 {
 	char	*temp_content;
 
 	*current_quote = 0;
 	if (**input == '\'')
 	{
-		temp_content = extract_quoted_string(gc, input, '\'');
+		temp_content = extract_quoted_string(gc, input, '\'', status);
 		*current_quote = '\'';
 	}
 	else if (**input == '"')
 	{
-		temp_content = extract_quoted_string(gc, input, '"');
+		temp_content = extract_quoted_string(gc, input, '"', status);
 		*current_quote = '"';
 	}
 	else if (**input == '$')
@@ -80,27 +80,27 @@ char	*get_content_by_type(t_gc *gc, const char **input,
 	return (temp_content);
 }
 
-t_concat_result	extract_concatenated_content_with_context(t_gc *gc,
-		const char **input)
+int	process_single_content(t_gc *gc, const char **input,
+		t_concat_result *result)
 {
-	t_concat_result	result;
-	char			*temp_content;
-	char			current_quote;
+	char				*temp_content;
+	char				current_quote;
+	t_tokenizer_status	status;
 
-	result.content = NULL;
-	result.quote_context = 0;
-	while (**input && should_concatenate(*input))
+	status = TOKENIZER_SUCCESS;
+	temp_content = get_content_by_type(gc, input, &current_quote, &status);
+	if (!temp_content)
 	{
-		temp_content = get_content_by_type(gc, input, &current_quote);
-		if (!temp_content)
-			return (result);
-		result.content = concatenate_strings(gc, result.content, temp_content);
-		if (!result.content)
-		{
-			result.quote_context = 0;
-			return (result);
-		}
-		update_quote_context(current_quote, &result.quote_context);
+		result->status = status;
+		return (0);
 	}
-	return (result);
+	result->content = concatenate_strings(gc, result->content, temp_content);
+	if (!result->content)
+	{
+		result->quote_context = 0;
+		result->status = TOKENIZER_ERROR_MEMORY;
+		return (0);
+	}
+	update_quote_context(current_quote, &result->quote_context);
+	return (1);
 }

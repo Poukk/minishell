@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <fcntl.h>
 
 static int	process_input_redirection_entry(t_redirection_entry *entry)
 {

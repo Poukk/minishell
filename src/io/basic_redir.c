@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <fcntl.h>
 
 static int	setup_file_input_redirection(char *filename)
 {

@@ -82,6 +82,7 @@ void				init_redir_ptrs(t_redirection **input,
 						t_redirection **output,
 						t_redirection_entry **redirections,
 						int *redir_position);
+void				free_split_array(char **array);
 char				**extract_command_args(t_gc *gc, t_token **tokens,
 						t_shell_env *env);
 char				**extract_args_with_redirections(t_gc *gc,
@@ -92,18 +93,17 @@ char				**expand_command_args(t_gc *gc, char **args,
 						t_shell_env *env);
 char				**extract_command_args(t_gc *gc, t_token **tokens,
 						t_shell_env *env);
+char				*process_regular_char(t_gc *gc, char **current,
+						char *result);
+char				*append_to_result(t_gc *gc, char *result, char *append_str);
+char				*extract_var_name(t_gc *gc, char *start);
+char				*append_line_to_content(t_gc *gc, char *content,
+						char *line, size_t content_len);
 int					setup_redir_ordered(t_redirection_entry *redirections);
 int					is_word_or_redirection_token(t_token_type type);
 int					has_command_token(t_token *tokens);
 int					is_redirection_token(t_token_type type);
 int					count_command_tokens(t_token *tokens);
-char				*process_regular_char(t_gc *gc, char **current, \
-											char *result);
-char				*append_to_result(t_gc *gc, char *result, char *append_str);
-char				*extract_var_name(t_gc *gc, char *start);
-void				free_split_array(char **array);
 int					is_delimiter_match(char *line, char *delimiter);
-char				*append_line_to_content(t_gc *gc, char *content, \
-											char *line, size_t content_len);
 
 #endif

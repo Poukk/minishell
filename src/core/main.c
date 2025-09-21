@@ -5,17 +5,6 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/19 19:41:50 by alexanfe          #+#    #+#             */
-/*   Updated: 2025/09/19 19:41:53 by alexanfe         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: alexanfe <alexanfe@student.42sp.org.br>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 23:29:41 by alexanfe          #+#    #+#             */
 /*   Updated: 2025/09/19 17:02:12 by alexanfe         ###   ########.fr       */
 /*                                                                            */
@@ -36,20 +25,26 @@ static void	execute_ast(t_ast_node *ast, t_shell_context *ctx)
 
 static void	handle_line(char *line, t_shell_context *ctx)
 {
-	t_gc		gc;
-	t_token		*tokens;
-	t_ast_node	*ast;
+	t_gc				gc;
+	t_token				*tokens;
+	t_ast_node			*ast;
+	t_tokenizer_status	status;
 
 	if (!line)
 		return ;
 	if (*line)
 		add_history(line);
 	gc_init(&gc);
-	tokens = tokenize(&gc, line);
+	tokens = tokenize(&gc, line, &status);
 	if (tokens)
 	{
 		ast = parse(&gc, tokens, ctx->env);
 		execute_ast(ast, ctx);
+	}
+	else if (status == TOKENIZER_ERROR_UNCLOSED_QUOTE)
+	{
+		ft_dprintf(2, "minishell: syntax error: unclosed quote\n");
+		env_set_exit_code(ctx->env, 2);
 	}
 	gc_free_all(&gc);
 }

@@ -50,8 +50,6 @@ typedef struct s_external_exec_data
 	t_shell_context	*ctx;
 }	t_external_exec_data;
 
-char	*resolve_command_path(const char *command, t_shell_env *env);
-char	*get_validated_command_path(t_ast_node *cmd_node, t_shell_env *env);
 void	init_empty_exec_ctx(t_child_exec_ctx *ctx);
 void	execute_simple_command_child(char **args, char *command_path);
 void	handle_execve_error(char **args, char *command_path);
@@ -59,6 +57,16 @@ void	execute_child_process(char **args, char *command_path,
 			t_child_exec_ctx *ctx);
 void	setup_child_exec_context(t_child_exec_ctx *exec_ctx,
 			t_ast_node *cmd_node, t_shell_context *ctx);
+void	handle_double_dollar(t_expansion_state *state);
+void	handle_regular_char(t_expansion_state *state);
+void	process_heredoc_line(char *line);
+char	*resolve_command_path(const char *command, t_shell_env *env);
+char	*get_validated_command_path(t_ast_node *cmd_node, t_shell_env *env);
+char	*init_expansion_result(t_gc *gc);
+char	*process_expansion_loop(t_gc *gc, char *content, char *result);
+char	*process_variable_expansion(t_gc *gc, char *content, size_t *i);
+char	*append_variable_to_result(t_gc *gc, char *result, \
+									char *var_value, size_t result_len);
 int		execute_cmd(t_ast_node *cmd_node, t_shell_context *ctx);
 int		execute(t_ast_node *ast, t_shell_context *ctx);
 int		wait_for_child(pid_t pid);
@@ -78,16 +86,7 @@ int		execute_pipe(t_ast_node *ast, t_shell_context *ctx);
 int		setup_multiple_in_redirections(t_redirection *input_redirs);
 int		setup_multiple_out_redirections(t_redirection *output_redirs);
 int		setup_pipe_and_signals(int pipefd[2]);
-
-char	*init_expansion_result(t_gc *gc);
-char	*process_expansion_loop(t_gc *gc, char *content, char *result);
-char	*process_variable_expansion(t_gc *gc, char *content, size_t *i);
-char	*append_variable_to_result(t_gc *gc, char *result, \
-									char *var_value, size_t result_len);
-void	handle_double_dollar(t_expansion_state *state);
 int		should_expand_variable(char *content, size_t i);
-void	handle_regular_char(t_expansion_state *state);
-void	process_heredoc_line(char *line);
 int		setup_heredoc_redirection(t_redirection *redir);
 int		setup_input_redirection(t_redirection *redir);
 int		setup_output_redirection(t_redirection *redir);
