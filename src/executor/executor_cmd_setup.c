@@ -87,7 +87,7 @@ int	setup_and_validate_command(t_ast_node *cmd_node, t_shell_env *env,
 	if (result == 2)
 	{
 		gc_free_all(gc);
-		return (0);
+		return (2);
 	}
 	return (result);
 }

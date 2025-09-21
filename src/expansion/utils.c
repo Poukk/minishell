@@ -19,6 +19,8 @@ static char	*get_variable_value(t_gc *gc, char *var_name, t_shell_env *env)
 	if (ft_strncmp(var_name, "?", 1) == 0)
 	{
 		var_value = expand_variable(gc, var_name, env);
+		if (!var_value)
+			var_value = "";
 	}
 	else
 	{
@@ -74,11 +76,19 @@ char	*append_to_result(t_gc *gc, char *result, char *append_str)
 
 	if (!append_str || !*append_str)
 		return (result);
+	if (!result)
+	{
+		new_result = gc_malloc(gc, ft_strlen(append_str) + 1);
+		if (!new_result)
+			return (NULL);
+		ft_strlcpy(new_result, append_str, ft_strlen(append_str) + 1);
+		return (new_result);
+	}
 	total_len = ft_strlen(result) + ft_strlen(append_str) + 1;
 	new_result = gc_malloc(gc, total_len);
 	if (!new_result)
 		return (NULL);
-	ft_strlcpy(new_result, result, ft_strlen(result) + 1);
+	ft_strlcpy(new_result, result, total_len);
 	ft_strlcat(new_result, append_str, total_len);
 	return (new_result);
 }

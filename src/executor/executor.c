@@ -70,6 +70,8 @@ int	execute_cmd(t_ast_node *cmd_node, t_shell_context *ctx)
 	int			result;
 
 	result = setup_and_validate_command(cmd_node, ctx->env, &setup, &gc);
+	if (result == 2)
+		return (0);
 	if (result != 0)
 		return (result);
 	if (is_builtin_command(setup.exp_args[0]) != BUILTIN_NONE)
