@@ -24,6 +24,7 @@
 # include <unistd.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <termios.h>
 
 # include "memory.h"
 # include "tokenizer.h"

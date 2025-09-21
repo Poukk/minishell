@@ -97,13 +97,13 @@ int					is_word_or_redirection_token(t_token_type type);
 int					has_command_token(t_token *tokens);
 int					is_redirection_token(t_token_type type);
 int					count_command_tokens(t_token *tokens);
-char	*process_regular_char(t_gc *gc, char **current, char *result);
-char	*append_to_result(t_gc *gc, char *result, char *append_str);
-char	*extract_var_name(t_gc *gc, char *start);
-void	free_split_array(char **array);
-int	is_delimiter_match(char *line, char *delimiter);
-char	*append_line_to_content(t_gc *gc, char *content, char *line,
-	size_t content_len);
-
+char				*process_regular_char(t_gc *gc, char **current, \
+											char *result);
+char				*append_to_result(t_gc *gc, char *result, char *append_str);
+char				*extract_var_name(t_gc *gc, char *start);
+void				free_split_array(char **array);
+int					is_delimiter_match(char *line, char *delimiter);
+char				*append_line_to_content(t_gc *gc, char *content, \
+											char *line, size_t content_len);
 
 #endif

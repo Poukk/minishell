@@ -69,11 +69,14 @@ static t_shell_env	*init_shell_env(t_gc *gc, char **envp)
 
 static void	main_loop(t_shell_context *ctx)
 {
-	char	*line;
-	int		signal_exit_code;
+	char			*line;
+	int				signal_exit_code;
+	struct termios	term;
 
+	tcgetattr(STDIN_FILENO, &term);
 	while (1)
 	{
+		tcsetattr(STDIN_FILENO, TCSANOW, &term);
 		line = readline(PROMPT);
 		if (!line)
 		{
