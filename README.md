@@ -128,19 +128,6 @@ The shell uses a garbage collector (`t_gc`) to manage memory during command exec
 - `Ctrl+\` (SIGQUIT): Ignored in interactive mode
 - `Ctrl+D` (EOF): Exit the shell
 
-## Testing
-
-### Valgrind (Memory Leak Detection)
-```bash
-make val
-```
-
-### Debug Build
-```bash
-make debug
-./minishell_debug
-```
-
 ## Known Limitations
 
 This is an educational implementation with some limitations compared to full bash:
