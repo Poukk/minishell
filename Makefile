@@ -1,6 +1,5 @@
 #------------------ Config -----------------#
 NAME    := minishell
-NAME_DEBUG := minishell_debug
 SRCS    := \
 src/core/main.c \
 src/core/memory.c \
@@ -83,11 +82,11 @@ $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) $(OBJS) $(HEADERS) -o $(NAME) $(LIBS)
 
 clean:
-	@rm -rf $(OBJ_DIR) $(DEBUG_OBJ_DIR)
+	@rm -rf $(OBJ_DIR)
 	@$(MAKE) --no-print-directory -C $(LIBFT) clean
 
 fclean: clean
-	@rm -rf $(NAME) $(NAME_DEBUG)
+	@rm -rf $(NAME)
 	@$(MAKE) --no-print-directory -C $(LIBFT) fclean
 
 re: fclean all

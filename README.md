@@ -65,7 +65,6 @@ A simplified shell implementation written in C, inspired by bash. This project i
 ### Compilation
 ```bash
 make
-make debug
 make clean
 make fclean
 make re
